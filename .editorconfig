@@ -1,0 +1,25 @@
+root = true
+
+[*]
+indent_style = space
+end_of_line = crlf
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.xml]
+indent_size = 2
+
+[*.cs]
+dotnet_diagnostic.CA2227.severity = none
+dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CS8600.severity = none
+dotnet_diagnostic.CS8602.severity = none
+dotnet_diagnostic.CS8603.severity = none
+dotnet_diagnostic.CS8625.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1816.severity = none
+dotnet_diagnostic.IDE0017.severity = none
+dotnet_diagnostic.IDE0044.severity = none
+dotnet_diagnostic.IDE0059.severity = none
+dotnet_diagnostic.IDE0063.severity = none

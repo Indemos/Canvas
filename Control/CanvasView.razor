@@ -1,0 +1,12 @@
+<iframe
+  @ref="CanvasContainer"
+  src="@Server?.Source"
+  class="canvas-control"
+  @onwheel="OnWheel"
+  @onmousewheel="OnWheel"
+  @onmousemove="OnMouseMove"
+  @onmouseout="OnMouseLeave"
+  @onmousedown="OnMouseDown">
+</iframe>
+
+<ScriptControl @ref="ScaleContainer"></ScriptControl>

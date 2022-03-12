@@ -1,0 +1,37 @@
+@inherits LayoutComponentBase
+
+<PageTitle>Blazor</PageTitle>
+
+<MudThemeProvider Theme="_theme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+  <MudAppBar Elevation="25" ToolBarClass="px-3">
+    <MudIconButton Size="Size.Large" Class="px-0" Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" />
+    <MudText Typo="Typo.h6" Class="ml-4">Demo</MudText>
+  </MudAppBar>
+  <MudDrawer @bind-Open="_drawerOpen" Elevation="25" ClipMode="DrawerClipMode.Always">
+  </MudDrawer>
+  <MudMainContent>
+    <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+      @Body
+    </MudContainer>
+  </MudMainContent>
+</MudLayout>
+
+@code {
+
+  public bool _drawerOpen = true;
+  public DashboardTheme _theme = new();
+
+  void DrawerToggle()
+  {
+    _drawerOpen = !_drawerOpen;
+  }
+
+  protected override void OnInitialized()
+  {
+    StateHasChanged();
+  }
+}

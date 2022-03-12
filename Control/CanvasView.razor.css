@@ -1,0 +1,12 @@
+.canvas-control {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 1px;
+  min-height: 1px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+}
