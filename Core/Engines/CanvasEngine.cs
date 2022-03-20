@@ -4,9 +4,9 @@ using SkiaSharp;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Core.ControlSpace
+namespace Core.EngineSpace
 {
-  public class CanvasCompositeControl : CanvasControl, ICanvasControl
+  public class CanvasEngine : Engine, IEngine
   {
     /// <summary>
     /// Bitmap
@@ -14,7 +14,7 @@ namespace Core.ControlSpace
     public virtual SKBitmap Map { get; protected set; }
 
     /// <summary>
-    /// Drawing surface
+    /// Canvas
     /// </summary>
     public virtual SKCanvas Canvas { get; protected set; }
 
@@ -24,7 +24,7 @@ namespace Core.ControlSpace
     /// <param name="indexSize"></param>
     /// <param name="valueSize"></param>
     /// <returns></returns>
-    public CanvasCompositeControl(double indexSize, double valueSize)
+    public CanvasEngine(double indexSize, double valueSize)
     {
       IndexSize = indexSize;
       ValueSize = valueSize;
@@ -43,7 +43,7 @@ namespace Core.ControlSpace
     /// <param name="shape"></param>
     public override void CreateLine(IList<IPointModel> points, IShapeModel shape)
     {
-      using (var paint = new SKPaint
+      var options = new SKPaint
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Stroke,
@@ -52,12 +52,14 @@ namespace Core.ControlSpace
         IsAntialias = true,
         IsStroke = false,
         IsDither = false
-      })
+      };
+
+      using (options)
       {
         switch (shape.LineShape)
         {
-          case LineShapeEnum.Dots: paint.PathEffect = SKPathEffect.CreateDash(new float[] { 1, 3 }, 0); break;
-          case LineShapeEnum.Dashes: paint.PathEffect = SKPathEffect.CreateDash(new float[] { 3, 3 }, 0); break;
+          case LineShapeEnum.Dots: options.PathEffect = SKPathEffect.CreateDash(new float[] { 1, 3 }, 0); break;
+          case LineShapeEnum.Dashes: options.PathEffect = SKPathEffect.CreateDash(new float[] { 3, 3 }, 0); break;
         }
 
         Canvas.DrawLine(
@@ -65,7 +67,7 @@ namespace Core.ControlSpace
           (float)points[0].Value,
           (float)points[1].Index,
           (float)points[1].Value,
-          paint);
+          options);
       }
     }
 
@@ -76,7 +78,7 @@ namespace Core.ControlSpace
     /// <param name="shape"></param>
     public override void CreateCircle(IPointModel point, IShapeModel shape)
     {
-      using (var paint = new SKPaint
+      var options = new SKPaint
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Fill,
@@ -84,13 +86,15 @@ namespace Core.ControlSpace
         IsAntialias = false,
         IsStroke = false,
         IsDither = false
-      })
+      };
+
+      using (options)
       {
         Canvas.DrawCircle(
           (float)point.Index,
           (float)point.Value,
           (float)shape.Size,
-          paint);
+          options);
       }
     }
 
@@ -101,7 +105,7 @@ namespace Core.ControlSpace
     /// <param name="shape"></param>
     public override void CreateBox(IList<IPointModel> points, IShapeModel shape)
     {
-      using (var paint = new SKPaint
+      var options = new SKPaint
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Fill,
@@ -109,14 +113,16 @@ namespace Core.ControlSpace
         IsAntialias = false,
         IsStroke = false,
         IsDither = false
-      })
+      };
+
+      using (options)
       {
         Canvas.DrawRect(
           (float)points[0].Index,
           (float)points[0].Value,
           (float)(points[1].Index - points[0].Index),
           (float)(points[1].Value - points[0].Value),
-          paint);
+          options);
       }
     }
 
@@ -134,6 +140,16 @@ namespace Core.ControlSpace
         return;
       }
 
+      var options = new SKPaint
+      {
+        Color = shape.Color.Value,
+        Style = SKPaintStyle.Fill,
+        FilterQuality = SKFilterQuality.High,
+        IsAntialias = false,
+        IsStroke = false,
+        IsDither = false
+      };
+
       using (var curve = new SKPath())
       {
         curve.MoveTo((float)origin.Index.Value, (float)origin.Value);
@@ -143,17 +159,9 @@ namespace Core.ControlSpace
           curve.LineTo((float)points[i].Index.Value, (float)points[i].Value);
         }
 
-        using (var paint = new SKPaint
+        using (options)
         {
-          Color = shape.Color.Value,
-          Style = SKPaintStyle.Fill,
-          FilterQuality = SKFilterQuality.High,
-          IsAntialias = false,
-          IsStroke = false,
-          IsDither = false
-        })
-        {
-          Canvas.DrawPath(curve, paint);
+          Canvas.DrawPath(curve, options);
         }
       }
     }
@@ -165,15 +173,17 @@ namespace Core.ControlSpace
     /// <param name="size"></param>
     public override IPointModel GetContentMeasure(string content, double size)
     {
-      using (var paint = new SKPaint
+      var options = new SKPaint
       {
         TextSize = (float)size
-      })
+      };
+
+      using (options)
       {
         return new PointModel
         {
-          Index = content.Length * paint.FontMetrics.MaxCharacterWidth,
-          Value = paint.FontSpacing
+          Index = content.Length * options.FontMetrics.MaxCharacterWidth,
+          Value = options.FontSpacing
         };
       }
     }
@@ -193,6 +203,9 @@ namespace Core.ControlSpace
     {
       Canvas?.Dispose();
       Map?.Dispose();
+
+      Canvas = null;
+      Map = null;
     }
   }
 }

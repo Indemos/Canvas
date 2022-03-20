@@ -2,9 +2,9 @@ using Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 
-namespace Core.ControlSpace
+namespace Core.EngineSpace
 {
-  public interface ICanvasControl : IDisposable
+  public interface IEngine : IDisposable
   {
     /// <summary>
     /// Name
@@ -61,7 +61,7 @@ namespace Core.ControlSpace
     void Clear();
   }
 
-  public abstract class CanvasControl : ICanvasControl
+  public abstract class Engine : IEngine
   {
     /// <summary>
     /// Name

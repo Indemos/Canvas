@@ -1,4 +1,4 @@
-using Core.ControlSpace;
+using Core.EngineSpace;
 using Core.ModelSpace;
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,9 @@ namespace Core
     public virtual string Name { get; set; }
 
     /// <summary>
-    /// Panels
+    /// Engine
     /// </summary>
-    public virtual ICanvasControl Canvas { get; set; }
+    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Data
@@ -47,8 +47,8 @@ namespace Core
     /// <summary>
     /// Internals
     /// </summary>
-    public IList<int> AutoIndexDomain { get; protected set; }
-    public IList<double> AutoValueDomain { get; protected set; }
+    public virtual IList<int> AutoIndexDomain { get; protected set; }
+    public virtual IList<double> AutoValueDomain { get; protected set; }
 
     /// <summary>
     /// Constructor
@@ -94,9 +94,9 @@ namespace Core
     /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
-    /// <param name="panel"></param>
+    /// <param name="engine"></param>
     /// <param name="input"></param>
-    public virtual IPointModel GetPixels(ICanvasControl panel, IPointModel input)
+    public virtual IPointModel GetPixels(IEngine engine, IPointModel input)
     {
       // Convert to device pixels
 
@@ -105,8 +105,8 @@ namespace Core
 
       // Percentage to pixels, Y is inverted
 
-      input.Index = panel.IndexSize * index.Value;
-      input.Value = panel.ValueSize - panel.ValueSize * value;
+      input.Index = engine.IndexSize * index.Value;
+      input.Value = engine.ValueSize - engine.ValueSize * value;
 
       return input;
     }
@@ -114,26 +114,26 @@ namespace Core
     /// <summary>
     /// Transform coordinates
     /// </summary>
-    /// <param name="panel"></param>
+    /// <param name="engine"></param>
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public virtual IPointModel GetPixels(ICanvasControl panel, double index, double value)
+    public virtual IPointModel GetPixels(IEngine engine, double index, double value)
     {
-      return GetPixels(panel, new PointModel { Index = index, Value = value });
+      return GetPixels(engine, new PointModel { Index = index, Value = value });
     }
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
-    /// <param name="panel"></param>
+    /// <param name="engine"></param>
     /// <param name="input"></param>
-    public virtual IPointModel GetValues(ICanvasControl panel, IPointModel input)
+    public virtual IPointModel GetValues(IEngine engine, IPointModel input)
     {
       // Convert to values
 
-      var index = input.Index / panel.IndexSize;
-      var value = input.Value / panel.ValueSize;
+      var index = input.Index / engine.IndexSize;
+      var value = input.Value / engine.ValueSize;
 
       // Percentage to values, Y is inverted
 
@@ -371,7 +371,7 @@ namespace Core
 
         foreach (var series in seriesGroup.Groups)
         {
-          series.Value.View = Canvas;
+          series.Value.View = Engine;
           series.Value.Composer = this;
           series.Value.CreateShape(i, series.Key, Groups);
         }
@@ -412,7 +412,7 @@ namespace Core
     /// <exception cref="NotImplementedException"></exception>
     public void Dispose()
     {
-      Canvas?.Dispose();
+      Engine?.Dispose();
     }
   }
 }

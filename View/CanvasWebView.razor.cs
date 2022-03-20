@@ -1,32 +1,58 @@
 using Core;
-using Core.ControlSpace;
+using Core.EngineSpace;
 using Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using ScriptContainer;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using System.Timers;
 
-namespace Control
+namespace View
 {
-  public partial class CanvasView : IDisposable
+  public partial class CanvasWebView : IDisposable
   {
-    protected bool Setup;
-    protected StreamServer Server;
-    protected ScriptControl ScaleContainer;
-    protected ElementReference CanvasContainer;
-    protected IDictionary<string, dynamic> Cache = new Dictionary<string, dynamic>();
-
-    public virtual string Name { get; set; }
-    public virtual Composer Composer { get; set; }
-    public virtual Subject<Composer> Domains { get; set; }
+    [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     /// <summary>
-    /// Load
+    /// Accessors
+    /// </summary>
+    public virtual Composer Composer { get; set; }
+    public virtual StreamServer Server { get; protected set; }
+    public virtual ScriptService ScaleService { get; protected set; }
+    public virtual ElementReference CanvasContainer { get; protected set; }
+
+    /// <summary>
+    /// Events
+    /// </summary>
+    public virtual Action<ViewMessage> OnSize { get; set; } = o => { };
+    public virtual Action<ViewMessage> OnCreate { get; set; } = o => { };
+
+    /// <summary>
+    /// Update view
+    /// </summary>
+    public virtual Task Update()
+    {
+      return InvokeAsync(async () =>
+      {
+        Composer.Engine.Clear();
+        Composer.Update();
+
+        var engine = Composer.Engine as CanvasEngine;
+
+        using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 100))
+        {
+          await Server.Stream.Writer.WriteAsync(image.ToArray());
+        }
+
+        StateHasChanged();
+      });
+    }
+
+    /// <summary>
+    /// Setup
     /// </summary>
     /// <param name="setup"></param>
     /// <returns></returns>
@@ -34,64 +60,32 @@ namespace Control
     {
       if (setup)
       {
-        Server ??= await StreamServer.Create();
-        ScaleContainer.OnSize = async message => await GetBounds();
-        ScaleContainer.OnLoad = async () => await GetBounds();
+        Server = await (new StreamServer()).Create();
+        ScaleService = new ScriptService(RuntimeService);
+
+        await ScaleService.CreateModule();
+
+        OnCreate(await CreateMessage());
+        ScaleService.OnSize = async scriptMessage => OnSize(await CreateMessage());
       }
 
       await base.OnAfterRenderAsync(setup);
     }
 
     /// <summary>
-    /// Canvas rendering
+    /// Get information about event
     /// </summary>
     /// <returns></returns>
-    protected async Task GetBounds()
+    protected async Task<ViewMessage> CreateMessage()
     {
-      Composer?.Dispose();
+      var bounds = await ScaleService.GetElementBounds(CanvasContainer);
 
-      var bounds = await ScaleContainer.GetElementBounds(CanvasContainer);
-      //var canvas = new CanvasCompositeControl(bounds.Width, bounds.Height);
-
-      //Composer = new Composer();
-      //Composer.Canvas = canvas;
-
-      //using (var image = SKImage.FromBitmap(canvas.Map))
-      //{
-      //  canvas.CreateCircle(
-      //    new PointModel { Index = 50, Value = 50 },
-      //    new ShapeModel { Size = 20, Color = SKColors.Black });
-
-      //  var data = image.Encode(SKEncodedImageFormat.Webp, 100).ToArray();
-
-      //  await Server.Stream.Writer.WriteAsync(data);
-      //}
-
-      var map = new SKBitmap(250, 250);
-      var canvas = new SKCanvas(map);
-      var pos = new Random().Next(50, 150);
-      using (var image = SKImage.FromBitmap(map))
+      return new ViewMessage
       {
-        var inPaint = new SKPaint
-        {
-          Color = SKColors.Black,
-          Style = SKPaintStyle.Fill,
-          FilterQuality = SKFilterQuality.High
-        };
-        var exPaint = new SKPaint
-        {
-          Color = SKColors.White,
-          Style = SKPaintStyle.Fill,
-          FilterQuality = SKFilterQuality.Low
-        };
-
-        canvas.DrawRect(0, 0, 250, 250, exPaint);
-        canvas.DrawCircle(pos, pos, 20, inPaint);
-        var data = image.Encode(SKEncodedImageFormat.Webp, 100).ToArray();
-        await Server.Stream.Writer.WriteAsync(data);
-      }
-
-      //await InvokeAsync(StateHasChanged);
+        View = this,
+        Width = bounds.Width,
+        Height = bounds.Height
+      };
     }
 
     /// <summary>
@@ -117,7 +111,7 @@ namespace Control
     /// <param name="e"></param>
     protected void OnWheel(WheelEventArgs e)
     {
-      if (Setup is false)
+      if (Composer is null)
       {
         return;
       }
@@ -139,7 +133,7 @@ namespace Control
     /// <param name="e"></param>
     protected void OnMouseMove(MouseEventArgs e)
     {
-      if (Setup is false)
+      if (Composer is null)
       {
         return;
       }
@@ -178,7 +172,7 @@ namespace Control
     /// <param name="e"></param>
     protected void OnMouseDown(MouseEventArgs e)
     {
-      if (Setup is false)
+      if (Composer is null)
       {
         return;
       }
@@ -194,25 +188,10 @@ namespace Control
     /// <param name="e"></param>
     protected void OnMouseLeave(MouseEventArgs e)
     {
-      if (Setup is false)
+      if (Composer is null)
       {
         return;
       }
-    }
-
-    /// <summary>
-    /// Create canvas
-    /// </summary>
-    protected void Create()
-    {
-      Dispose(0);
-    }
-
-    /// <summary>
-    /// Update canvas
-    /// </summary>
-    protected void Update()
-    {
     }
   }
 }

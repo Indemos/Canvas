@@ -1,4 +1,4 @@
-using Core.ControlSpace;
+using Core.EngineSpace;
 
 namespace Core.ModelSpace
 {
@@ -22,7 +22,7 @@ namespace Core.ModelSpace
     /// <summary>
     /// Reference to panel
     /// </summary>
-    ICanvasControl View { get; set; }
+    IEngine View { get; set; }
   }
 
   public class PointModel : IPointModel
@@ -45,7 +45,7 @@ namespace Core.ModelSpace
     /// <summary>
     /// Reference to panel
     /// </summary>
-    public virtual ICanvasControl View { get; set; }
+    public virtual IEngine View { get; set; }
 
     /// <summary>
     /// Constructor

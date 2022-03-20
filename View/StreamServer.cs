@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace Control
+namespace View
 {
   public class StreamServer : IDisposable
   {
@@ -19,59 +20,63 @@ namespace Control
     /// <summary>
     /// Constructor
     /// </summary>
-    private StreamServer() { }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public static async Task<StreamServer> Create()
+    public async Task<StreamServer> Create()
     {
-      var server = new StreamServer();
-      var app = WebApplication.CreateBuilder();
+      var server = WebApplication.CreateBuilder();
 
-      app.WebHost.ConfigureKestrel(o =>
+      server.WebHost.ConfigureKestrel(options =>
       {
-        o.ListenAnyIP(0);
+        options.ListenAnyIP(0, serverOptions =>
+        {
+          serverOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
+        });
       });
 
-      server.Route = "/source";
-      server.Stream = Channel.CreateUnbounded<byte[]>();
-      server.Application = app.Build();
-      server.Application.MapGet(server.Route, server.OnRoute);
+      Route = "/source";
+      Stream = Channel.CreateUnbounded<byte[]>();
+      Application = server.Build();
+      Application.Use((context, next) => OnRoute(context, next));
 
-      await server.Application.StartAsync();
+      await Application.StartAsync();
 
-      if (server.Application.Urls.Any())
+      if (Application.Urls.Any())
       {
-        var source = server.Application.Urls.FirstOrDefault();
+        var source = Application.Urls.FirstOrDefault();
         var sourceProps = new UriBuilder(source);
 
         sourceProps.Host = $"{ IPAddress.Loopback }";
-        sourceProps.Path = server.Route;
-        server.Source = $"{ sourceProps }";
+        sourceProps.Path = Route;
+
+        Source = $"{ sourceProps }";
       }
 
-      return server;
+      return this;
     }
 
     /// <summary>
-    /// Process
+    /// Process route
     /// </summary>
     /// <param name="context"></param>
+    /// <param name="next"></param>
     /// <returns></returns>
-    protected Task OnRoute(HttpContext context)
+    protected virtual Task OnRoute(HttpContext context, Func<Task> next)
     {
-      var response = new StreamResponse();
-
-      Task.Run(async () =>
+      if (context.Request.Path.Value.Contains(Route))
       {
-        await foreach (var content in Stream.Reader.ReadAllAsync())
+        return Task.Run(async () =>
         {
-          await response.Stream.Writer.WriteAsync(content);
-        }
-      });
+          var response = new StreamResponse();
 
-      return Task.FromResult(response);
+          response.SetHeader(context);
+
+          await foreach (var content in Stream.Reader.ReadAllAsync())
+          {
+            await response.SetDocument(context, content);
+          }
+        });
+      }
+
+      return next();
     }
 
     /// <summary>
