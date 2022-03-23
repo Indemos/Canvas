@@ -1,4 +1,5 @@
 using Core.EngineSpace;
+using System.Collections.Generic;
 
 namespace Core.ModelSpace
 {
@@ -22,7 +23,25 @@ namespace Core.ModelSpace
     /// <summary>
     /// Reference to panel
     /// </summary>
-    IEngine View { get; set; }
+    IEngine Engine { get; set; }
+
+    /// <summary>
+    /// Get Min and Max for the current point
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="name"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    double[] CreateDomain(int position, string name, IList<IPointModel> items);
+
+    /// <summary>
+    /// Create the shape
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="name"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    void CreateShape(int position, string name, IList<IPointModel> items);
   }
 
   public class PointModel : IPointModel
@@ -45,12 +64,46 @@ namespace Core.ModelSpace
     /// <summary>
     /// Reference to panel
     /// </summary>
-    public virtual IEngine View { get; set; }
+    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     public PointModel()
+    {
+    }
+
+    /// <summary>
+    /// Get Min and Max for the current point
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="name"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    public virtual double[] CreateDomain(int position, string name, IList<IPointModel> items)
+    {
+      var currentModel = Composer.GetPoint(position, name, items);
+
+      if (currentModel?.Point is null)
+      {
+        return null;
+      }
+
+      return new double[]
+      {
+        currentModel.Point,
+        currentModel.Point
+      };
+    }
+
+    /// <summary>
+    /// Create the shape
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="name"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    public virtual void CreateShape(int position, string name, IList<IPointModel> items)
     {
     }
   }

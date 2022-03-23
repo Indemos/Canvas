@@ -11,10 +11,10 @@ namespace Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IGroupModel> items)
+    public override void CreateShape(int position, string name, IList<IPointModel> items)
     {
-      var currentModel = Composer.GetGroup(position, name, items);
-      var previousModel = Composer.GetGroup(position - 1, name, items);
+      var currentModel = Composer.GetPoint(position, name, items);
+      var previousModel = Composer.GetPoint(position - 1, name, items);
 
       if (currentModel?.Point is null || previousModel?.Point is null)
       {
@@ -23,13 +23,13 @@ namespace Core.ModelSpace
 
       var points = new IPointModel[]
       {
-        Composer.GetPixels(View, position - 1, previousModel.Point),
-        Composer.GetPixels(View, position, currentModel.Point)
+        Composer.GetPixels(Engine, position - 1, previousModel.Point),
+        Composer.GetPixels(Engine, position, currentModel.Point)
       };
 
       Color = currentModel.Color ?? Color;
 
-      View.CreateLine(points, this);
+      Engine.CreateLine(points, this);
     }
   }
 }

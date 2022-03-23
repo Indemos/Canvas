@@ -11,13 +11,13 @@ using View;
 
 namespace Client.Pages
 {
-  public partial class Index
+  public partial class Chart : IAsyncDisposable
   {
     protected Timer _interval = new(100);
     protected Random _generator = new();
     protected double _pointValue = 0;
     protected DateTime _pointTime = DateTime.Now;
-    protected IList<IGroupModel> _points = new List<IGroupModel>();
+    protected IList<IPointModel> _points = new List<IPointModel>();
     protected IDictionary<string, CanvasWebView> _views = new Dictionary<string, CanvasWebView>();
 
     public CanvasWebView ViewBars { get; set; }
@@ -71,15 +71,22 @@ namespace Client.Pages
     /// <returns></returns>
     protected void OnCreate(string name, ViewMessage message, TaskCompletionSource source)
     {
-      message?.View?.Composer?.Dispose();
-
-      _views[name] = message.View;
-      _views[name].Composer = new Composer
+      var composer = new GroupComposer
       {
         Name = name,
-        Groups = _points,
+        Points = _points,
         Engine = new CanvasEngine(message.Width, message.Height)
       };
+
+      if (message?.View?.Composer is not null)
+      {
+        composer.Points = message.View.Composer.Points;
+        composer.IndexDomain = message.View.Composer.IndexDomain;
+        message.View.Composer.Dispose();
+      }
+
+      _views[name] = message.View;
+      _views[name].Composer = composer;
 
       _views[name].Update();
       _views[name].Update();
@@ -110,14 +117,15 @@ namespace Client.Pages
             [nameof(ViewBars)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = point } } },
             [nameof(ViewAreas)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaGroupModel { Value = point } } },
             [nameof(ViewDeltas)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = pointDelta } } },
-            [nameof(ViewLines)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Value = point }, ["V2"] = new LineGroupModel { Value = pointMirror }}},
-            [nameof(ViewCandles)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new CandleGroupModel { Value = candle }, ["V2"] = new ArrowGroupModel { Value = arrow }}}
+            [nameof(ViewLines)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Value = point }, ["V2"] = new LineGroupModel { Value = pointMirror } } },
+            [nameof(ViewCandles)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new CandleGroupModel { Value = candle }, ["V2"] = new ArrowGroupModel { Value = arrow } } }
           }
         });
       }
 
-      var currentDelta = _points.Last().Groups[nameof(ViewDeltas)].Groups["V1"];
-      var currentCandle = _points.Last().Groups[nameof(ViewCandles)].Groups["V1"];
+      var grp = _points.Last() as IGroupModel;
+      var currentDelta = grp.Groups[nameof(ViewDeltas)].Groups["V1"];
+      var currentCandle = grp.Groups[nameof(ViewCandles)].Groups["V1"];
 
       currentCandle.Value.Low = candle.Low;
       currentCandle.Value.High = candle.High;
@@ -128,12 +136,12 @@ namespace Client.Pages
       currentDelta.Color = currentCandle.Color;
 
       _views.ForEach(panel =>
-      { 
+      {
         var composer = panel.Value.Composer;
-        composer.Groups = _points;
+        composer.Points = _points;
         composer.IndexDomain ??= new int[2];
-        composer.IndexDomain[0] = composer.Groups.Count - composer.IndexCount;
-        composer.IndexDomain[1] = composer.Groups.Count;
+        composer.IndexDomain[0] = composer.Points.Count - composer.IndexCount;
+        composer.IndexDomain[1] = composer.Points.Count;
         panel.Value.Update();
       });
     }
@@ -164,6 +172,17 @@ namespace Client.Pages
     protected bool IsNextFrame()
     {
       return _points.Count == 0 || DateTime.UtcNow.Ticks - _pointTime.Ticks >= TimeSpan.FromMilliseconds(100).Ticks;
+    }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    /// <returns></returns>
+    public ValueTask DisposeAsync()
+    {
+      _interval.Dispose();
+
+      return new ValueTask(Task.CompletedTask);
     }
   }
 }

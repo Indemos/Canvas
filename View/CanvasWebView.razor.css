@@ -1,16 +1,79 @@
-.canvas-control, .canvas-control * {
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
+.canvas-container, .canvas-scale, .canvas-view, .canvas-view * {
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
   min-width: 1px;
   min-height: 1px;
   max-width: 100%;
   max-height: 100%;
-  overflow: hidden;
   display: flex;
   flex: 1;
   border: 0;
+  position: relative;
+  z-index: 5;
+}
+
+.canvas-container {
+  display: grid;
+  grid-template-rows: 2rem 1fr 2rem;
+  grid-template-columns: 4rem 1fr 4rem;
+  grid-template-areas:
+    ". T ."
+    "L V R"
+    ". B .";
+}
+
+.canvas-scale {
+  border: 1px solid transparent;
+  flex: 0;
+}
+
+.canvas-view {
+  grid-area: V;
+  position: absolute;
+  z-index: 10;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 100% 25%, 100% 50%, 100% 75%;
+  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
+  border: 1px solid #DDD;
+}
+
+.canvas-view iframe {
+  background-repeat: no-repeat;
+  background-size: 1px 100%;
+  background-position: 25% 100%, 50% 100%, 75% 100%;
+  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
+}
+
+.canvas-scale-T {
+  grid-area: T;
+  background-repeat: no-repeat;
+  background-size: 1px 5px;
+  background-position: 25% 100%, 50% 100%, 75% 100%;
+  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
+}
+
+.canvas-scale-B {
+  grid-area: B;
+  background-repeat: no-repeat;
+  background-size: 1px 5px;
+  background-position: 25% 0, 50% 0, 75% 0;
+  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
+}
+
+.canvas-scale-L {
+  grid-area: L;
+  background-repeat: no-repeat;
+  background-size: 5px 1px;
+  background-position: 100% 25%, 100% 50%, 100% 75%;
+  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
+}
+
+.canvas-scale-R {
+  grid-area: R;
+  background-repeat: no-repeat;
+  background-size: 5px 1px;
+  background-position: 0 25%, 0 50%, 0 75%;
+  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScriptContainer" Version="1.0.4-prerelease" />
+    <PackageReference Include="ScriptContainer" Version="1.0.5-prerelease" />
   </ItemGroup>
 
   <ItemGroup>

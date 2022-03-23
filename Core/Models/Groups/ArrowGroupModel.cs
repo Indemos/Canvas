@@ -1,4 +1,3 @@
-using Core.ModelSpace;
 using System.Collections.Generic;
 
 namespace Core.ModelSpace
@@ -12,22 +11,22 @@ namespace Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IGroupModel> items)
+    public override void CreateShape(int position, string name, IList<IPointModel> items)
     {
-      var currentModel = Composer.GetGroup(position, name, items);
+      var currentModel = Composer.GetPoint(position, name, items);
 
       if (currentModel?.Point is null)
       {
         return;
       }
 
-      var size = View.IndexSize / Composer.IndexCount / 3;
+      var size = Engine.IndexSize / Composer.IndexCount / 3;
 
       var points = new PointModel[]
       {
-        Composer.GetPixels(View, position, currentModel.Point),
-        Composer.GetPixels(View, position, currentModel.Point),
-        Composer.GetPixels(View, position, currentModel.Point)
+        Composer.GetPixels(Engine, position, currentModel.Point),
+        Composer.GetPixels(Engine, position, currentModel.Point),
+        Composer.GetPixels(Engine, position, currentModel.Point)
       };
 
       points[0].Value -= size * currentModel.Direction;
@@ -36,7 +35,7 @@ namespace Core.ModelSpace
 
       Color = currentModel.Color ?? Color;
 
-      View.CreateShape(points, this);
+      Engine.CreateShape(points, this);
     }
   }
 }

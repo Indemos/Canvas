@@ -31,24 +31,24 @@ namespace Core.ModelSpace
 
       foreach (var level in IndexLevels)
       {
-        var pixelLevel = Composer.GetPixels(View, level, 0);
+        var pixelLevel = Composer.GetPixels(Engine, level, 0);
 
         points[0].Index = pointMax.Index = pixelLevel.Index;
         points[0].Value = 0;
-        points[1].Value = View.ValueSize;
+        points[1].Value = Engine.ValueSize;
 
-        View.CreateLine(points, this);
+        Engine.CreateLine(points, this);
       }
 
       foreach (var level in ValueLevels)
       {
-        var pixelLevel = Composer.GetPixels(View, 0, level);
+        var pixelLevel = Composer.GetPixels(Engine, 0, level);
 
         points[0].Value = pointMax.Value = pixelLevel.Value;
         points[0].Index = 0;
-        points[1].Index = View.IndexSize;
+        points[1].Index = Engine.IndexSize;
 
-        View.CreateLine(points, this);
+        Engine.CreateLine(points, this);
       }
     }
   }

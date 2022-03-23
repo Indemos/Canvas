@@ -1,10 +1,85 @@
-<iframe
-  @ref="CanvasContainer"
-  src="@Server?.Source"
-  class="canvas-control"
-  @onwheel="OnWheel"
-  @onmousewheel="OnWheel"
-  @onmousemove="OnMouseMove"
-  @onmouseout="OnMouseLeave"
-  @onmousedown="OnMouseDown">
-</iframe>
+@using System.Text
+
+<div class="canvas-container">
+
+  @{
+    var imageT = new StringBuilder();
+    var imageB = new StringBuilder();
+    var imageL = new StringBuilder();
+    var imageR = new StringBuilder();
+    var gridImageX = new StringBuilder();
+    var gridImageY = new StringBuilder();
+    var positionT = new StringBuilder();
+    var positionB = new StringBuilder();
+    var positionL = new StringBuilder();
+    var positionR = new StringBuilder();
+    var gridPositionX = new StringBuilder();
+    var gridPositionY = new StringBuilder();
+  }
+
+  <div class="canvas-scale canvas-scale-T">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <g font-size="10" dominant-baseline="middle" text-anchor="middle">
+        @foreach (var o in GetIndexEnumerator())
+        {
+          imageT.AppendJoin(",", $"linear-gradient(#DDD, #DDD)");
+          positionT.AppendJoin(",", $"{ o.step } 100%");
+
+          <text><text x="@o.step" y="50%">@o.value</text></text>
+        }
+      </g>
+    </svg>
+  </div>
+
+  <style type="text/css">
+    .canvas-scale-T {
+      background-image: @imageT;
+      background-position: @positionT
+    }
+  </style>
+
+  <div class="canvas-scale canvas-scale-B">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <g font-size="10" dominant-baseline="middle" text-anchor="middle">
+        @foreach (var o in GetIndexEnumerator())
+        {
+          <text><text x="@o.step" y="50%">@o.value</text></text>
+        }
+      </g>
+    </svg>
+  </div>
+
+  <div class="canvas-scale canvas-scale-L">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <g font-size="10" dominant-baseline="middle" text-anchor="end" transform="translate(-10,0)">
+        @foreach (var o in GetValueEnumerator())
+        {
+          <text><text x="100%" y="@o.step">@o.value</text></text>
+        }
+      </g>
+    </svg>
+  </div>
+
+  <div class="canvas-scale canvas-scale-R">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <g font-size="10" dominant-baseline="middle" text-anchor="start" transform="translate(10,0)">
+        @foreach (var o in GetValueEnumerator())
+        {
+          <text><text x="0" y="@o.step">@o.value</text></text>
+        }
+      </g>
+    </svg>
+  </div>
+
+  <div class="canvas-view">
+    <iframe @ref="CanvasContainer"
+            src="@Server?.Source"
+            @onwheel="OnWheel"
+            @onmousewheel="OnWheel"
+            @onmousemove="OnMouseMove"
+            @onmouseout="OnMouseLeave"
+            @onmousedown="OnMouseDown">
+    </iframe>
+  </div>
+
+</div>

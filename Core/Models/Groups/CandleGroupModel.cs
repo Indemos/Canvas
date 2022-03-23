@@ -1,4 +1,3 @@
-using Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 
@@ -13,9 +12,9 @@ namespace Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override double[] CreateDomain(int position, string name, IList<IGroupModel> items)
+    public override double[] CreateDomain(int position, string name, IList<IPointModel> items)
     {
-      var currentModel = Composer.GetGroup(position, name, items);
+      var currentModel = Composer.GetPoint(position, name, items);
 
       if (currentModel is null)
       {
@@ -36,9 +35,9 @@ namespace Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IGroupModel> items)
+    public override void CreateShape(int position, string name, IList<IPointModel> items)
     {
-      var currentModel = Composer.GetGroup(position, name, items);
+      var currentModel = Composer.GetPoint(position, name, items);
 
       if (currentModel is null)
       {
@@ -55,23 +54,23 @@ namespace Core.ModelSpace
 
       var points = new IPointModel[]
       {
-        Composer.GetPixels(View, position - size, upSide),
-        Composer.GetPixels(View, position + size, upSide),
-        Composer.GetPixels(View, position + size, downSide),
-        Composer.GetPixels(View, position - size, downSide),
-        Composer.GetPixels(View, position - size, upSide)
+        Composer.GetPixels(Engine, position - size, upSide),
+        Composer.GetPixels(Engine, position + size, upSide),
+        Composer.GetPixels(Engine, position + size, downSide),
+        Composer.GetPixels(Engine, position - size, downSide),
+        Composer.GetPixels(Engine, position - size, upSide)
       };
 
       var linePoints = new IPointModel[]
       {
-        Composer.GetPixels(View, position, L),
-        Composer.GetPixels(View, position, H),
+        Composer.GetPixels(Engine, position, L),
+        Composer.GetPixels(Engine, position, H),
       };
 
       Color = currentModel.Color ?? Color;
 
-      View.CreateShape(points, this);
-      View.CreateLine(linePoints, this);
+      Engine.CreateShape(points, this);
+      Engine.CreateLine(linePoints, this);
     }
   }
 }

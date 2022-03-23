@@ -1,11 +1,56 @@
 @page "/"
 
-<PageTitle>Index</PageTitle>
+@using Core
+@using Core.EngineSpace
+@using Core.ModelSpace
+@using ScriptContainer
 
-<div class="views">
-  <CanvasWebView @ref="ViewCandles"></CanvasWebView>
-  <CanvasWebView @ref="ViewBars"></CanvasWebView>
-  <CanvasWebView @ref="ViewLines"></CanvasWebView>
-  <CanvasWebView @ref="ViewAreas"></CanvasWebView>
-  <CanvasWebView @ref="ViewDeltas"></CanvasWebView>
-</div>
+<CanvasWebView @ref="ViewControl"></CanvasWebView>
+
+@code
+{
+  public CanvasWebView ViewControl { get; set; }
+
+  protected override async Task OnAfterRenderAsync(bool setup)
+  {
+    if (setup)
+    {
+      ViewControl.OnSize = ViewControl.OnCreate = message => OnCreate(nameof(ViewControl), message);
+    }
+
+    await base.OnAfterRenderAsync(setup);
+  }
+
+  protected void OnCreate(string name, ViewMessage message)
+  {
+    var generator = new Random();
+    var points = new List<IPointModel>();
+
+    Enumerable.Range(1, 100).ForEach(i =>
+    {
+      points.Add(new BarGroupModel
+      {
+        Index = i,
+        Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
+      });
+    });
+
+    var composer = new Composer
+    {
+      Name = name,
+      Points = points,
+      Engine = new CanvasEngine(message.Width, message.Height)
+    };
+
+    if (message?.View?.Composer is not null)
+    {
+      composer.Points = message.View.Composer.Points;
+      composer.IndexDomain = message.View.Composer.IndexDomain;
+      message.View.Composer.Dispose();
+    }
+
+    ViewControl.Composer = composer;
+    ViewControl.Update();
+    ViewControl.Update();
+  }
+}

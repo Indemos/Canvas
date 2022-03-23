@@ -1,6 +1,5 @@
 using Core;
 using Core.EngineSpace;
-using Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -21,7 +20,9 @@ namespace View
     /// </summary>
     public virtual Composer Composer { get; set; }
     public virtual StreamServer Server { get; protected set; }
+    public virtual ScriptMessage Bounds { get; protected set; }
     public virtual ScriptService ScaleService { get; protected set; }
+    public virtual ElementReference ScaleContainer { get; protected set; }
     public virtual ElementReference CanvasContainer { get; protected set; }
 
     /// <summary>
@@ -29,6 +30,42 @@ namespace View
     /// </summary>
     public virtual Action<ViewMessage> OnSize { get; set; } = o => { };
     public virtual Action<ViewMessage> OnCreate { get; set; } = o => { };
+
+    /// <summary>
+    /// Enumerate indices
+    /// </summary>
+    public virtual IEnumerable<(double step, string value)> GetIndexEnumerator()
+    {
+      if (Composer?.Engine is not null)
+      {
+        var cnt = Composer.IndexLabelCount;
+        var step = Composer.Engine.IndexSize / cnt;
+        var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
+
+        for (var i = 1; i < cnt; i++)
+        {
+          yield return (step * i, Composer.ShowIndex(Composer.MinIndex + i * stepValue));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Enumerate values
+    /// </summary>
+    public virtual IEnumerable<(double step, string value)> GetValueEnumerator()
+    {
+      if (Composer?.Engine is not null)
+      {
+        var cnt = Composer.ValueLabelCount;
+        var step = Composer.Engine.ValueSize / cnt;
+        var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
+
+        for (var i = 1; i < cnt; i++)
+        {
+          yield return (step * i, Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue));
+        }
+      }
+    }
 
     /// <summary>
     /// Update view
@@ -78,13 +115,13 @@ namespace View
     /// <returns></returns>
     protected async Task<ViewMessage> CreateMessage()
     {
-      var bounds = await ScaleService.GetElementBounds(CanvasContainer);
+      Bounds = await ScaleService.GetElementBounds(CanvasContainer);
 
       return new ViewMessage
       {
         View = this,
-        Width = bounds.Width,
-        Height = bounds.Height
+        Width = Bounds.Width,
+        Height = Bounds.Height
       };
     }
 
