@@ -66,7 +66,39 @@ MaxIndex += 1
 
 # Data source structure
 
-To simplify sycnhronization of multiple charts, data source has format of a list where each entry point has a time stamp and a set of Areas and Series that will be rendered in the relevant viewport. 
+The simplest format used by the library is a list of model with a single `Point` property. 
+
+```C#
+<CanvasWebView @ref="ViewControl"></CanvasWebView>
+
+@code
+{
+  public CanvasWebView ViewControl { get; set; }
+
+  protected override async Task OnAfterRenderAsync(bool setup)
+  {
+    if (setup)
+    {
+      ViewControl.OnSize = ViewControl.OnCreate = message => OnCreate(nameof(ViewControl), message);
+    }
+  }
+
+  protected void OnCreate(string name, ViewMessage message)
+  {
+    var composer = new Composer
+    {
+      Name = name,
+      Engine = new CanvasEngine(message.Width, message.Height),
+      Points = new IPointModel[]{ new Model { ["Point"] = 55 }, new Model { ["Point"] = 125 }},
+    };
+
+    ViewControl.Composer = composer;
+    ViewControl.Update();
+  }
+}
+```
+
+In case when charts have to be subchronizaed or overlapped within the same viewport, data source should have format of a list where each entry point has a time stamp and a set of Areas and Series that will be rendered in the relevant viewport. 
 
 ```C#
 [
