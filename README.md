@@ -87,13 +87,19 @@ The simplest format used by the library is a list of model with a single `Point`
 
   protected void OnCreate(string name, ViewMessage message)
   {
+    var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
+    {
+      Index = i,
+      Value = new Model { ["Point"] = new Random().Next(-5000, 5000) }
+    } as IPointModel);
+
     var composer = new Composer
     {
       Name = name,
-      Engine = new CanvasEngine(message.Width, message.Height),
-      Points = new IPointModel[]{ new Model { ["Point"] = 55 }, new Model { ["Point"] = 125 }},
+      Points = points.ToList(),
+      Engine = new CanvasEngine(message.Width, message.Height)
     };
-
+    
     ViewControl.Composer = composer;
     ViewControl.Update();
   }

@@ -24,21 +24,16 @@
   protected void OnCreate(string name, ViewMessage message)
   {
     var generator = new Random();
-    var points = new List<IPointModel>();
-
-    Enumerable.Range(1, 100).ForEach(i =>
+    var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
     {
-      points.Add(new BarGroupModel
-      {
-        Index = i,
-        Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
-      });
-    });
+      Index = i,
+      Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
+    } as IPointModel);
 
     var composer = new Composer
     {
       Name = name,
-      Points = points,
+      Points = points.ToList(),
       Engine = new CanvasEngine(message.Width, message.Height)
     };
 
