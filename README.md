@@ -69,6 +69,8 @@ MaxIndex += 1
 The simplest format used by the library is a list of model with a single `Point` property. 
 
 ```C#
+// Blazor example 
+
 <CanvasWebView @ref="ViewControl"></CanvasWebView>
 
 @code
