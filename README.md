@@ -4,7 +4,7 @@ Generic cross-platform real-time charts for Web and Desktop apps.
 
 The main purpose of this app is to be used as a charting tool for real-time financial applications, e.g. backtesters for trading strategies. 
 Here is [the most comprehensive guide](https://github.com/swharden/Csharp-Data-Visualization) dedicated to charting in .NET that I have seen so far. 
-Nevertheless, trying various options from that guide I wasn't able to find anything flexible enough for my needs, so created my own. Available in Nuget as `CrossCanvas`. Usage samples can be found [here](https://github.com/Indemos/Canvas-V2/tree/master/Samples) or as more complete example in a separate [repository](https://github.com/Indemos/Terminal-V2).
+Nevertheless, trying various options from that guide I wasn't able to find anything flexible enough for my needs, so created my own. Available in Nuget as `CrossCanvas`. Usage samples can be found [here](https://github.com/Indemos/Canvas-V3/tree/main/Samples) or as more complete example in a separate [repository](https://github.com/Indemos/Terminal-V2).
 
 # Drawing Methods 
 
@@ -137,7 +137,3 @@ At this moment, `Painter` supports only horizontal orientation, so the axis X is
 # Preview 
 
 ![](Screens/Preview.png)
-
-# Notes and Roadmaps
-
-Currently, this repository contains controls for WPF and Avalonia. Blazor controls are coming soon...
