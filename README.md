@@ -7,7 +7,7 @@ Here is [the most comprehensive guide](https://github.com/swharden/Csharp-Data-V
 Nevertheless, trying various options from that guide I wasn't able to find anything fast and flexible enough for my needs, so created my own. 
 
 - Usage samples can be found [here](https://github.com/Indemos/Canvas-V3/tree/main/Sample/Pages) 
-- Possible [application](https://github.com/Indemos/Terminal-V2) of this library 
+- Possible application of this library is [here](https://github.com/Indemos/Terminal-V2) 
 
 # Nuget 
 
