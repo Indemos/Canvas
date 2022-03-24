@@ -19,7 +19,7 @@ Install-Package Canvas.Views.Web -Version 1.0.0-prerelease
 
 Currently available controls.
 
-* Engine - base `Canvas` control exposing drawing context of various frameworks, like `GDI`, `SkiaSharp`, `OpenTK`, etc 
+* Engine - base `Canvas` control exposing drawing context of various frameworks, like `GDI` or `SkiaSharp`  
 * CanvasEngine - a wrapper around [SkiaSharp](https://github.com/mono/SkiaSharp) and Open GL 
 
 In order to add a different type of panel, e.g. `GDI+` or `Direct 2D`, you need to implement `IEngine` interface.
