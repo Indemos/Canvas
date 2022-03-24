@@ -11,6 +11,9 @@
   border: 0;
   position: relative;
   z-index: 5;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .canvas-container {
@@ -28,21 +31,33 @@
   flex: 0;
 }
 
+.canvas-label {
+  position: absolute;
+  font: 10px arial, helvetica, sans-serif;
+  top: 50%;
+}
+
+.canvas-label b {
+  display: block;
+  font-weight: normal;
+  position: relative;
+}
+
 .canvas-view {
   grid-area: V;
   position: absolute;
   z-index: 10;
   background-repeat: no-repeat;
-  background-size: 100% 1px;
-  background-position: 100% 25%, 100% 50%, 100% 75%;
+  background-size: 1px 100%;
+  background-position: 25% 100%, 50% 100%, 75% 100%;
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
   border: 1px solid #DDD;
 }
 
 .canvas-view iframe {
   background-repeat: no-repeat;
-  background-size: 1px 100%;
-  background-position: 25% 100%, 50% 100%, 75% 100%;
+  background-size: 100% 1px;
+  background-position: 100% 25%, 100% 50%, 100% 75%;
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }
 
@@ -62,6 +77,12 @@
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }
 
+.canvas-scale-T b, .canvas-scale-B b {
+  left: -50%;
+  margin-top: -25%;
+  margin-bottom: 25%;
+}
+
 .canvas-scale-L {
   grid-area: L;
   background-repeat: no-repeat;
@@ -70,10 +91,37 @@
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }
 
+.canvas-scale-L .canvas-label {
+  right: 0;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.canvas-scale-L b {
+  width: 100%;
+  text-align: right;
+  margin-right: 10px;
+  top: -50%;
+}
+
 .canvas-scale-R {
   grid-area: R;
   background-repeat: no-repeat;
   background-size: 5px 1px;
   background-position: 0 25%, 0 50%, 0 75%;
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
+}
+
+.canvas-scale-R .canvas-label {
+  height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.canvas-scale-R b {
+  width: 100%;
+  text-align: left;
+  margin-left: 10px;
+  top: -50%;
 }

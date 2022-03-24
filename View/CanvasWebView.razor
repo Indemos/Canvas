@@ -1,85 +1,109 @@
 @using System.Text
 
-<div class="canvas-container">
+<div class="canvas-container" space>
 
   @{
-    var imageT = new StringBuilder();
-    var imageB = new StringBuilder();
-    var imageL = new StringBuilder();
-    var imageR = new StringBuilder();
-    var gridImageX = new StringBuilder();
-    var gridImageY = new StringBuilder();
-    var positionT = new StringBuilder();
-    var positionB = new StringBuilder();
-    var positionL = new StringBuilder();
-    var positionR = new StringBuilder();
-    var gridPositionX = new StringBuilder();
-    var gridPositionY = new StringBuilder();
+    var imageT = new List<string>();
+    var imageB = new List<string>();
+    var imageL = new List<string>();
+    var imageR = new List<string>();
+    var gridImageX = new List<string>();
+    var gridImageY = new List<string>();
+    var positionT = new List<string>();
+    var positionB = new List<string>();
+    var positionL = new List<string>();
+    var positionR = new List<string>();
+    var gridPositionX = new List<string>();
+    var gridPositionY = new List<string>();
+    var grid = "linear-gradient(#DDD,#DDD)";
   }
 
   <div class="canvas-scale canvas-scale-T">
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-      <g font-size="10" dominant-baseline="middle" text-anchor="middle">
-        @foreach (var o in GetIndexEnumerator())
-        {
-          imageT.AppendJoin(",", $"linear-gradient(#DDD, #DDD)");
-          positionT.AppendJoin(",", $"{ o.step } 100%");
-
-          <text><text x="@o.step" y="50%">@o.value</text></text>
-        }
-      </g>
-    </svg>
+    @foreach (var o in GetIndexEnumerator())
+    {
+      <span class="canvas-label" style="left: @( o.step + "px" )"><b>@o.value</b></span>
+    }
   </div>
 
-  <style type="text/css">
-    .canvas-scale-T {
-      background-image: @imageT;
-      background-position: @positionT
-    }
-  </style>
-
   <div class="canvas-scale canvas-scale-B">
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-      <g font-size="10" dominant-baseline="middle" text-anchor="middle">
-        @foreach (var o in GetIndexEnumerator())
-        {
-          <text><text x="@o.step" y="50%">@o.value</text></text>
-        }
-      </g>
-    </svg>
+    @foreach (var o in GetIndexEnumerator())
+    {
+      imageT.Add(grid);
+      imageB.Add(grid);
+      gridImageX.Add(grid);
+      positionT.Add($"{ o.step }px 100%");
+      positionB.Add($"{ o.step }px 0");
+      gridPositionX.Add($"{ o.step }px 100%");
+
+      <span class="canvas-label" style="left: @( o.step + "px" )"><b>@o.value</b></span>
+    }
   </div>
 
   <div class="canvas-scale canvas-scale-L">
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-      <g font-size="10" dominant-baseline="middle" text-anchor="end" transform="translate(-10,0)">
-        @foreach (var o in GetValueEnumerator())
-        {
-          <text><text x="100%" y="@o.step">@o.value</text></text>
-        }
-      </g>
-    </svg>
+    @foreach (var o in GetValueEnumerator())
+    {
+      <span class="canvas-label" style="top: @( o.step + "px" )"><b>@o.value</b></span>
+    }
   </div>
 
   <div class="canvas-scale canvas-scale-R">
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-      <g font-size="10" dominant-baseline="middle" text-anchor="start" transform="translate(10,0)">
-        @foreach (var o in GetValueEnumerator())
-        {
-          <text><text x="0" y="@o.step">@o.value</text></text>
-        }
-      </g>
-    </svg>
+    @foreach (var o in GetValueEnumerator())
+    {
+      imageL.Add(grid);
+      imageR.Add(grid);
+      gridImageY.Add(grid);
+      positionL.Add($"100% { o.step }px");
+      positionR.Add($"0 { o.step }px");
+      gridPositionY.Add($"100% { o.step }px");
+
+      <span class="canvas-label" style="top: @( o.step + "px" )"><b>@o.value</b></span>
+    }
   </div>
 
   <div class="canvas-view">
-    <iframe @ref="CanvasContainer"
-            src="@Server?.Source"
-            @onwheel="OnWheel"
-            @onmousewheel="OnWheel"
-            @onmousemove="OnMouseMove"
-            @onmouseout="OnMouseLeave"
-            @onmousedown="OnMouseDown">
+    <iframe
+      @ref="CanvasContainer"
+      src="@Server?.Source"
+      @onwheel="OnWheel"
+      @onmousewheel="OnWheel"
+      @onmousemove="OnMouseMove"
+      @onmouseout="OnMouseLeave"
+      @onmousedown="OnMouseDown">
     </iframe>
   </div>
 
 </div>
+
+<style type="text/css">
+
+  .canvas-container[space] .canvas-scale-T {
+    background-image: @(string.Join(",", imageT));
+    background-position: @(string.Join(",", positionT));
+  }
+
+  .canvas-container[space] .canvas-scale-B {
+    background-image: @(string.Join(",", imageB));
+    background-position: @(string.Join(",", positionB));
+  }
+
+  .canvas-container[space] .canvas-scale-L {
+    background-image: @(string.Join(",", imageL));
+    background-position: @(string.Join(",", positionL));
+  }
+
+  .canvas-container[space] .canvas-scale-R {
+    background-image: @(string.Join(",", imageR));
+    background-position: @(string.Join(",", positionR));
+  }
+
+  .canvas-container[space] .canvas-view {
+    background-image: @(string.Join(",", gridImageX));
+    background-position: @(string.Join(",", gridPositionX));
+  }
+
+  .canvas-container[space] .canvas-view iframe {
+    background-image: @(string.Join(",", gridImageY));
+    background-position: @(string.Join(",", gridPositionY));
+  }
+
+</style>
