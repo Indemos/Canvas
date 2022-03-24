@@ -1,19 +1,28 @@
 # Canvas and Open GL Stock and Financial Charts
 
-Generic cross-platform real-time charts for Web and Desktop apps. 
-
-The main purpose of this app is to be used as a charting tool for real-time financial applications, e.g. backtesters for trading strategies. 
+The fastest charting web control targeting primarily Blazor, both Server Side and Web Assembly, or event ASP.NET MVC. 
+This charting library was designed for Web, but it can also be used in Desktop apps via Web View. 
+The main purpose of this library is to be used as a charting tool for real-time financial applications, e.g. backtesters for trading strategies. 
 Here is [the most comprehensive guide](https://github.com/swharden/Csharp-Data-Visualization) dedicated to charting in .NET that I have seen so far. 
-Nevertheless, trying various options from that guide I wasn't able to find anything flexible enough for my needs, so created my own. Available in Nuget as `CrossCanvas`. Usage samples can be found [here](https://github.com/Indemos/Canvas-V3/tree/main/Sample/Pages) or as more complete example in a separate [repository](https://github.com/Indemos/Terminal-V2).
+Nevertheless, trying various options from that guide I wasn't able to find anything fast and flexible enough for my needs, so created my own. 
+
+- Usage samples can be found [here](https://github.com/Indemos/Canvas-V3/tree/main/Sample/Pages) 
+- Possible [application](https://github.com/Indemos/Terminal-V2) of this library 
+
+# Nuget 
+
+```
+Install-Package Canvas.Views.Web -Version 1.0.0-prerelease
+```
 
 # Drawing Methods 
 
 Currently available controls.
 
-* CanvasControl - base `Canvas` control exposing `DrawingContext` used with `Shapes` and `Geometries`
-* CanvasPanelControl - a wrapper around [SkiaSharp](https://github.com/mono/SkiaSharp) and Open GL 
+* Engine - base `Canvas` control exposing drawing context of various frameworks, like `GDI`, `SkiaSharp`, `OpenTK`, etc 
+* CanvasEngine - a wrapper around [SkiaSharp](https://github.com/mono/SkiaSharp) and Open GL 
 
-In order to add a different type of panel, e.g. `GDI+` or `Direct 2D`, you need to implement `ICanvasControl` interface.
+In order to add a different type of panel, e.g. `GDI+` or `Direct 2D`, you need to implement `IEngine` interface.
 
 # Chart Types 
 
@@ -22,9 +31,10 @@ At the moment, there are four built-in chart types.
 * Line - line 
 * Bar - polygon
 * Area - polygon
+* Arrow - polygon
 * Candle - OHLC box, a mix of a line and a rectangle polygon
 
-If there is a need to create a new chart type, then you need to implement `IShape` interface. 
+If there is a need to create a new chart type, then you need to implement `IGroupModel` interface. 
 
 # Pan and Zoom 
 
