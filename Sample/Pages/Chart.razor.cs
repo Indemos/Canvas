@@ -5,6 +5,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Timers;
 using View;
@@ -19,6 +20,7 @@ namespace Client.Pages
     protected DateTime _pointTime = DateTime.Now;
     protected IList<IPointModel> _points = new List<IPointModel>();
     protected IDictionary<string, CanvasWebView> _views = new Dictionary<string, CanvasWebView>();
+    protected Subject<Composer> _observer = new();
 
     public CanvasWebView ViewBars { get; set; }
     public CanvasWebView ViewLines { get; set; }
@@ -49,6 +51,16 @@ namespace Client.Pages
           sourceDeltas.Task,
           sourceCandles.Task);
 
+        _views.ForEach(o => o.Value.Observer = _observer);
+        _observer.Subscribe(composer => _views.ForEach(o =>
+        {
+          if (Equals(o.Value.Composer.Name, composer.Name) is false)
+          {
+            o.Value.Composer.IndexDomain = composer.IndexDomain;
+            o.Value.Update();
+          }
+        }));
+
         _interval.Enabled = true;
         _interval.Elapsed += (o, e) =>
         {
@@ -75,7 +87,7 @@ namespace Client.Pages
       {
         Name = name,
         Points = _points,
-        Engine = new CanvasEngine(message.Width, message.Height)
+        Engine = new CanvasEngine(message.X, message.Y)
       };
 
       if (message?.View?.Composer is not null)

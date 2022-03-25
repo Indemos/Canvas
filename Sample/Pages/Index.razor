@@ -34,7 +34,7 @@
     {
       Name = name,
       Points = points.ToList(),
-      Engine = new CanvasEngine(message.Width, message.Height)
+      Engine = new CanvasEngine(message.X, message.Y)
     };
 
     if (message?.View?.Composer is not null)

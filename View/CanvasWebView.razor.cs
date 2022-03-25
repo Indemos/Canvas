@@ -1,5 +1,6 @@
 using Core;
 using Core.EngineSpace;
+using Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -7,6 +8,7 @@ using ScriptContainer;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 namespace View
@@ -16,9 +18,15 @@ namespace View
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     /// <summary>
+    /// Mouse position
+    /// </summary>
+    protected IPointModel _mouse = null;
+
+    /// <summary>
     /// Accessors
     /// </summary>
     public virtual Composer Composer { get; set; }
+    public virtual Subject<Composer> Observer { get; set; }
     public virtual StreamServer Server { get; protected set; }
     public virtual ScriptMessage Bounds { get; protected set; }
     public virtual ScriptService ScaleService { get; protected set; }
@@ -34,7 +42,7 @@ namespace View
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    public virtual IEnumerable<(double step, string value)> GetIndexEnumerator()
+    public virtual IEnumerable<IPointModel> GetIndexEnumerator()
     {
       if (Composer?.Engine is not null)
       {
@@ -44,7 +52,11 @@ namespace View
 
         for (var i = 1; i < cnt; i++)
         {
-          yield return (step * i, Composer.ShowIndex(Composer.MinIndex + i * stepValue));
+          yield return new PointModel
+          {
+            Index = step * i,
+            Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
+          };
         }
       }
     }
@@ -52,7 +64,7 @@ namespace View
     /// <summary>
     /// Enumerate values
     /// </summary>
-    public virtual IEnumerable<(double step, string value)> GetValueEnumerator()
+    public virtual IEnumerable<IPointModel> GetValueEnumerator()
     {
       if (Composer?.Engine is not null)
       {
@@ -62,15 +74,21 @@ namespace View
 
         for (var i = 1; i < cnt; i++)
         {
-          yield return (step * i, Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue));
+          yield return new PointModel
+          {
+            Index = step * i,
+            Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue)
+          };
         }
       }
     }
 
     /// <summary>
-    /// Update view
+    /// Render
     /// </summary>
-    public virtual Task Update()
+    /// <param name="message"></param>
+    /// <returns></returns>
+    public virtual Task Update(Composer message = null)
     {
       return InvokeAsync(async () =>
       {
@@ -82,6 +100,11 @@ namespace View
         using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 100))
         {
           await Server.Stream.Writer.WriteAsync(image.ToArray());
+        }
+
+        if (message is not null && Observer is not null)
+        {
+          Observer.OnNext(message);
         }
 
         StateHasChanged();
@@ -122,8 +145,8 @@ namespace View
       return new ViewMessage
       {
         View = this,
-        Width = Bounds.Width,
-        Height = Bounds.Height
+        X = Bounds.Width,
+        Y = Bounds.Height
       };
     }
 
@@ -150,20 +173,20 @@ namespace View
     /// <param name="e"></param>
     protected void OnWheel(WheelEventArgs e)
     {
-      if (Composer is null)
+      if (Composer?.Engine is null)
       {
         return;
       }
 
-      //var isZoom = e.ShiftKey;
+      var isZoom = e.ShiftKey;
 
-      //switch (true)
-      //{
-      //  case true when e.DeltaX > 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(1); break;
-      //  case true when e.DeltaX < 0: _ = isZoom ? Composer.ZoomIndexScale(-1) : Composer.PanIndexScale(-1); break;
-      //}
+      switch (true)
+      {
+        case true when e.DeltaY > 0: _ = isZoom ? Composer.ZoomIndexScale(-1) : Composer.PanIndexScale(1); break;
+        case true when e.DeltaY < 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(-1); break;
+      }
 
-      //Domains.OnNext(Composer);
+      Update(Composer);
     }
 
     /// <summary>
@@ -172,37 +195,50 @@ namespace View
     /// <param name="e"></param>
     protected void OnMouseMove(MouseEventArgs e)
     {
-      if (Composer is null)
+      if (Composer?.Engine is null)
       {
         return;
       }
 
-      //var position = new PointModel
-      //{
-      //  Index = e.ClientX,
-      //  Value = e.ClientY
-      //};
+      var position = new PointModel
+      {
+        Index = e.ClientX,
+        Value = e.ClientY
+      };
 
-      //if (Equals(e.Button, 0))
-      //{
-      //  var deltaX = position.Index;
-      //  var deltaY = position.Value;
-      //  var isZoom = e.ShiftKey;
+      if (_mouse is null)
+      {
+        _mouse = position;
 
-      //  switch (true)
-      //  {
-      //    case true when deltaX > 0: _ = isZoom ? Composer.ZoomIndexScale(-1) : Composer.PanIndexScale(1); break;
-      //    case true when deltaX < 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(-1); break;
-      //  }
+        return;
+      }
 
-      //  switch (true)
-      //  {
-      //    case true when deltaY > 0: Composer.ZoomValueScale(-1); break;
-      //    case true when deltaY < 0: Composer.ZoomValueScale(1); break;
-      //  }
-      //}
+      if (e.Buttons == 1)
+      {
+        var deltaX = _mouse.Index - position.Index;
+        var deltaY = _mouse.Value - position.Value;
+        var isZoom = e.ShiftKey;
 
-      //Domains.OnNext(Composer);
+        _mouse = position;
+
+        switch (true)
+        {
+          case true when deltaX > 0: _ = isZoom ? Composer.ZoomIndexScale(-1) : Composer.PanIndexScale(1); break;
+          case true when deltaX < 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(-1); break;
+        }
+
+        switch (true)
+        {
+          case true when deltaY > 0: Composer.ZoomValueScale(-1); break;
+          case true when deltaY < 0: Composer.ZoomValueScale(1); break;
+        }
+      }
+      else
+      {
+        _mouse = null;
+      }
+
+      Update(Composer);
     }
 
     /// <summary>
@@ -211,14 +247,14 @@ namespace View
     /// <param name="e"></param>
     protected void OnMouseDown(MouseEventArgs e)
     {
-      if (Composer is null)
+      if (Composer?.Engine is null)
       {
         return;
       }
 
-      //Composer.ValueDomain = null;
+      Composer.ValueDomain = null;
 
-      //Domains.OnNext(Composer);
+      Update(Composer);
     }
 
     /// <summary>
@@ -227,7 +263,7 @@ namespace View
     /// <param name="e"></param>
     protected void OnMouseLeave(MouseEventArgs e)
     {
-      if (Composer is null)
+      if (Composer?.Engine is null)
       {
         return;
       }
