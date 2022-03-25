@@ -97,6 +97,8 @@ namespace View
     {
       if (setup)
       {
+        Dispose(0);
+
         Server = await (new StreamServer()).Create();
         ScaleService = new ScriptService(RuntimeService);
 

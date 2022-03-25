@@ -7,14 +7,14 @@
     var imageB = new List<string>();
     var imageL = new List<string>();
     var imageR = new List<string>();
-    var gridImageX = new List<string>();
-    var gridImageY = new List<string>();
+    var imageVX = new List<string>();
+    var imageVY = new List<string>();
     var positionT = new List<string>();
     var positionB = new List<string>();
     var positionL = new List<string>();
     var positionR = new List<string>();
-    var gridPositionX = new List<string>();
-    var gridPositionY = new List<string>();
+    var positionVX = new List<string>();
+    var positionVY = new List<string>();
     var grid = "linear-gradient(#DDD,#DDD)";
   }
 
@@ -30,10 +30,10 @@
     {
       imageT.Add(grid);
       imageB.Add(grid);
-      gridImageX.Add(grid);
+      imageVX.Add(grid);
       positionT.Add($"{ o.step }px 100%");
       positionB.Add($"{ o.step }px 0");
-      gridPositionX.Add($"{ o.step }px 100%");
+      positionVX.Add($"{ o.step }px 100%");
 
       <span class="canvas-label" style="left: @( o.step + "px" )"><b>@o.value</b></span>
     }
@@ -51,10 +51,10 @@
     {
       imageL.Add(grid);
       imageR.Add(grid);
-      gridImageY.Add(grid);
+      imageVY.Add(grid);
       positionL.Add($"100% { o.step }px");
       positionR.Add($"0 { o.step }px");
-      gridPositionY.Add($"100% { o.step }px");
+      positionVY.Add($"100% { o.step }px");
 
       <span class="canvas-label" style="top: @( o.step + "px" )"><b>@o.value</b></span>
     }
@@ -97,13 +97,13 @@
   }
 
   .canvas-container[space] .canvas-view {
-    background-image: @(string.Join(",", gridImageX));
-    background-position: @(string.Join(",", gridPositionX));
+    background-image: @(string.Join(",", imageVX));
+    background-position: @(string.Join(",", positionVX));
   }
 
   .canvas-container[space] .canvas-view iframe {
-    background-image: @(string.Join(",", gridImageY));
-    background-position: @(string.Join(",", gridPositionY));
+    background-image: @(string.Join(",", imageVY));
+    background-position: @(string.Join(",", positionVY));
   }
 
 </style>

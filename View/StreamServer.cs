@@ -84,17 +84,18 @@ namespace View
     /// </summary>
     public virtual void Dispose()
     {
-      //if (Stream.Writer.TryComplete())
-      //{
-      //  Stream.Reader.Completion.ContinueWith(async o =>
-      //  {
-      //    await Application.StopAsync();
+      if (Stream.Writer.TryComplete())
+      {
+        Stream.Reader.Completion.ContinueWith(async o =>
+        {
+          await Application.StopAsync();
 
-      //    Application = null;
-      //    Stream = null;
-      //    Source = null;
-      //  });
-      //}
+          Application = null;
+          Stream = null;
+          Source = null;
+
+        }).Unwrap();
+      }
     }
   }
 }
