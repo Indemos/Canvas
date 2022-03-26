@@ -1,4 +1,4 @@
-namespace View
+namespace Views
 {
   public class ViewMessage
   {

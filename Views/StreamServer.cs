@@ -8,7 +8,7 @@ using System.Net;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace View
+namespace Views
 {
   public class StreamServer : IDisposable
   {

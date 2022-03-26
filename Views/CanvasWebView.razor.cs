@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
-namespace View
+namespace Views
 {
   public partial class CanvasWebView : IDisposable
   {

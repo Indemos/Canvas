@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Timers;
-using View;
+using Views;
 
 namespace Client.Pages
 {

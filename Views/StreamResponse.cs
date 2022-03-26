@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace View
+namespace Views
 {
   public class StreamResponse : IActionResult
   {
