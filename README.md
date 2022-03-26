@@ -12,7 +12,7 @@ Nevertheless, trying various options from that guide I wasn't able to find anyth
 # Nuget 
 
 ```
-Install-Package Canvas.Views.Web -Version 1.0.0-prerelease
+Install-Package Canvas.Views.Web -Version 1.0.5-prerelease
 ```
 
 # Drawing Methods 

@@ -1,4 +1,4 @@
-.canvas-container, .canvas-scale, .canvas-view, .canvas-view * {
+.canvas-container, .canvas-scale, .canvas-view, .canvas-view *, .canvas-cross {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -34,13 +34,19 @@
 .canvas-label {
   position: absolute;
   font: 10px arial, helvetica, sans-serif;
-  top: 50%;
 }
 
 .canvas-label b {
   display: block;
   font-weight: normal;
   position: relative;
+}
+
+.canvas-marker b {
+  z-index: 20;
+  padding: 5px 10px;
+  background: #999;
+  color: #FFF;
 }
 
 .canvas-view {
@@ -62,26 +68,38 @@
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }
 
+.canvas-cross {
+  z-index: 15;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: -1px -1px, -1px -1px;
+  background-image: linear-gradient(to right, #999 1px, transparent 1px), linear-gradient(to bottom, #999 1px, transparent 1px);
+}
+
 .canvas-scale-T {
   grid-area: T;
+  align-items: center;
   background-repeat: no-repeat;
   background-size: 1px 5px;
   background-position: 25% 100%, 50% 100%, 75% 100%;
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }
 
+.canvas-scale-T b {
+  left: -50%;
+}
+
 .canvas-scale-B {
   grid-area: B;
+  align-items: center;
   background-repeat: no-repeat;
   background-size: 1px 5px;
   background-position: 25% 0, 50% 0, 75% 0;
   background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
 }
 
-.canvas-scale-T b, .canvas-scale-B b {
+.canvas-scale-B b {
   left: -50%;
-  margin-top: -25%;
-  margin-bottom: 25%;
 }
 
 .canvas-scale-L {
@@ -106,6 +124,10 @@
   top: -50%;
 }
 
+.canvas-scale-L .canvas-marker b {
+  margin: 0
+}
+
 .canvas-scale-R {
   grid-area: R;
   background-repeat: no-repeat;
@@ -125,4 +147,8 @@
   text-align: left;
   margin-left: 10px;
   top: -50%;
+}
+
+.canvas-scale-R .canvas-marker b {
+  margin: 0
 }

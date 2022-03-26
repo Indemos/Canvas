@@ -94,6 +94,7 @@ namespace Client.Pages
       {
         composer.Points = message.View.Composer.Points;
         composer.IndexDomain = message.View.Composer.IndexDomain;
+        composer.ValueDomain = message.View.Composer.ValueDomain;
         message.View.Composer.Dispose();
       }
 

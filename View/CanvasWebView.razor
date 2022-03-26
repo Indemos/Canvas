@@ -19,13 +19,26 @@
   }
 
   <div class="canvas-scale canvas-scale-T">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="left: @(Cursor.X + "px")"><b>@Cursor.ValueX</b></span>
+    }
+
     @foreach (var o in GetIndexEnumerator())
     {
       <span class="canvas-label" style="left: @( o.Index + "px" )"><b>@o.Value</b></span>
     }
+
   </div>
 
   <div class="canvas-scale canvas-scale-B">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="left: @(Cursor.X + "px")"><b>@Cursor.ValueX</b></span>
+    }
+
     @foreach (var o in GetIndexEnumerator())
     {
       imageT.Add(grid);
@@ -37,16 +50,30 @@
 
       <span class="canvas-label" style="left: @( o.Index + "px" )"><b>@o.Value</b></span>
     }
+
   </div>
 
   <div class="canvas-scale canvas-scale-L">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="top: @(Cursor.Y + "px")"><b>@Cursor.ValueY</b></span>
+    }
+
     @foreach (var o in GetValueEnumerator())
     {
       <span class="canvas-label" style="top: @( o.Index + "px" )"><b>@o.Value</b></span>
     }
+
   </div>
 
   <div class="canvas-scale canvas-scale-R">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="top: @(Cursor.Y + "px")"><b>@Cursor.ValueY</b></span>
+    }
+
     @foreach (var o in GetValueEnumerator())
     {
       imageL.Add(grid);
@@ -58,6 +85,7 @@
 
       <span class="canvas-label" style="top: @( o.Index + "px" )"><b>@o.Value</b></span>
     }
+
   </div>
 
   <div class="canvas-view"
@@ -66,6 +94,7 @@
     @onmousemove="OnMouseMove"
     @onmouseout="OnMouseLeave"
     @onmousedown="OnMouseDown">
+    <div class="canvas-cross" style="background-position: @(Cursor?.X ?? -1)px 100%, 100% @(Cursor?.Y ?? -1)px"></div>
     <img
       @ref="CanvasContainer"
       src="@Server?.Source" />
@@ -100,7 +129,7 @@
     background-position: @(string.Join(",", positionVX));
   }
 
-  .canvas-container[space] .canvas-view iframe {
+  .canvas-container[space] .canvas-view img {
     background-image: @(string.Join(",", imageVY));
     background-position: @(string.Join(",", positionVY));
   }

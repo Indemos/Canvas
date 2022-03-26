@@ -18,15 +18,11 @@ namespace View
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     /// <summary>
-    /// Mouse position
-    /// </summary>
-    protected IPointModel _mouse = null;
-
-    /// <summary>
     /// Accessors
     /// </summary>
     public virtual Composer Composer { get; set; }
     public virtual Subject<Composer> Observer { get; set; }
+    public virtual ViewMessage Cursor { get; protected set; }
     public virtual StreamServer Server { get; protected set; }
     public virtual ScriptMessage Bounds { get; protected set; }
     public virtual ScriptService ScaleService { get; protected set; }
@@ -200,26 +196,31 @@ namespace View
         return;
       }
 
-      var position = new PointModel
+      var values = Composer.GetValues(Composer.Engine, new PointModel
       {
-        Index = e.ClientX,
-        Value = e.ClientY
+        Index = e.OffsetX,
+        Value = e.OffsetY
+      });
+
+      var position = new ViewMessage
+      {
+        X = e.OffsetX,
+        Y = e.OffsetY,
+        ScreenX = e.ClientX,
+        ScreenY = e.ClientY,
+        ValueX = Composer.ShowIndex(values.Index.Value),
+        ValueY = Composer.ShowValue(values.Value)
       };
 
-      if (_mouse is null)
-      {
-        _mouse = position;
-
-        return;
-      }
+      Cursor ??= position;
 
       if (e.Buttons == 1)
       {
-        var deltaX = _mouse.Index - position.Index;
-        var deltaY = _mouse.Value - position.Value;
+        var deltaX = Cursor.ScreenX - position.ScreenX;
+        var deltaY = Cursor.ScreenY - position.ScreenY;
         var isZoom = e.ShiftKey;
 
-        _mouse = position;
+        Cursor = position;
 
         switch (true)
         {
@@ -233,10 +234,8 @@ namespace View
           case true when deltaY < 0: Composer.ZoomValueScale(1); break;
         }
       }
-      else
-      {
-        _mouse = null;
-      }
+
+      Cursor = position;
 
       Update(Composer);
     }
@@ -252,9 +251,12 @@ namespace View
         return;
       }
 
-      Composer.ValueDomain = null;
-
-      Update(Composer);
+      if (e.CtrlKey)
+      {
+        Composer.ValueDomain = null;
+        Update(Composer);
+        Update();
+      }
     }
 
     /// <summary>
@@ -267,6 +269,8 @@ namespace View
       {
         return;
       }
+
+      Cursor = null;
     }
   }
 }
