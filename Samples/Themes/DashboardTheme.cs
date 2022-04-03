@@ -1,6 +1,6 @@
 using MudBlazor;
 
-namespace Client.Themes
+namespace Canvas.Client.Themes
 {
   public class DashboardTheme : MudTheme
   {

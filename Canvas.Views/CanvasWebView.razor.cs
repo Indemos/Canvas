@@ -1,6 +1,6 @@
-using Core;
-using Core.EngineSpace;
-using Core.ModelSpace;
+using Canvas.Core;
+using Canvas.Core.EngineSpace;
+using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
-namespace Views
+namespace Canvas.Views
 {
   public partial class CanvasWebView : IDisposable
   {

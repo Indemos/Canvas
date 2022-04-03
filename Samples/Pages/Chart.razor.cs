@@ -1,6 +1,7 @@
-using Core;
-using Core.EngineSpace;
-using Core.ModelSpace;
+using Canvas.Core;
+using Canvas.Core.EngineSpace;
+using Canvas.Core.ModelSpace;
+using Canvas.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,8 @@ using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Timers;
-using Views;
 
-namespace Client.Pages
+namespace Canvas.Client.Pages
 {
   public partial class Chart : IAsyncDisposable
   {

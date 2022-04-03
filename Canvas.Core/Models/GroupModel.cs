@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Core.ModelSpace
+namespace Canvas.Core.ModelSpace
 {
   public interface IGroupModel : IShapeModel
   {

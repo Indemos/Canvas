@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Views\Views.csproj" />
+    <ProjectReference Include="..\Canvas.Views\Canvas.Views.csproj" />
   </ItemGroup>
 
 </Project>

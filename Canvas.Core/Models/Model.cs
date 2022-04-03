@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 
-namespace Core.ModelSpace
+namespace Canvas.Core.ModelSpace
 {
   public interface IModel : IDynamicMetaObjectProvider, ICloneable, IDisposable
   {

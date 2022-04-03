@@ -1,6 +1,6 @@
-using Views;
-using Core.EngineSpace;
-using Core.ModelSpace;
+using Canvas.Views;
+using Canvas.Core.EngineSpace;
+using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Mvc;
 using SkiaSharp;
 using System;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace Client.Controllers
+namespace Canvas.Client.Controllers
 {
   [ApiController]
   public class StreamController : ControllerBase

@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31815.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EA63C533-F5A5-4201-88B3-EF661FB45503}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{56348940-DA2B-46E7-8529-2638DA4282AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Canvas.Core", "Canvas.Core\Canvas.Core.csproj", "{56348940-DA2B-46E7-8529-2638DA4282AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Views", "Views\Views.csproj", "{4CD84515-CAF2-4451-921C-47E7B9C7F44B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Canvas.Views", "Canvas.Views\Canvas.Views.csproj", "{4CD84515-CAF2-4451-921C-47E7B9C7F44B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Samples\Client.csproj", "{67C6ECCC-5244-4C95-B765-7CC2EF594D74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Canvas.Client", "Samples\Canvas.Client.csproj", "{67C6ECCC-5244-4C95-B765-7CC2EF594D74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

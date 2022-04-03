@@ -1,10 +1,10 @@
-using Core.EngineSpace;
-using Core.ModelSpace;
+using Canvas.Core.EngineSpace;
+using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Core
+namespace Canvas.Core
 {
   public class Composer : IDisposable
   {

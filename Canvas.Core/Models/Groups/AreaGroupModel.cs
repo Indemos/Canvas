@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Core.ModelSpace
+namespace Canvas.Core.ModelSpace
 {
-  public class ArrowGroupModel : GroupModel, IGroupModel
+  public class AreaGroupModel : GroupModel, IGroupModel
   {
     /// <summary>
     /// Render the shape
@@ -14,24 +14,21 @@ namespace Core.ModelSpace
     public override void CreateShape(int position, string name, IList<IPointModel> items)
     {
       var currentModel = Composer.GetPoint(position, name, items);
+      var previousModel = Composer.GetPoint(position - 1, name, items);
 
-      if (currentModel?.Point is null)
+      if (currentModel?.Point is null || previousModel?.Point is null)
       {
         return;
       }
 
-      var size = Engine.IndexSize / Composer.IndexCount / 3;
-
-      var points = new PointModel[]
+      var points = new IPointModel[]
       {
+        Composer.GetPixels(Engine, position - 1, previousModel.Point),
         Composer.GetPixels(Engine, position, currentModel.Point),
-        Composer.GetPixels(Engine, position, currentModel.Point),
-        Composer.GetPixels(Engine, position, currentModel.Point)
+        Composer.GetPixels(Engine, position, 0.0),
+        Composer.GetPixels(Engine, position - 1, 0.0),
+        Composer.GetPixels(Engine, position - 1, previousModel.Point)
       };
-
-      points[0].Value -= size * currentModel.Direction;
-      points[1].Index += size;
-      points[2].Index -= size;
 
       Color = currentModel.Color ?? Color;
 

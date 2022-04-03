@@ -1,8 +1,8 @@
-using Core.ModelSpace;
+using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 
-namespace Core.EngineSpace
+namespace Canvas.Core.EngineSpace
 {
   public interface IEngine : IDisposable
   {

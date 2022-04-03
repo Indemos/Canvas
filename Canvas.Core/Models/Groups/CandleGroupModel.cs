@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Core.ModelSpace
+namespace Canvas.Core.ModelSpace
 {
   public class CandleGroupModel : GroupModel, IGroupModel
   {

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
 
-namespace Client
+namespace Canvas.Client
 {
   public class Program
   {

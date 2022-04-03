@@ -1,7 +1,7 @@
-using Core.EngineSpace;
+using Canvas.Core.EngineSpace;
 using System.Collections.Generic;
 
-namespace Core.ModelSpace
+namespace Canvas.Core.ModelSpace
 {
   public interface IPointModel
   {

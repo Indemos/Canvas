@@ -1,4 +1,4 @@
-namespace Core.EnumSpace
+namespace Canvas.Core.EnumSpace
 {
   public enum ShapeEnum : byte
   {
