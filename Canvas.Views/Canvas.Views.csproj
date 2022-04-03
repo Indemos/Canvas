@@ -4,32 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <IsPackable>true</IsPackable>
     <OutputType>Library</OutputType>
-    <AssemblyName>Canvas.Views.Web</AssemblyName>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Authors>artemiusgreat</Authors>
-    <Description>Generic real-time charts for Web and Desktop apps with built-in pan and zoom support. Financial and stock-trading charts.</Description>
-    <Copyright>http://indemos.com</Copyright>
-    <PackageProjectUrl>https://github.com/Indemos/Canvas-V3</PackageProjectUrl>
-    <PackageIcon>Icon.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/Indemos/Canvas-V3</RepositoryUrl>
-    <PackageTags>finance chart opengl canvas trading gdi stock direct2d</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.0.6-prerelease</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\Screens\Icon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
   
   <ItemGroup>
     <SupportedPlatform Include="browser" />
