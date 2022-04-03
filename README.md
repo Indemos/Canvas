@@ -89,28 +89,19 @@ The simplest format used by the library is a list of model with a single `Point`
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
-    if (setup)
-    {
-      ViewControl.OnSize = ViewControl.OnCreate = message => OnCreate(nameof(ViewControl), message);
-    }
-  }
-
-  protected void OnCreate(string name, ViewMessage message)
-  {
     var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
     {
       Index = i,
       Value = new Model { ["Point"] = new Random().Next(-5000, 5000) }
     } as IPointModel);
 
-    var composer = new Composer
+    ViewControl.Composer = new Composer
     {
       Name = name,
       Points = points.ToList(),
-      Engine = new CanvasEngine(message.Width, message.Height)
+      Engine = new CanvasEngine(1000, 500)
     };
-    
-    ViewControl.Composer = composer;
+
     ViewControl.Update();
   }
 }
