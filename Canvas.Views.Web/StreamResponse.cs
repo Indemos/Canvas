@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace Canvas.Views
+namespace Canvas.Views.Web
 {
   public class StreamResponse : IActionResult
   {

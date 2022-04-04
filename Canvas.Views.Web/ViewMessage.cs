@@ -1,4 +1,4 @@
-namespace Canvas.Views
+namespace Canvas.Views.Web
 {
   public class ViewMessage
   {

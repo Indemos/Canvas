@@ -1,7 +1,7 @@
 using Canvas.Core;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
-using Canvas.Views;
+using Canvas.Views.Web;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;

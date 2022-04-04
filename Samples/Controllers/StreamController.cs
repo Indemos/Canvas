@@ -1,4 +1,4 @@
-using Canvas.Views;
+using Canvas.Views.Web;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Mvc;
