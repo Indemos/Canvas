@@ -40,20 +40,17 @@ namespace Canvas.Views.Web
     /// </summary>
     public virtual IEnumerable<IPointModel> GetIndexEnumerator()
     {
-      if (Composer?.Engine is not null)
-      {
-        var cnt = Composer.IndexLabelCount;
-        var step = Composer.Engine.IndexSize / cnt;
-        var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
+      var cnt = Composer.IndexLabelCount;
+      var step = Composer.Engine.IndexSize / cnt;
+      var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
 
-        for (var i = 1; i < cnt; i++)
+      for (var i = 1; i < cnt; i++)
+      {
+        yield return new PointModel
         {
-          yield return new PointModel
-          {
-            Index = step * i,
-            Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
-          };
-        }
+          Index = step * i,
+          Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
+        };
       }
     }
 
@@ -62,20 +59,17 @@ namespace Canvas.Views.Web
     /// </summary>
     public virtual IEnumerable<IPointModel> GetValueEnumerator()
     {
-      if (Composer?.Engine is not null)
-      {
-        var cnt = Composer.ValueLabelCount;
-        var step = Composer.Engine.ValueSize / cnt;
-        var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
+      var cnt = Composer.ValueLabelCount;
+      var step = Composer.Engine.ValueSize / cnt;
+      var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
 
-        for (var i = 1; i < cnt; i++)
+      for (var i = 1; i < cnt; i++)
+      {
+        yield return new PointModel
         {
-          yield return new PointModel
-          {
-            Index = step * i,
-            Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue)
-          };
-        }
+          Index = step * i,
+          Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue)
+        };
       }
     }
 

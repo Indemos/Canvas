@@ -22,12 +22,21 @@
 
     @if (Cursor is not null)
     {
-      <span class="canvas-label canvas-marker" style="left: @(Cursor.X + "px")"><b>@Cursor.ValueX</b></span>
+      <span class="canvas-label canvas-marker" style="left: @(Cursor.X)px"><b>@Cursor.ValueX</b></span>
     }
 
-    @foreach (var o in GetIndexEnumerator())
+    @if (Composer?.Engine is null)
     {
-      <span class="canvas-label" style="left: @( o.Index + "px" )"><b>@o.Value</b></span>
+      <span class="canvas-label" style="left: 25%"><b>25%</b></span>
+      <span class="canvas-label" style="left: 50%"><b>50%</b></span>
+      <span class="canvas-label" style="left: 75%"><b>75%</b></span>
+    }
+    else
+    {
+      @foreach (var o in GetIndexEnumerator())
+      {
+        <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
+      }
     }
 
   </div>
@@ -36,19 +45,28 @@
 
     @if (Cursor is not null)
     {
-      <span class="canvas-label canvas-marker" style="left: @(Cursor.X + "px")"><b>@Cursor.ValueX</b></span>
+      <span class="canvas-label canvas-marker" style="left: @(Cursor.X)px"><b>@Cursor.ValueX</b></span>
     }
 
-    @foreach (var o in GetIndexEnumerator())
+    @if (Composer?.Engine is null)
     {
-      imageT.Add(grid);
-      imageB.Add(grid);
-      imageVX.Add(grid);
-      positionT.Add($"{ o.Index }px 100%");
-      positionB.Add($"{ o.Index }px 0");
-      positionVX.Add($"{ o.Index }px 100%");
+      <span class="canvas-label" style="left: 25%"><b>25%</b></span>
+      <span class="canvas-label" style="left: 50%"><b>50%</b></span>
+      <span class="canvas-label" style="left: 75%"><b>75%</b></span>
+    }
+    else
+    {
+      @foreach (var o in GetIndexEnumerator())
+      {
+        imageT.Add(grid);
+        imageB.Add(grid);
+        imageVX.Add(grid);
+        positionT.Add($"{ o.Index }px 100%");
+        positionB.Add($"{ o.Index }px 0");
+        positionVX.Add($"{ o.Index }px 100%");
 
-      <span class="canvas-label" style="left: @( o.Index + "px" )"><b>@o.Value</b></span>
+        <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
+      }
     }
 
   </div>
@@ -57,12 +75,21 @@
 
     @if (Cursor is not null)
     {
-      <span class="canvas-label canvas-marker" style="top: @(Cursor.Y + "px")"><b>@Cursor.ValueY</b></span>
+      <span class="canvas-label canvas-marker" style="top: @(Cursor.Y)px"><b>@Cursor.ValueY</b></span>
     }
 
-    @foreach (var o in GetValueEnumerator())
+    @if (Composer?.Engine is null)
     {
-      <span class="canvas-label" style="top: @( o.Index + "px" )"><b>@o.Value</b></span>
+      <span class="canvas-label" style="top: 25%"><b>25%</b></span>
+      <span class="canvas-label" style="top: 50%"><b>50%</b></span>
+      <span class="canvas-label" style="top: 75%"><b>75%</b></span>
+    }
+    else
+    {
+      @foreach (var o in GetValueEnumerator())
+      {
+        <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
+      }
     }
 
   </div>
@@ -71,19 +98,28 @@
 
     @if (Cursor is not null)
     {
-      <span class="canvas-label canvas-marker" style="top: @(Cursor.Y + "px")"><b>@Cursor.ValueY</b></span>
+      <span class="canvas-label canvas-marker" style="top: @(Cursor.Y)px"><b>@Cursor.ValueY</b></span>
     }
 
-    @foreach (var o in GetValueEnumerator())
+    @if (Composer?.Engine is null)
     {
-      imageL.Add(grid);
-      imageR.Add(grid);
-      imageVY.Add(grid);
-      positionL.Add($"100% { o.Index }px");
-      positionR.Add($"0 { o.Index }px");
-      positionVY.Add($"100% { o.Index }px");
+      <span class="canvas-label" style="top: 25%"><b>25%</b></span>
+      <span class="canvas-label" style="top: 50%"><b>50%</b></span>
+      <span class="canvas-label" style="top: 75%"><b>75%</b></span>
+    }
+    else
+    {
+      @foreach (var o in GetValueEnumerator())
+      {
+        imageL.Add(grid);
+        imageR.Add(grid);
+        imageVY.Add(grid);
+        positionL.Add($"100% { o.Index }px");
+        positionR.Add($"0 { o.Index }px");
+        positionVY.Add($"100% { o.Index }px");
 
-      <span class="canvas-label" style="top: @( o.Index + "px" )"><b>@o.Value</b></span>
+        <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
+      }
     }
 
   </div>
@@ -94,10 +130,14 @@
     @onmousemove="OnMouseMove"
     @onmouseout="OnMouseLeave"
     @onmousedown="OnMouseDown">
-    <div class="canvas-cross" style="background-position: @(Cursor?.X ?? -1)px 100%, 100% @(Cursor?.Y ?? -1)px"></div>
-    <img
-      @ref="CanvasContainer"
-      src="@Server?.Source" />
+
+    @if (Cursor is not null)
+    {
+      <div class="canvas-cross" style="background-position: @(Cursor.X)px 100%, 100% @(Cursor.Y)px"></div>
+    }
+
+    <img @ref="CanvasContainer" src="@Server?.Source" />
+
   </div>
 
 </div>
