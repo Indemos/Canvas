@@ -32,8 +32,8 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Events
     /// </summary>
-    public virtual Action<ViewMessage> OnSize { get; set; } = o => { };
-    public virtual Action<ViewMessage> OnCreate { get; set; } = o => { };
+    public virtual BehaviorSubject<ViewMessage> OnSize { get; set; } = new BehaviorSubject<ViewMessage>(null);
+    public virtual BehaviorSubject<ViewMessage> OnCreate { get; set; } = new BehaviorSubject<ViewMessage>(null);
 
     /// <summary>
     /// Enumerate indices
@@ -117,8 +117,8 @@ namespace Canvas.Views.Web
 
         await ScaleService.CreateModule();
 
-        OnCreate(await CreateMessage());
-        ScaleService.OnSize = async scriptMessage => OnSize(await CreateMessage());
+        OnCreate.OnNext(await CreateMessage());
+        ScaleService.OnSize.Subscribe(async scriptMessage => OnSize.OnNext(await CreateMessage()));
       }
 
       await base.OnAfterRenderAsync(setup);

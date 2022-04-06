@@ -1,4 +1,4 @@
-@page "/"
+@page "/demo"
 
 @using Canvas.Core
 @using Canvas.Core.EngineSpace
@@ -15,7 +15,8 @@
   {
     if (setup)
     {
-      ViewControl.OnSize = ViewControl.OnCreate = message => OnCreate(nameof(ViewControl), message);
+      ViewControl.OnSize.Subscribe(message => OnCreate(nameof(ViewControl), message));
+      ViewControl.OnCreate.Subscribe(message => OnCreate(nameof(ViewControl), message));
     }
 
     await base.OnAfterRenderAsync(setup);
@@ -23,6 +24,11 @@
 
   protected void OnCreate(string name, ViewMessage message)
   {
+    if (message is null)
+    {
+      return;
+    }
+
     var generator = new Random();
     var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
     {

@@ -130,14 +130,8 @@
     @onmousemove="OnMouseMove"
     @onmouseout="OnMouseLeave"
     @onmousedown="OnMouseDown">
-
-    @if (Cursor is not null)
-    {
-      <div class="canvas-cross" style="background-position: @(Cursor.X)px 100%, 100% @(Cursor.Y)px"></div>
-    }
-
+    <div class="canvas-cross" style="background-position: @(Cursor?.X ?? -1)px 100%, 100% @(Cursor?.Y ?? -1)px"></div>
     <img @ref="CanvasContainer" src="@Server?.Source" />
-
   </div>
 
 </div>

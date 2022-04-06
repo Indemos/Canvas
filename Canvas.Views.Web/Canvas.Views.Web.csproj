@@ -10,12 +10,12 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.1.2-prerelease</Version>
+    <Version>1.1.3-prerelease</Version>
     <PackageTags>finance chart opengl canvas trading gdi stock direct2d</PackageTags>
     <Copyright>http://indemos.com</Copyright>
     <PackageProjectUrl>https://github.com/Indemos/Canvas</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Indemos/Canvas</RepositoryUrl>
-    <Description>Generic real-time charts for Web and Desktop apps with built-in pan and zoom support. Financial and stock-trading charts.</Description>
+    <Description>Generic real-time charts for Web and Desktop apps with built-in pan and zoom support.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScriptContainer" Version="1.0.7-prerelease" />
+    <PackageReference Include="ScriptContainer" Version="1.0.8-prerelease" />
   </ItemGroup>
 
   <ItemGroup>
