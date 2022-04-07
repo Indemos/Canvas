@@ -1,28 +1,28 @@
 # Canvas and Open GL Stock and Financial Charts
 
-The fastest charting web control targeting primarily Blazor, both Server Side and Web Assembly, or event ASP.NET MVC. 
+The fastest charting web control targeting primarily Blazor, both Server Side and Web Assembly, and even ASP.NET MVC. 
 This charting library was designed for Web, but it can also be used in Desktop apps via Web View. 
 The main purpose of this library is to be used as a charting tool for real-time financial applications, e.g. backtesters for trading strategies. 
 Here is [the most comprehensive guide](https://github.com/swharden/Csharp-Data-Visualization) dedicated to charting in .NET that I have seen so far. 
 Nevertheless, trying various options from that guide I wasn't able to find anything fast and flexible enough for my needs, so created my own. 
 
-- Usage samples can be found [here](https://github.com/Indemos/Canvas-V3/tree/main/Sample/Pages) 
-- Possible application of this library is [here](https://github.com/Indemos/Terminal-V2) 
+- Examples can be found [here](https://github.com/Indemos/Canvas/tree/main/Samples/Pages) 
+- Possible application of this library is [here](https://github.com/Indemos/Terminal-Desktop) 
 
 # Nuget 
 
 ```
-Install-Package Canvas.Views.Web -Version 1.1.3-prerelease
+Install-Package Canvas.Views.Web -Version 1.1.4-prerelease
 ```
 
 # Drawing Methods 
 
 Currently available controls.
 
-* Engine - base `Canvas` control exposing drawing context of various frameworks, like `GDI` or `SkiaSharp`  
+* Engine - abstract base `Canvas` control exposing drawing context of various frameworks, like `GDI` or `SkiaSharp`  
 * CanvasEngine - a wrapper around [SkiaSharp](https://github.com/mono/SkiaSharp) and Open GL 
 
-In order to add a different type of panel, e.g. `GDI+` or `Direct 2D`, you need to implement `IEngine` interface.
+In order to add different types of panels, e.g. `GDI+`, `Direct 2D`, `Win UI`, `Open GL`, you need to implement `IEngine` interface.
 
 # Chart Types 
 
@@ -38,7 +38,7 @@ If there is a need to create a new chart type, then you need to implement `IGrou
 
 # Pan and Zoom 
 
-The chart is completely data-centric, thus in order to scale the chart you need to change the data source. 
+The chart is data-centric, thus in order to scale the chart you need to change the data source. 
 By default, the chart displays last 100 data points, as defined in `IndexCount` property. 
 
 ```C#
@@ -76,10 +76,9 @@ MaxIndex += 1
 
 # Data source structure
 
-The simplest format used by the library is a list of model with a single `Point` property. 
+The simplest format used by the library is a list of models with a single `Point` property. 
 
 ```C#
-// Blazor example 
 
 <CanvasWebView @ref="ViewControl"></CanvasWebView>
 
@@ -107,7 +106,7 @@ The simplest format used by the library is a list of model with a single `Point`
 }
 ```
 
-In case when charts have to be subchronizaed or overlapped within the same viewport, data source should have format of a list where each entry point has a time stamp and a set of Areas and Series that will be rendered in the relevant viewport. 
+In case when charts have to be synchronized or overlapped within the same viewport, data source should have format of a list where each entry point has a time stamp and a set of `Areas` and `Series` that will be rendered in the relevant viewport. 
 
 ```C#
 [
@@ -135,12 +134,16 @@ In case when charts have to be subchronizaed or overlapped within the same viewp
 
 ```
 
-* **Area** is a viewport, an actual chart, each viewport can show several types of series, e.g. a mix of candles and lines.
-* **Series** is a single chart type to be displayed in the viewport, e.g. lines. 
-* **Model** is a data point of `dynamic` type, can accept different type of inputs, e.g. double or OHLC box.
+- **Area** is a viewport, an actual chart, each viewport can show several types of series, e.g. a mix of candles and lines.
+- **Series** is a single chart type to be displayed in the viewport, e.g. lines. 
+- **Model** is a data point of `dynamic` type, can accept different type of inputs, e.g. double or OHLC box.
 
-At this moment, `Painter` supports only horizontal orientation, so the axis X is used as an index scale that picks data points from the source list and axis Y is a value scale that represents the actual value of each data point. 
+At this moment, `Canvas` supports only horizontal orientation, so the axis X is used as an index scale that picks data points from the source list and axis Y is a value scale that represents the actual value of each data point. 
 
 # Preview 
 
 ![](Screens/Preview.png)
+
+# Roadmap 
+
+The current version is already the fastest .NET charting library, but it can be even faster if instead of rerendering HTML elements Blazor will simply show or hide them using CSS. 

@@ -38,16 +38,11 @@ namespace Canvas.Client.Pages
         var sourceDeltas = new TaskCompletionSource();
         var sourceCandles = new TaskCompletionSource();
 
-        ViewBars.OnSize.Subscribe(message => OnCreate(nameof(ViewBars), message, sourceBars));
-        ViewBars.OnCreate.Subscribe(message => OnCreate(nameof(ViewBars), message, sourceBars));
-        ViewLines.OnSize.Subscribe(message => OnCreate(nameof(ViewLines), message, sourceLines));
-        ViewLines.OnCreate.Subscribe(message => OnCreate(nameof(ViewLines), message, sourceLines));
-        ViewAreas.OnSize.Subscribe(message => OnCreate(nameof(ViewAreas), message, sourceAreas));
-        ViewAreas.OnCreate.Subscribe(message => OnCreate(nameof(ViewAreas), message, sourceAreas));
-        ViewDeltas.OnSize.Subscribe(message => OnCreate(nameof(ViewDeltas), message, sourceDeltas));
-        ViewDeltas.OnCreate.Subscribe(message => OnCreate(nameof(ViewDeltas), message, sourceDeltas));
-        ViewCandles.OnSize.Subscribe(message => OnCreate(nameof(ViewCandles), message, sourceCandles));
-        ViewCandles.OnCreate.Subscribe(message => OnCreate(nameof(ViewCandles), message, sourceCandles));
+        ViewBars.OnSize = ViewBars.OnCreate = message => OnCreate(nameof(ViewBars), message, sourceBars);
+        ViewLines.OnSize = ViewLines.OnCreate = message => OnCreate(nameof(ViewLines), message, sourceLines);
+        ViewAreas.OnSize = ViewAreas.OnCreate = message => OnCreate(nameof(ViewAreas), message, sourceAreas);
+        ViewDeltas.OnSize = ViewDeltas.OnCreate = message => OnCreate(nameof(ViewDeltas), message, sourceDeltas);
+        ViewCandles.OnSize = ViewCandles.OnCreate = message => OnCreate(nameof(ViewCandles), message, sourceCandles);
 
         await Task.WhenAll(
           sourceBars.Task,
@@ -88,11 +83,6 @@ namespace Canvas.Client.Pages
     /// <returns></returns>
     protected void OnCreate(string name, ViewMessage message, TaskCompletionSource source)
     {
-      if (message is null)
-      {
-        return;
-      }
-
       var composer = new GroupComposer
       {
         Name = name,
