@@ -22,7 +22,7 @@ Currently available controls.
 * Engine - abstract base `Canvas` control exposing drawing context of various frameworks, like `GDI` or `SkiaSharp`  
 * CanvasEngine - a wrapper around [SkiaSharp](https://github.com/mono/SkiaSharp) and Open GL 
 
-In order to add different types of panels, e.g. `GDI+`, `Direct 2D`, `Win UI`, `Open GL`, you need to implement `IEngine` interface.
+To add different view types, e.g. `GDI+`, `Direct 2D`, `Win UI`, `Open GL`, implement `IEngine` interface.
 
 # Chart Types 
 
@@ -34,7 +34,7 @@ At the moment, there are four built-in chart types.
 * Arrow - polygon
 * Candle - OHLC box, a mix of a line and a rectangle polygon
 
-If there is a need to create a new chart type, then you need to implement `IGroupModel` interface. 
+To add new chart types, e.g. `Error Bars` or `Bubbles`, implement `IGroupModel` interface. 
 
 # Pan and Zoom 
 
