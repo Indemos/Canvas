@@ -82,10 +82,15 @@ namespace Canvas.Views.Web
     {
       return InvokeAsync(async () =>
       {
+        var engine = Composer?.Engine as CanvasEngine;
+
+        if (engine is null)
+        {
+          return;
+        }
+
         Composer.Engine.Clear();
         Composer.Update();
-
-        var engine = Composer.Engine as CanvasEngine;
 
         using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 100))
         {

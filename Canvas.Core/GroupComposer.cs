@@ -59,6 +59,7 @@ namespace Canvas.Core
         foreach (var shape in series.Groups)
         {
           shape.Value.Composer = this;
+          shape.Value.Engine = Engine;
 
           var domain = shape.Value.CreateDomain(i, shape.Key, Points);
 

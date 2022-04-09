@@ -17,9 +17,14 @@ namespace Canvas.Core.ModelSpace
     SKColor? Color { get; set; }
 
     /// <summary>
-    /// Line style
+    /// Position and alignment
     /// </summary>
-    LineShapeEnum? LineShape { get; set; }
+    LocationEnum? Location { get; set; }
+
+    /// <summary>
+    /// Format and density 
+    /// </summary>
+    CompositionEnum? Composition { get; set; }
 
     /// <summary>
     /// Points
@@ -46,9 +51,14 @@ namespace Canvas.Core.ModelSpace
     public virtual SKColor? Color { get; set; }
 
     /// <summary>
-    /// Line style
+    /// Position and alignment
     /// </summary>
-    public virtual LineShapeEnum? LineShape { get; set; }
+    public virtual LocationEnum? Location { get; set; }
+
+    /// <summary>
+    /// Format and density 
+    /// </summary>
+    public virtual CompositionEnum? Composition { get; set; }
 
     /// <summary>
     /// Points

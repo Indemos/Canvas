@@ -52,6 +52,7 @@ namespace Canvas.Client.Pages
           sourceCandles.Task);
 
         _views.ForEach(o => o.Value.Observer = _observer);
+
         _observer.Subscribe(composer => _views.ForEach(o =>
         {
           if (Equals(o.Value.Composer.Name, composer.Name) is false)

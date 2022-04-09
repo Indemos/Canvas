@@ -49,6 +49,22 @@ namespace Canvas.Core.EngineSpace
     void CreateShape(IList<IPointModel> points, IShapeModel shape);
 
     /// <summary>
+    /// Create label
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="shape"></param>
+    /// <param name="content"></param>
+    void CreateLabel(IPointModel point, IShapeModel shape, string content);
+
+    /// <summary>
+    /// Draw label along the path
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="shape"></param>
+    /// <param name="content"></param>
+    void CreateLabelShape(IList<IPointModel> points, IShapeModel shape, string content);
+
+    /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
@@ -110,6 +126,26 @@ namespace Canvas.Core.EngineSpace
     /// <param name="points"></param>
     /// <param name="shape"></param>
     public virtual void CreateShape(IList<IPointModel> points, IShapeModel shape)
+    {
+    }
+
+    /// <summary>
+    /// Create label
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="shape"></param>
+    /// <param name="content"></param>
+    public virtual void CreateLabel(IPointModel point, IShapeModel shape, string content)
+    {
+    }
+
+    /// <summary>
+    /// Draw label along the path
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="shape"></param>
+    /// <param name="content"></param>
+    public virtual void CreateLabelShape(IList<IPointModel> points, IShapeModel shape, string content)
     {
     }
 
