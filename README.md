@@ -101,6 +101,7 @@ The simplest format used by the library is a list of models with a single `Point
       Engine = new CanvasEngine(1000, 500)
     };
 
+    ViewControl.Create();
     ViewControl.Update();
   }
 }
