@@ -1,11 +1,10 @@
-@page "/"
+@page "/demo"
 
 <PageTitle>Index</PageTitle>
 
 <div class="views">
-  <CanvasWebView @ref="ViewCandles"></CanvasWebView>
-  <CanvasWebView @ref="ViewBars"></CanvasWebView>
-  <CanvasWebView @ref="ViewLines"></CanvasWebView>
-  <CanvasWebView @ref="ViewAreas"></CanvasWebView>
-  <CanvasWebView @ref="ViewDeltas"></CanvasWebView>
+  @foreach (var view in _views)
+  {
+    <CanvasWebView @ref="_views[view.Key]"></CanvasWebView>    
+  }
 </div>

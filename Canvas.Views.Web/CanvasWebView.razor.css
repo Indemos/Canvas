@@ -140,35 +140,3 @@
 .canvas-scale-R .canvas-marker b {
   margin: 0
 }
-
-/* Demo */
-
-.canvas-view {
-  background-position: 25% 100%, 50% 100%, 75% 100%;
-  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
-}
-
-.canvas-view iframe, .canvas-view img {
-  background-position: 100% 25%, 100% 50%, 100% 75%;
-  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
-}
-
-.canvas-scale-T {
-  background-position: 25% 100%, 50% 100%, 75% 100%;
-  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
-}
-
-.canvas-scale-B {
-  background-position: 25% 0, 50% 0, 75% 0;
-  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
-}
-
-.canvas-scale-L {
-  background-position: 100% 25%, 100% 50%, 100% 75%;
-  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
-}
-
-.canvas-scale-R {
-  background-position: 0 25%, 0 50%, 0 75%;
-  background-image: linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD), linear-gradient(#DDD, #DDD);
-}

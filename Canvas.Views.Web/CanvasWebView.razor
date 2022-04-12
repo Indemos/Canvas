@@ -1,22 +1,22 @@
 @using System.Text
 
-<div class="canvas-container" space>
+@{
+  var imageT = new List<string>();
+  var imageB = new List<string>();
+  var imageL = new List<string>();
+  var imageR = new List<string>();
+  var imageVX = new List<string>();
+  var imageVY = new List<string>();
+  var positionT = new List<string>();
+  var positionB = new List<string>();
+  var positionL = new List<string>();
+  var positionR = new List<string>();
+  var positionVX = new List<string>();
+  var positionVY = new List<string>();
+  var grid = "linear-gradient(#DDD,#DDD)";
+}
 
-  @{
-    var imageT = new List<string>();
-    var imageB = new List<string>();
-    var imageL = new List<string>();
-    var imageR = new List<string>();
-    var imageVX = new List<string>();
-    var imageVY = new List<string>();
-    var positionT = new List<string>();
-    var positionB = new List<string>();
-    var positionL = new List<string>();
-    var positionR = new List<string>();
-    var positionVX = new List<string>();
-    var positionVY = new List<string>();
-    var grid = "linear-gradient(#DDD,#DDD)";
-  }
+<div class="canvas-container" space>
 
   <div class="canvas-scale canvas-scale-T">
 
@@ -25,18 +25,9 @@
       <span class="canvas-label canvas-marker" style="left: @(Cursor.X)px"><b>@Cursor.ValueX</b></span>
     }
 
-    @if (Composer?.Engine is null)
+    @foreach (var o in GetIndexEnumerator())
     {
-      <span class="canvas-label" style="left: 25%"><b>25%</b></span>
-      <span class="canvas-label" style="left: 50%"><b>50%</b></span>
-      <span class="canvas-label" style="left: 75%"><b>75%</b></span>
-    }
-    else
-    {
-      @foreach (var o in GetIndexEnumerator())
-      {
-        <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
-      }
+      <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
     }
 
   </div>
@@ -48,25 +39,16 @@
       <span class="canvas-label canvas-marker" style="left: @(Cursor.X)px"><b>@Cursor.ValueX</b></span>
     }
 
-    @if (Composer?.Engine is null)
+    @foreach (var o in GetIndexEnumerator())
     {
-      <span class="canvas-label" style="left: 25%"><b>25%</b></span>
-      <span class="canvas-label" style="left: 50%"><b>50%</b></span>
-      <span class="canvas-label" style="left: 75%"><b>75%</b></span>
-    }
-    else
-    {
-      @foreach (var o in GetIndexEnumerator())
-      {
-        imageT.Add(grid);
-        imageB.Add(grid);
-        imageVX.Add(grid);
-        positionT.Add($"{ o.Index }px 100%");
-        positionB.Add($"{ o.Index }px 0");
-        positionVX.Add($"{ o.Index }px 100%");
+      imageT.Add(grid);
+      imageB.Add(grid);
+      imageVX.Add(grid);
+      positionT.Add($"{ o.Index }px 100%");
+      positionB.Add($"{ o.Index }px 0");
+      positionVX.Add($"{ o.Index }px 100%");
 
-        <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
-      }
+      <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
     }
 
   </div>
@@ -78,18 +60,9 @@
       <span class="canvas-label canvas-marker" style="top: @(Cursor.Y)px"><b>@Cursor.ValueY</b></span>
     }
 
-    @if (Composer?.Engine is null)
+    @foreach (var o in GetValueEnumerator())
     {
-      <span class="canvas-label" style="top: 25%"><b>25%</b></span>
-      <span class="canvas-label" style="top: 50%"><b>50%</b></span>
-      <span class="canvas-label" style="top: 75%"><b>75%</b></span>
-    }
-    else
-    {
-      @foreach (var o in GetValueEnumerator())
-      {
-        <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
-      }
+      <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
     }
 
   </div>
@@ -101,25 +74,16 @@
       <span class="canvas-label canvas-marker" style="top: @(Cursor.Y)px"><b>@Cursor.ValueY</b></span>
     }
 
-    @if (Composer?.Engine is null)
+    @foreach (var o in GetValueEnumerator())
     {
-      <span class="canvas-label" style="top: 25%"><b>25%</b></span>
-      <span class="canvas-label" style="top: 50%"><b>50%</b></span>
-      <span class="canvas-label" style="top: 75%"><b>75%</b></span>
-    }
-    else
-    {
-      @foreach (var o in GetValueEnumerator())
-      {
-        imageL.Add(grid);
-        imageR.Add(grid);
-        imageVY.Add(grid);
-        positionL.Add($"100% { o.Index }px");
-        positionR.Add($"0 { o.Index }px");
-        positionVY.Add($"100% { o.Index }px");
+      imageL.Add(grid);
+      imageR.Add(grid);
+      imageVY.Add(grid);
+      positionL.Add($"100% { o.Index }px");
+      positionR.Add($"0 { o.Index }px");
+      positionVY.Add($"100% { o.Index }px");
 
-        <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
-      }
+      <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
     }
 
   </div>

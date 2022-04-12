@@ -6,7 +6,6 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -18,49 +17,41 @@ namespace Canvas.Client.Pages
     protected Random _generator = new();
     protected double _pointValue = 0;
     protected DateTime _pointTime = DateTime.Now;
-    protected IList<IPointModel> _points = new List<IPointModel>();
-    protected IDictionary<string, CanvasWebView> _views = new Dictionary<string, CanvasWebView>();
-    protected Subject<Composer> _observer = new();
-
-    public CanvasWebView ViewBars { get; set; }
-    public CanvasWebView ViewLines { get; set; }
-    public CanvasWebView ViewAreas { get; set; }
-    public CanvasWebView ViewDeltas { get; set; }
-    public CanvasWebView ViewCandles { get; set; }
+    protected List<IPointModel> _points = new();
+    protected Dictionary<string, CanvasWebView> _views = new()
+    {
+      ["Candles"] = null,
+      ["Bars"] = null,
+      ["Lines"] = null,
+      ["Areas"] = null,
+      ["Deltas"] = null
+    };
 
     protected override async Task OnAfterRenderAsync(bool setup)
     {
       if (setup)
       {
-        var sourceBars = new TaskCompletionSource();
-        var sourceLines = new TaskCompletionSource();
-        var sourceAreas = new TaskCompletionSource();
-        var sourceDeltas = new TaskCompletionSource();
-        var sourceCandles = new TaskCompletionSource();
+        await InvokeAsync(StateHasChanged);
 
-        ViewBars.OnSize = ViewBars.OnCreate = message => OnCreate(nameof(ViewBars), message, sourceBars);
-        ViewLines.OnSize = ViewLines.OnCreate = message => OnCreate(nameof(ViewLines), message, sourceLines);
-        ViewAreas.OnSize = ViewAreas.OnCreate = message => OnCreate(nameof(ViewAreas), message, sourceAreas);
-        ViewDeltas.OnSize = ViewDeltas.OnCreate = message => OnCreate(nameof(ViewDeltas), message, sourceDeltas);
-        ViewCandles.OnSize = ViewCandles.OnCreate = message => OnCreate(nameof(ViewCandles), message, sourceCandles);
+        var sources = new List<TaskCompletionSource>();
 
-        await Task.WhenAll(
-          sourceBars.Task,
-          sourceLines.Task,
-          sourceAreas.Task,
-          sourceDeltas.Task,
-          sourceCandles.Task);
-
-        _views.ForEach(o => o.Value.Observer = _observer);
-
-        _observer.Subscribe(composer => _views.ForEach(o =>
+        foreach (var view in _views)
         {
-          if (Equals(o.Value.Composer.Name, composer.Name) is false)
+          sources.Add(new TaskCompletionSource());
+          view.Value.OnSize = view.Value.OnCreate = message => OnCreate(view.Key, message, sources.Last());
+          view.Value.OnUpdate = message => _views.ForEach(o =>
           {
-            o.Value.Composer.IndexDomain = composer.IndexDomain;
-            o.Value.Update();
-          }
-        }));
+            if (Equals(o.Value.Composer.Name, message.View.Composer.Name) is false)
+            {
+              o.Value.Composer.IndexDomain = message.View.Composer.IndexDomain;
+              o.Value.Update();
+            }
+          });
+
+          await view.Value.Create();
+        }
+
+        await Task.WhenAll(sources.Select(o => o.Task));
 
         _interval.Enabled = true;
         _interval.Elapsed += (o, e) =>
@@ -101,8 +92,6 @@ namespace Canvas.Client.Pages
 
       _views[name] = message.View;
       _views[name].Composer = composer;
-
-      _views[name].Update();
       _views[name].Update();
 
       source.TrySetResult();
@@ -128,18 +117,18 @@ namespace Canvas.Client.Pages
           Index = _pointTime.Ticks,
           Groups = new Dictionary<string, IGroupModel>
           {
-            [nameof(ViewBars)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = point } } },
-            [nameof(ViewAreas)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaGroupModel { Value = point } } },
-            [nameof(ViewDeltas)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = pointDelta } } },
-            [nameof(ViewLines)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Value = point }, ["V2"] = new LineGroupModel { Value = pointMirror } } },
-            [nameof(ViewCandles)] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new CandleGroupModel { Value = candle }, ["V2"] = new ArrowGroupModel { Value = arrow } } }
+            ["Bars"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = point } } },
+            ["Areas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaGroupModel { Value = point } } },
+            ["Deltas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = pointDelta } } },
+            ["Lines"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Value = point }, ["V2"] = new LineGroupModel { Value = pointMirror } } },
+            ["Candles"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new CandleGroupModel { Value = candle }, ["V2"] = new ArrowGroupModel { Value = arrow } } }
           }
         });
       }
 
       var grp = _points.Last() as IGroupModel;
-      var currentDelta = grp.Groups[nameof(ViewDeltas)].Groups["V1"];
-      var currentCandle = grp.Groups[nameof(ViewCandles)].Groups["V1"];
+      var currentDelta = grp.Groups["Deltas"].Groups["V1"];
+      var currentCandle = grp.Groups["Candles"].Groups["V1"];
 
       currentCandle.Value.Low = candle.Low;
       currentCandle.Value.High = candle.High;

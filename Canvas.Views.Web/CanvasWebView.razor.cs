@@ -8,7 +8,6 @@ using ScriptContainer;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Subjects;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web
@@ -21,7 +20,6 @@ namespace Canvas.Views.Web
     /// Accessors
     /// </summary>
     public virtual Composer Composer { get; set; }
-    public virtual Subject<Composer> Observer { get; set; }
     public virtual ViewMessage Cursor { get; protected set; }
     public virtual StreamServer Server { get; protected set; }
     public virtual ScriptMessage Bounds { get; protected set; }
@@ -34,23 +32,27 @@ namespace Canvas.Views.Web
     /// </summary>
     public virtual Action<ViewMessage> OnSize { get; set; } = o => { };
     public virtual Action<ViewMessage> OnCreate { get; set; } = o => { };
+    public virtual Action<ViewMessage> OnUpdate { get; set; } = o => { };
 
     /// <summary>
     /// Enumerate indices
     /// </summary>
     public virtual IEnumerable<IPointModel> GetIndexEnumerator()
     {
-      var cnt = Composer.IndexLabelCount;
-      var step = Composer.Engine.IndexSize / cnt;
-      var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
-
-      for (var i = 1; i < cnt; i++)
+      if (Composer?.Engine is not null)
       {
-        yield return new PointModel
+        var cnt = Composer.IndexLabelCount;
+        var step = Composer.Engine.IndexSize / cnt;
+        var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
+
+        for (var i = 1; i < cnt; i++)
         {
-          Index = step * i,
-          Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
-        };
+          yield return new PointModel
+          {
+            Index = step * i,
+            Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
+          };
+        }
       }
     }
 
@@ -59,17 +61,20 @@ namespace Canvas.Views.Web
     /// </summary>
     public virtual IEnumerable<IPointModel> GetValueEnumerator()
     {
-      var cnt = Composer.ValueLabelCount;
-      var step = Composer.Engine.ValueSize / cnt;
-      var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
-
-      for (var i = 1; i < cnt; i++)
+      if (Composer?.Engine is not null)
       {
-        yield return new PointModel
+        var cnt = Composer.ValueLabelCount;
+        var step = Composer.Engine.ValueSize / cnt;
+        var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
+
+        for (var i = 1; i < cnt; i++)
         {
-          Index = step * i,
-          Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue)
-        };
+          yield return new PointModel
+          {
+            Index = step * i,
+            Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue)
+          };
+        }
       }
     }
 
@@ -82,24 +87,22 @@ namespace Canvas.Views.Web
     {
       return InvokeAsync(async () =>
       {
-        var engine = Composer?.Engine as CanvasEngine;
-
-        if (engine is null)
-        {
-          return;
-        }
+        var engine = Composer.Engine as CanvasEngine;
 
         Composer.Engine.Clear();
         Composer.Update();
 
         using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 100))
         {
-          await Server.Stream.Writer.WriteAsync(image.ToArray());
+          var data = image.ToArray();
+
+          await Server.Stream.Writer.WriteAsync(data);
+          await Server.Stream.Writer.WriteAsync(data);
         }
 
-        if (message is not null && Observer is not null)
+        if (message is not null)
         {
-          Observer.OnNext(message);
+          OnUpdate(await CreateMessage());
         }
 
         StateHasChanged();
@@ -109,24 +112,18 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Setup
     /// </summary>
-    /// <param name="setup"></param>
     /// <returns></returns>
-    protected override async Task OnAfterRenderAsync(bool setup)
+    public virtual async Task Create()
     {
-      if (setup)
-      {
-        Dispose(0);
+      Dispose(0);
 
-        Server = await (new StreamServer()).Create();
-        ScaleService = new ScriptService(RuntimeService);
+      Server = await (new StreamServer()).Create();
+      ScaleService = new ScriptService(RuntimeService);
 
-        await ScaleService.CreateModule();
+      await ScaleService.CreateModule();
 
-        OnCreate(await CreateMessage());
-        ScaleService.OnSize = async scriptMessage => OnSize(await CreateMessage());
-      }
-
-      await base.OnAfterRenderAsync(setup);
+      OnCreate(await CreateMessage());
+      ScaleService.OnSize = async scriptMessage => OnSize(await CreateMessage());
     }
 
     /// <summary>
@@ -232,11 +229,11 @@ namespace Canvas.Views.Web
           case true when deltaY > 0: Composer.ZoomValueScale(-1); break;
           case true when deltaY < 0: Composer.ZoomValueScale(1); break;
         }
+
+        Update(Composer);
       }
 
       Cursor = position;
-
-      Update(Composer);
     }
 
     /// <summary>
@@ -254,7 +251,6 @@ namespace Canvas.Views.Web
       {
         Composer.ValueDomain = null;
         Update(Composer);
-        Update();
       }
     }
 

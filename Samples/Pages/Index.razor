@@ -1,4 +1,4 @@
-@page "/demo"
+@page "/"
 
 @using Canvas.Core
 @using Canvas.Core.EngineSpace
@@ -17,6 +17,8 @@
     {
       ViewControl.OnSize = message => OnCreate(nameof(ViewControl), message);
       ViewControl.OnCreate = message => OnCreate(nameof(ViewControl), message);
+
+      await ViewControl.Create();
     }
 
     await base.OnAfterRenderAsync(setup);
@@ -47,7 +49,6 @@
     }
 
     ViewControl.Composer = composer;
-    ViewControl.Update();
     ViewControl.Update();
   }
 }
