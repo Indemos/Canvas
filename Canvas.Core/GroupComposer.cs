@@ -72,14 +72,20 @@ namespace Canvas.Core
         }
       }
 
+      AutoValueDomain ??= new double[2];
+
       if (min > max)
       {
         return AutoValueDomain = null;
       }
 
-      AutoValueDomain ??= new double[2];
-      AutoValueDomain[0] = min;
-      AutoValueDomain[1] = max;
+      if (min == max)
+      {
+        AutoValueDomain[0] = Math.Min(0, min);
+        AutoValueDomain[1] = Math.Max(0, max);
+
+        return AutoValueDomain;
+      }
 
       if (min < 0 && max > 0)
       {
@@ -87,7 +93,12 @@ namespace Canvas.Core
 
         AutoValueDomain[0] = -domain;
         AutoValueDomain[1] = domain;
+
+        return AutoValueDomain;
       }
+
+      AutoValueDomain[0] = min;
+      AutoValueDomain[1] = max;
 
       return AutoValueDomain;
     }
