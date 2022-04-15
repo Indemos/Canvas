@@ -52,17 +52,11 @@ namespace Canvas.Views.Web
     /// <returns></returns>
     public virtual async Task ExecuteResultAsync(ActionContext context)
     {
-      try
-      {
-        SetHeader(context.HttpContext);
+      SetHeader(context.HttpContext);
 
-        await foreach (var content in Stream.Reader.ReadAllAsync())
-        {
-          await SetDocument(context.HttpContext, content);
-        }
-      }
-      catch (TaskCanceledException)
+      await foreach (var content in Stream.Reader.ReadAllAsync())
       {
+        await SetDocument(context.HttpContext, content);
       }
     }
 

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Canvas.Core.ModelSpace
 {
-  public interface IModel : IDynamicMetaObjectProvider, ICloneable, IDisposable
+  public interface IModel : IDynamicMetaObjectProvider, ICloneable
   {
   }
 
@@ -16,14 +16,9 @@ namespace Canvas.Core.ModelSpace
   public class Model : DynamicObject, IModel
   {
     /// <summary>
-    /// Disposable resources
-    /// </summary>
-    protected IList<IDisposable> _disposables = new List<IDisposable>();
-
-    /// <summary>
     /// Internal dictionary to keep dynamic properties
     /// </summary>
-    protected ConcurrentDictionary<string, dynamic> _items = new ConcurrentDictionary<string, dynamic>();
+    protected ConcurrentDictionary<string, dynamic> _items = new();
 
     /// <summary>
     /// Redirect setter for dynamic properties to internal dictionary
@@ -70,18 +65,5 @@ namespace Canvas.Core.ModelSpace
     /// </summary>
     /// <returns></returns>
     public virtual object Clone() => MemberwiseClone();
-
-    /// <summary>
-    /// Dispose implementation
-    /// </summary>
-    public virtual void Dispose()
-    {
-      foreach (var disposable in _disposables)
-      {
-        disposable.Dispose();
-      }
-
-      _disposables.Clear();
-    }
   }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public interface IPointModel
+  public interface IPointModel : IModel
   {
     /// <summary>
     /// Index
@@ -44,7 +44,7 @@ namespace Canvas.Core.ModelSpace
     void CreateShape(int position, string name, IList<IPointModel> items);
   }
 
-  public class PointModel : IPointModel
+  public class PointModel : Model, IPointModel
   {
     /// <summary>
     /// Index
