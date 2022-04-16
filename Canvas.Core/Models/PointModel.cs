@@ -1,9 +1,10 @@
 using Canvas.Core.EngineSpace;
+using System;
 using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public interface IPointModel : IModel
+  public interface IPointModel : ICloneable
   {
     /// <summary>
     /// Index
@@ -44,7 +45,7 @@ namespace Canvas.Core.ModelSpace
     void CreateShape(int position, string name, IList<IPointModel> items);
   }
 
-  public class PointModel : Model, IPointModel
+  public class PointModel : IPointModel
   {
     /// <summary>
     /// Index
@@ -65,13 +66,6 @@ namespace Canvas.Core.ModelSpace
     /// Reference to panel
     /// </summary>
     public virtual IEngine Engine { get; set; }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public PointModel()
-    {
-    }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -106,5 +100,11 @@ namespace Canvas.Core.ModelSpace
     public virtual void CreateShape(int position, string name, IList<IPointModel> items)
     {
     }
+
+    /// <summary>
+    /// Clone
+    /// </summary>
+    /// <returns></returns>
+    public virtual object Clone() => MemberwiseClone();
   }
 }

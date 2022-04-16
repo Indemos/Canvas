@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Canvas.Core.ModelSpace
 {
@@ -23,6 +24,19 @@ namespace Canvas.Core.ModelSpace
     public GroupModel()
     {
       Groups = new Dictionary<string, IGroupModel>(); 
+    }
+
+    /// <summary>
+    /// Clone
+    /// </summary>
+    /// <returns></returns>
+    public override object Clone()
+    {
+      var clone = MemberwiseClone() as IGroupModel;
+
+      clone.Groups = Groups.ToDictionary(o => o.Key, o => o.Value.Clone() as IGroupModel);
+
+      return clone;
     }
   }
 }

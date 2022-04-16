@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -18,7 +17,15 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Internal dictionary to keep dynamic properties
     /// </summary>
-    protected ConcurrentDictionary<string, dynamic> _items = new();
+    protected IDictionary<string, dynamic> _items = null;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public Model()
+    {
+      _items = new Dictionary<string, dynamic>();
+    }
 
     /// <summary>
     /// Redirect setter for dynamic properties to internal dictionary
@@ -64,6 +71,13 @@ namespace Canvas.Core.ModelSpace
     /// Clone
     /// </summary>
     /// <returns></returns>
-    public virtual object Clone() => MemberwiseClone();
+    public virtual object Clone()
+    {
+      var clone = MemberwiseClone() as Model;
+
+      clone._items = _items.ToDictionary(o => o.Key, o => o.Value);
+
+      return clone;
+    }
   }
 }
