@@ -20,20 +20,24 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Constructor
     /// </summary>
+    public StreamServer()
+    {
+      Route = "/source";
+    }
+
+    /// <summary>
+    /// Setup
+    /// </summary>
     public async Task<StreamServer> Create()
     {
+      Stream = Channel.CreateUnbounded<byte[]>();
+
       var server = WebApplication.CreateBuilder();
 
       server.WebHost.ConfigureKestrel(options =>
-      {
         options.ListenAnyIP(0, serverOptions =>
-        {
-          serverOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
-        });
-      });
+          serverOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3));
 
-      Route = "/source";
-      Stream = Channel.CreateUnbounded<byte[]>();
       Application = server.Build();
       Application.Use((context, next) => OnRoute(context, next));
 
