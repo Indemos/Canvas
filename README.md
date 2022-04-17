@@ -1,4 +1,4 @@
-# Canvas and Open GL Stock and Financial Charts
+# Canvas - Financial Charts
 
 The fastest charting web control targeting primarily Blazor, both Server Side and Web Assembly, and even ASP.NET MVC. 
 This charting library was designed for Web, but it can also be used in Desktop apps via Web View. 
