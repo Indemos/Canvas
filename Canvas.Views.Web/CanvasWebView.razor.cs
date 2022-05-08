@@ -17,22 +17,23 @@ namespace Canvas.Views.Web
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     /// <summary>
-    /// Accessors
+    /// Parameters
     /// </summary>
     public virtual Composer Composer { get; set; }
-    public virtual ViewMessage Cursor { get; protected set; }
-    public virtual StreamServer Server { get; protected set; }
-    public virtual ScriptMessage Bounds { get; protected set; }
-    public virtual ScriptService ScaleService { get; protected set; }
-    public virtual ElementReference ScaleContainer { get; protected set; }
-    public virtual ElementReference CanvasContainer { get; protected set; }
-
-    /// <summary>
-    /// Events
-    /// </summary>
     public virtual Action<ViewMessage> OnSize { get; set; } = o => { };
     public virtual Action<ViewMessage> OnCreate { get; set; } = o => { };
     public virtual Action<ViewMessage> OnUpdate { get; set; } = o => { };
+
+    /// <summary>
+    /// Accessors
+    /// </summary>
+    protected virtual Task Updater { get; set; }
+    protected virtual ViewMessage Cursor { get; set; }
+    protected virtual StreamServer Server { get; set; }
+    protected virtual ScriptMessage Bounds { get; set; }
+    protected virtual ScriptService ScaleService { get; set; }
+    protected virtual ElementReference ScaleContainer { get; set; }
+    protected virtual ElementReference CanvasContainer { get; set; }
 
     /// <summary>
     /// Enumerate indices
@@ -85,7 +86,12 @@ namespace Canvas.Views.Web
     /// <returns></returns>
     public virtual Task Update(Composer message = null)
     {
-      return InvokeAsync(async () =>
+      if (message is null && Updater?.IsCompleted is false)
+      {
+        return Updater;
+      }
+
+      return Updater = InvokeAsync(async () =>
       {
         var engine = Composer?.Engine as CanvasEngine;
 

@@ -59,7 +59,7 @@
   border: 1px solid #DDD;
 }
 
-.canvas-view iframe, .canvas-view img {
+.canvas-view iframe, .canvas-view img, .canvas-view canvas {
   pointer-events: none;
   background-repeat: no-repeat;
   background-size: 100% 1px;

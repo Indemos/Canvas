@@ -13,7 +13,7 @@ namespace Canvas.Client.Pages
 {
   public partial class Chart : IAsyncDisposable
   {
-    protected Timer _interval = new(100);
+    protected Timer _interval = new(1);
     protected Random _generator = new();
     protected double _pointValue = 0;
     protected DateTime _pointTime = DateTime.Now;
