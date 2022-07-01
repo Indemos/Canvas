@@ -1,0 +1,47 @@
+@page "/single"
+
+@using Canvas.Core
+@using Canvas.Core.EngineSpace
+@using Canvas.Core.ModelSpace
+@using ScriptContainer
+
+<div class="demo">
+  <CanvasWebView @ref="ViewControl"></CanvasWebView>
+</div>
+
+<style type="text/css">
+  .demo {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+  }
+</style>
+
+@code
+{
+  public CanvasWebView ViewControl { get; set; }
+
+  protected override async Task OnAfterRenderAsync(bool setup)
+  {
+    if (setup)
+    {
+      var generator = new Random();
+
+      var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
+      {
+        Index = i,
+        Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
+
+      } as IPointModel).ToList();
+
+      await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
+      {
+        Name = "Demo",
+        Points = points,
+        Engine = new CanvasEngine(dimensions.X, dimensions.Y)
+      });
+    }
+
+    await base.OnAfterRenderAsync(setup);
+  }
+}

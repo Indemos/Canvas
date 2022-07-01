@@ -20,8 +20,6 @@ namespace Canvas.Views.Web
     /// Parameters
     /// </summary>
     public virtual Composer Composer { get; set; }
-    public virtual Action<ViewMessage> OnSize { get; set; } = o => { };
-    public virtual Action<ViewMessage> OnCreate { get; set; } = o => { };
     public virtual Action<ViewMessage> OnUpdate { get; set; } = o => { };
 
     /// <summary>
@@ -31,7 +29,7 @@ namespace Canvas.Views.Web
     protected virtual ViewMessage Cursor { get; set; }
     protected virtual StreamServer Server { get; set; }
     protected virtual ScriptMessage Bounds { get; set; }
-    protected virtual ScriptService ScaleService { get; set; }
+    protected virtual ScriptService Service { get; set; }
     protected virtual ElementReference ScaleContainer { get; set; }
     protected virtual ElementReference CanvasContainer { get; set; }
 
@@ -42,7 +40,7 @@ namespace Canvas.Views.Web
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = Composer.IndexLabelCount;
+        var cnt = Composer.IndexLabelCount + 1;
         var step = Composer.Engine.IndexSize / cnt;
         var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
 
@@ -64,12 +62,15 @@ namespace Canvas.Views.Web
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = Composer.ValueLabelCount;
+        var cnt = Composer.ValueLabelCount + 1;
         var step = Composer.Engine.ValueSize / cnt;
         var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
 
         for (var i = 1; i < cnt; i++)
         {
+          var Index = step * i;
+          var Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue);
+
           yield return new PointModel
           {
             Index = step * i,
@@ -121,20 +122,24 @@ namespace Canvas.Views.Web
     }
 
     /// <summary>
-    /// Setup
+    /// Create canvas
     /// </summary>
+    /// <param name="action"></param>
     /// <returns></returns>
-    public virtual async Task Create()
+    public virtual async Task Create(Action<ViewMessage> action)
     {
       Dispose(0);
 
       Server = await (new StreamServer()).Create();
-      ScaleService = new ScriptService(RuntimeService);
+      Service = await (new ScriptService(RuntimeService)).CreateModule();
+      Service.OnSize = async o =>
+      {
+        action(await CreateMessage());
+        await Update();
+      };
 
-      await ScaleService.CreateModule();
-
-      OnCreate(await CreateMessage());
-      ScaleService.OnSize = async scriptMessage => OnSize(await CreateMessage());
+      action(await CreateMessage());
+      await Update();
     }
 
     /// <summary>
@@ -143,13 +148,13 @@ namespace Canvas.Views.Web
     /// <returns></returns>
     protected async Task<ViewMessage> CreateMessage()
     {
-      Bounds = await ScaleService.GetElementBounds(CanvasContainer);
+      Bounds = await Service.GetElementBounds(CanvasContainer);
 
       return new ViewMessage
       {
         View = this,
-        X = Bounds.Width,
-        Y = Bounds.Height
+        X = Bounds.X,
+        Y = Bounds.Y
       };
     }
 
@@ -213,8 +218,6 @@ namespace Canvas.Views.Web
       {
         X = e.OffsetX,
         Y = e.OffsetY,
-        ScreenX = e.ClientX,
-        ScreenY = e.ClientY,
         ValueX = Composer.ShowIndex(values.Index.Value),
         ValueY = Composer.ShowValue(values.Value)
       };
@@ -223,11 +226,9 @@ namespace Canvas.Views.Web
 
       if (e.Buttons == 1)
       {
-        var deltaX = Cursor.ScreenX - position.ScreenX;
-        var deltaY = Cursor.ScreenY - position.ScreenY;
+        var deltaX = Cursor.X - position.X;
+        var deltaY = Cursor.Y - position.Y;
         var isZoom = e.ShiftKey;
-
-        Cursor = position;
 
         switch (true)
         {

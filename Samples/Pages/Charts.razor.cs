@@ -11,7 +11,7 @@ using System.Timers;
 
 namespace Canvas.Client.Pages
 {
-  public partial class Chart : IAsyncDisposable
+  public partial class Charts : IAsyncDisposable
   {
     protected Timer _interval = new(1);
     protected Random _generator = new();
@@ -37,8 +37,22 @@ namespace Canvas.Client.Pages
 
         foreach (var view in _views)
         {
-          sources.Add(new TaskCompletionSource());
-          view.Value.OnSize = view.Value.OnCreate = message => OnCreate(view.Key, message, sources.Last());
+          var source = new TaskCompletionSource();
+
+          sources.Add(source);
+
+          await view.Value.Create(message =>
+          {
+            view.Value.Composer = new GroupComposer
+            {
+              Name = view.Key,
+              Points = _points,
+              Engine = new CanvasEngine(message.X, message.Y)
+            };
+
+            source.TrySetResult();
+          });
+
           view.Value.OnUpdate = message => _views.ForEach(o =>
           {
             if (Equals(o.Value.Composer.Name, message.View.Composer.Name) is false)
@@ -47,8 +61,6 @@ namespace Canvas.Client.Pages
               o.Value.Update();
             }
           });
-
-          await view.Value.Create();
         }
 
         await Task.WhenAll(sources.Select(o => o.Task));
@@ -65,36 +77,6 @@ namespace Canvas.Client.Pages
       }
 
       await base.OnAfterRenderAsync(setup);
-    }
-
-    /// <summary>
-    /// On load event for web view
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="message"></param>
-    /// <returns></returns>
-    protected void OnCreate(string name, ViewMessage message, TaskCompletionSource source)
-    {
-      var composer = new GroupComposer
-      {
-        Name = name,
-        Points = _points,
-        Engine = new CanvasEngine(message.X, message.Y)
-      };
-
-      if (message?.View?.Composer is not null)
-      {
-        composer.Points = message.View.Composer.Points;
-        composer.IndexDomain = message.View.Composer.IndexDomain;
-        composer.ValueDomain = message.View.Composer.ValueDomain;
-        message.View.Composer.Dispose();
-      }
-
-      _views[name] = message.View;
-      _views[name].Composer = composer;
-      _views[name].Update();
-
-      source.TrySetResult();
     }
 
     /// <summary>

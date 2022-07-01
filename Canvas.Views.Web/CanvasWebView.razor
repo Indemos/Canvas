@@ -90,7 +90,11 @@
 
   <div class="canvas-view"
     @onwheel="OnWheel"
+    @onwheel:preventDefault="true"
+    @onwheel:stopPropagation="true"
     @onmousewheel="OnWheel"
+    @onmousewheel:preventDefault="true"
+    @onmousewheel:stopPropagation="true"
     @onmousemove="OnMouseMove"
     @onmouseout="OnMouseLeave"
     @onmousedown="OnMouseDown">

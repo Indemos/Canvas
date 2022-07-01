@@ -88,21 +88,26 @@ The simplest format used by the library is a list of models with a single `Point
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
-    var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
+    if (setup)
     {
-      Index = i,
-      Value = new Model { ["Point"] = new Random().Next(-5000, 5000) }
-    } as IPointModel);
+      var generator = new Random();
 
-    ViewControl.Composer = new Composer
-    {
-      Name = name,
-      Points = points.ToList(),
-      Engine = new CanvasEngine(1000, 500)
-    };
+      var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
+      {
+        Index = i,
+        Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
 
-    ViewControl.Create();
-    ViewControl.Update();
+      } as IPointModel).ToList();
+
+      await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
+      {
+        Name = "Demo",
+        Points = points,
+        Engine = new CanvasEngine(dimensions.X, dimensions.Y)
+      });
+    }
+
+    await base.OnAfterRenderAsync(setup);
   }
 }
 ```

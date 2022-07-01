@@ -1,0 +1,89 @@
+@page "/actions"
+
+@inject IJSRuntime _scriptService
+
+@using Canvas.Core
+@using Canvas.Core.EngineSpace
+@using Canvas.Core.ModelSpace
+@using ScriptContainer
+
+<div class="grid">
+  <div class="grid-caption">
+    <select class="selector" @onchange="OnChange">
+      <option>Select one</option>
+      <option value="Bars">Bars</option>
+      <option value="Lines">Lines</option>
+      <option value="Areas">Areas</option>
+    </select>
+  </div>
+  <div class="grid-content" @ref="ViewContainer">
+    @if (Selection is not null)
+    {
+      <CanvasWebView @ref="ViewControl"></CanvasWebView>
+    }
+  </div>
+</div>
+
+<style type="text/css">
+
+  .selector {
+    margin: 10px;
+    border: 1px solid #ccc;
+  }
+
+  .grid {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .grid-content {
+    display: flex;
+    flex-grow: 1;
+  }
+
+</style>
+
+@code
+{
+  public string Selection { get; set; }
+  public CanvasWebView ViewControl { get; set; }
+  public ElementReference ViewContainer { get; set; }
+
+  protected async Task OnChange(ChangeEventArgs e)
+  {
+    var dimensions = await GetDimensions(ViewContainer);
+
+    Selection = $"{ e.Value }";
+
+    StateHasChanged();
+
+    await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
+    {
+      Name = Selection,
+      Points = GetPoints(Selection).ToList(),
+      Engine = new CanvasEngine(dimensions.X, dimensions.Y)
+    });
+  }
+
+  protected async Task<ScriptMessage> GetDimensions(ElementReference container)
+  {
+    return await (await (new ScriptService(_scriptService)).CreateModule()).GetElementBounds(container);
+  }
+
+  protected IEnumerable<IPointModel> GetPoints(string input)
+  {
+    var generator = new Random();
+    var range = Enumerable.Range(1, 100);
+
+    switch (input)
+    {
+      case "Bars": return range.Select(i => new BarGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IPointModel);
+      case "Lines": return range.Select(i => new LineGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IPointModel);
+      case "Areas": return range.Select(i => new AreaGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IPointModel);
+    }
+
+    return null;
+  }
+}

@@ -55,8 +55,8 @@ namespace Canvas.Core
     /// </summary>
     public Composer()
     {
-      IndexCount = 100;
-      IndexLabelCount = 10;
+      IndexCount = 90;
+      IndexLabelCount = 9;
 
       ValueCount = 6;
       ValueLabelCount = 3;
@@ -73,7 +73,6 @@ namespace Canvas.Core
       CreateIndexDomain();
       CreateValueDomain();
       UpdatePoints();
-      UpdateShapes();
     }
 
     /// <summary>
@@ -317,6 +316,16 @@ namespace Canvas.Core
         return AutoValueDomain;
       }
 
+      if (min < 0 && max > 0)
+      {
+        var extreme = Math.Max(Math.Abs(min), Math.Abs(max));
+
+        AutoValueDomain[0] = -extreme;
+        AutoValueDomain[1] = extreme;
+
+        return AutoValueDomain;
+      }
+
       AutoValueDomain[0] = min;
       AutoValueDomain[1] = max;
 
@@ -341,34 +350,6 @@ namespace Canvas.Core
         point.Composer = this;
         point.CreateShape(i, null, Points);
       }
-    }
-
-    /// <summary>
-    /// Update static shapes
-    /// </summary>
-    protected virtual void UpdateShapes()
-    {
-      //foreach (var shape in Shapes)
-      //{
-      //  shape.Panel.Clear();
-      //  shape.UpdateShape();
-      //}
-    }
-
-    /// <summary>
-    /// Update levels
-    /// </summary>
-    protected virtual void UpdateLevels(IList<int> indexLevels, IList<double> valueLevels)
-    {
-      //var levels = Shapes.Where(o => o is LineShapeModel);
-
-      //foreach (LineShapeModel level in levels)
-      //{
-      //  level.IndexLevels = indexLevels ?? new int[0];
-      //  level.ValueLevels = valueLevels ?? new double[0];
-      //}
-
-      //UpdateShapes();
     }
 
     /// <summary>
