@@ -30,6 +30,7 @@ namespace Canvas.Core
     public virtual int IndexCount { get; set; }
     public virtual int IndexLabelCount { get; set; }
     public virtual IList<int> IndexDomain { get; set; }
+    public virtual IList<int> AutoIndexDomain { get; protected set; }
     public virtual Func<dynamic, dynamic> ShowIndexAction { get; set; }
     public virtual int MinIndex => IndexDomain?.ElementAtOrDefault(0) ?? AutoIndexDomain?.ElementAtOrDefault(0) ?? 0;
     public virtual int MaxIndex => IndexDomain?.ElementAtOrDefault(1) ?? AutoIndexDomain?.ElementAtOrDefault(1) ?? IndexCount;
@@ -40,15 +41,10 @@ namespace Canvas.Core
     public virtual int ValueCount { get; set; }
     public virtual int ValueLabelCount { get; set; }
     public virtual IList<double> ValueDomain { get; set; }
+    public virtual IList<double> AutoValueDomain { get; protected set; }
     public virtual Func<dynamic, dynamic> ShowValueAction { get; set; }
     public virtual double MinValue => ValueDomain?.ElementAtOrDefault(0) ?? AutoValueDomain?.ElementAtOrDefault(0) ?? 0.0;
     public virtual double MaxValue => ValueDomain?.ElementAtOrDefault(1) ?? AutoValueDomain?.ElementAtOrDefault(1) ?? ValueCount;
-
-    /// <summary>
-    /// Internals
-    /// </summary>
-    public virtual IList<int> AutoIndexDomain { get; protected set; }
-    public virtual IList<double> AutoValueDomain { get; protected set; }
 
     /// <summary>
     /// Constructor
