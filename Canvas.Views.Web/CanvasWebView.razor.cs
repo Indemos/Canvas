@@ -26,6 +26,7 @@ namespace Canvas.Views.Web
     /// Accessors
     /// </summary>
     protected virtual Task Updater { get; set; }
+    protected virtual ViewMessage Move { get; set; }
     protected virtual ViewMessage Cursor { get; set; }
     protected virtual StreamServer Server { get; set; }
     protected virtual ScriptMessage Bounds { get; set; }
@@ -40,11 +41,11 @@ namespace Canvas.Views.Web
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = Composer.IndexLabelCount + 1;
-        var step = Composer.Engine.IndexSize / cnt;
-        var stepValue = (Composer.MaxIndex - Composer.MinIndex) / cnt;
+        var cnt = (double)Composer.IndexLabelCount + 1.0;
+        var step = (double)Composer.Engine.IndexSize / cnt;
+        var stepValue = (double)(Composer.MaxIndex - Composer.MinIndex) / cnt;
 
-        for (var i = 1; i < cnt; i++)
+        for (var i = 1.0; i < cnt; i++)
         {
           yield return new PointModel
           {
@@ -62,11 +63,11 @@ namespace Canvas.Views.Web
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = Composer.ValueLabelCount + 1;
-        var step = Composer.Engine.ValueSize / cnt;
-        var stepValue = (Composer.MaxValue - Composer.MinValue) / cnt;
+        var cnt = (double)Composer.ValueLabelCount + 1.0;
+        var step = (double)Composer.Engine.ValueSize / cnt;
+        var stepValue = (double)(Composer.MaxValue - Composer.MinValue) / cnt;
 
-        for (var i = 1; i < cnt; i++)
+        for (var i = 1.0; i < cnt; i++)
         {
           var Index = step * i;
           var Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue);
@@ -176,6 +177,33 @@ namespace Canvas.Views.Web
     }
 
     /// <summary>
+    /// Get cursor position
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
+    protected ViewMessage GetDelta(MouseEventArgs e)
+    {
+      if (Composer?.Engine is null)
+      {
+        return null;
+      }
+
+      var values = Composer.GetValues(Composer.Engine, new PointModel
+      {
+        Index = e.OffsetX,
+        Value = e.OffsetY
+      });
+
+      return new ViewMessage
+      {
+        X = e.OffsetX,
+        Y = e.OffsetY,
+        ValueX = Composer.ShowIndex(values.Index.Value),
+        ValueY = Composer.ShowValue(values.Value)
+      };
+    }
+
+    /// <summary>
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
@@ -208,27 +236,15 @@ namespace Canvas.Views.Web
         return;
       }
 
-      var values = Composer.GetValues(Composer.Engine, new PointModel
-      {
-        Index = e.OffsetX,
-        Value = e.OffsetY
-      });
-
-      var position = new ViewMessage
-      {
-        X = e.OffsetX,
-        Y = e.OffsetY,
-        ValueX = Composer.ShowIndex(values.Index.Value),
-        ValueY = Composer.ShowValue(values.Value)
-      };
+      var position = GetDelta(e);
 
       Cursor ??= position;
 
       if (e.Buttons == 1)
       {
+        var isZoom = e.ShiftKey;
         var deltaX = Cursor.X - position.X;
         var deltaY = Cursor.Y - position.Y;
-        var isZoom = e.ShiftKey;
 
         switch (true)
         {
@@ -236,7 +252,41 @@ namespace Canvas.Views.Web
           case true when deltaX < 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(-1); break;
         }
 
-        switch (true)
+        Update(Composer);
+      }
+
+      Cursor = position;
+    }
+
+    /// <summary>
+    /// Resize event
+    /// </summary>
+    /// <param name="e"></param>
+    /// <param name="direction"></param>
+    protected void OnScaleMove(MouseEventArgs e, int direction = 0)
+    {
+      if (Composer?.Engine is null)
+      {
+        return;
+      }
+
+      var position = GetDelta(e);
+
+      Move ??= position;
+
+      if (e.Buttons == 1)
+      {
+        var isZoom = e.ShiftKey;
+        var deltaX = Move.X - position.X;
+        var deltaY = Move.Y - position.Y;
+
+        switch (direction > 0)
+        {
+          case true when deltaX > 0: _ = Composer.ZoomIndexScale(-1); break;
+          case true when deltaX < 0: _ = Composer.ZoomIndexScale(1); break;
+        }
+
+        switch (direction < 0)
         {
           case true when deltaY > 0: Composer.ZoomValueScale(-1); break;
           case true when deltaY < 0: Composer.ZoomValueScale(1); break;
@@ -245,7 +295,7 @@ namespace Canvas.Views.Web
         Update(Composer);
       }
 
-      Cursor = position;
+      Move = position;
     }
 
     /// <summary>

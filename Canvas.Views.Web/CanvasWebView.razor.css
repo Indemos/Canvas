@@ -34,6 +34,7 @@
 
 .canvas-label {
   position: absolute;
+  pointer-events: none;
   font: 10px arial, helvetica, sans-serif;
 }
 
@@ -73,71 +74,75 @@
   background-image: linear-gradient(to right, #999 1px, transparent 1px), linear-gradient(to bottom, #999 1px, transparent 1px);
 }
 
-.canvas-scale-T {
+.canvas-scale-n {
   grid-area: T;
   align-items: center;
   background-repeat: no-repeat;
   background-size: 1px 5px;
+  cursor: ew-resize;
 }
 
-.canvas-scale-T b {
+.canvas-scale-n b {
   left: -50%;
 }
 
-.canvas-scale-B {
+.canvas-scale-s {
   grid-area: B;
   align-items: center;
   background-repeat: no-repeat;
   background-size: 1px 5px;
+  cursor: ew-resize;
 }
 
-.canvas-scale-B b {
+.canvas-scale-s b {
   left: -50%;
 }
 
-.canvas-scale-L {
+.canvas-scale-w {
   grid-area: L;
   background-repeat: no-repeat;
   background-size: 5px 1px;
+  cursor: ns-resize;
 }
 
-.canvas-scale-L .canvas-label {
+.canvas-scale-w .canvas-label {
   right: 0;
   height: 2rem;
   display: flex;
   align-items: center;
 }
 
-.canvas-scale-L b {
+.canvas-scale-w b {
   width: 100%;
   text-align: right;
   margin-right: 10px;
   top: -50%;
 }
 
-.canvas-scale-L .canvas-marker b {
+.canvas-scale-w .canvas-marker b {
   margin: 0
 }
 
-.canvas-scale-R {
+.canvas-scale-e {
   grid-area: R;
   background-repeat: no-repeat;
   background-size: 5px 1px;
+  cursor: ns-resize;
 }
 
-.canvas-scale-R .canvas-label {
+.canvas-scale-e .canvas-label {
   height: 2rem;
   display: flex;
   align-items: center;
 }
 
-.canvas-scale-R b {
+.canvas-scale-e b {
   width: 100%;
   text-align: left;
   margin-left: 10px;
   top: -50%;
 }
 
-.canvas-scale-R .canvas-marker b {
+.canvas-scale-e .canvas-marker b {
   margin: 0
 }

@@ -1,16 +1,16 @@
 @using System.Text
 
 @{
-  var imageT = new List<string>();
-  var imageB = new List<string>();
-  var imageL = new List<string>();
-  var imageR = new List<string>();
+  var imageN = new List<string>();
+  var imageS = new List<string>();
+  var imageW = new List<string>();
+  var imageE = new List<string>();
   var imageVX = new List<string>();
   var imageVY = new List<string>();
-  var positionT = new List<string>();
-  var positionB = new List<string>();
-  var positionL = new List<string>();
-  var positionR = new List<string>();
+  var positionN = new List<string>();
+  var positionS = new List<string>();
+  var positionW = new List<string>();
+  var positionE = new List<string>();
   var positionVX = new List<string>();
   var positionVY = new List<string>();
   var grid = "linear-gradient(#DDD,#DDD)";
@@ -18,7 +18,7 @@
 
 <div class="canvas-container" space>
 
-  <div class="canvas-scale canvas-scale-T">
+  <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleMove(e, 1)">
 
     @if (Cursor is not null)
     {
@@ -32,7 +32,7 @@
 
   </div>
 
-  <div class="canvas-scale canvas-scale-B">
+  <div class="canvas-scale canvas-scale-s" @onmousemove="e => OnScaleMove(e, 1)">
 
     @if (Cursor is not null)
     {
@@ -41,11 +41,11 @@
 
     @foreach (var o in GetIndexEnumerator())
     {
-      imageT.Add(grid);
-      imageB.Add(grid);
+      imageN.Add(grid);
+      imageS.Add(grid);
       imageVX.Add(grid);
-      positionT.Add($"{ o.Index }px 100%");
-      positionB.Add($"{ o.Index }px 0");
+      positionN.Add($"{ o.Index }px 100%");
+      positionS.Add($"{ o.Index }px 0");
       positionVX.Add($"{ o.Index }px 100%");
 
       <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
@@ -53,7 +53,7 @@
 
   </div>
 
-  <div class="canvas-scale canvas-scale-L">
+  <div class="canvas-scale canvas-scale-w" @onmousemove="e => OnScaleMove(e, -1)">
 
     @if (Cursor is not null)
     {
@@ -67,7 +67,7 @@
 
   </div>
 
-  <div class="canvas-scale canvas-scale-R">
+  <div class="canvas-scale canvas-scale-e" @onmousemove="e => OnScaleMove(e, -1)">
 
     @if (Cursor is not null)
     {
@@ -76,11 +76,11 @@
 
     @foreach (var o in GetValueEnumerator())
     {
-      imageL.Add(grid);
-      imageR.Add(grid);
+      imageW.Add(grid);
+      imageE.Add(grid);
       imageVY.Add(grid);
-      positionL.Add($"100% { o.Index }px");
-      positionR.Add($"0 { o.Index }px");
+      positionW.Add($"100% { o.Index }px");
+      positionE.Add($"0 { o.Index }px");
       positionVY.Add($"100% { o.Index }px");
 
       <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
@@ -90,11 +90,7 @@
 
   <div class="canvas-view"
     @onwheel="OnWheel"
-    @onwheel:preventDefault="true"
-    @onwheel:stopPropagation="true"
     @onmousewheel="OnWheel"
-    @onmousewheel:preventDefault="true"
-    @onmousewheel:stopPropagation="true"
     @onmousemove="OnMouseMove"
     @onmouseout="OnMouseLeave"
     @onmousedown="OnMouseDown">
@@ -107,23 +103,23 @@
 <style type="text/css">
 
   .canvas-container[space] .canvas-scale-T {
-    background-image: @(string.Join(",", imageT));
-    background-position: @(string.Join(",", positionT));
+    background-image: @(string.Join(",", imageN));
+    background-position: @(string.Join(",", positionN));
   }
 
   .canvas-container[space] .canvas-scale-B {
-    background-image: @(string.Join(",", imageB));
-    background-position: @(string.Join(",", positionB));
+    background-image: @(string.Join(",", imageS));
+    background-position: @(string.Join(",", positionS));
   }
 
   .canvas-container[space] .canvas-scale-L {
-    background-image: @(string.Join(",", imageL));
-    background-position: @(string.Join(",", positionL));
+    background-image: @(string.Join(",", imageW));
+    background-position: @(string.Join(",", positionW));
   }
 
   .canvas-container[space] .canvas-scale-R {
-    background-image: @(string.Join(",", imageR));
-    background-position: @(string.Join(",", positionR));
+    background-image: @(string.Join(",", imageE));
+    background-position: @(string.Join(",", positionE));
   }
 
   .canvas-container[space] .canvas-view {
