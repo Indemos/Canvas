@@ -27,7 +27,7 @@
     {
       var generator = new Random();
 
-      var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
+      var points = Enumerable.Range(1, 100000).Select(i => new BarGroupModel
       {
         Index = i,
         Value = new Model { ["Point"] = generator.Next(-5000, 5000) }

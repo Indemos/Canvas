@@ -59,6 +59,8 @@ namespace Canvas.Core
 
       Points = new List<IPointModel>();
       Shapes = new List<IShapeModel>();
+
+      CreateIndexDomain();
     }
 
     /// <summary>
