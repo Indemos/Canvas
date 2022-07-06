@@ -9,6 +9,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Canvas.Views.Web
 {
@@ -26,6 +27,7 @@ namespace Canvas.Views.Web
     /// Accessors
     /// </summary>
     protected virtual Task Updater { get; set; }
+    protected virtual Timer Preparer { get; set; }
     protected virtual ViewMessage Move { get; set; }
     protected virtual ViewMessage Cursor { get; set; }
     protected virtual StreamServer Server { get; set; }
@@ -84,11 +86,11 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Render
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="composer"></param>
     /// <returns></returns>
-    public virtual Task Update(Composer message = null)
+    public virtual Task Update(Composer composer = null)
     {
-      if (message is null && Updater?.IsCompleted is false)
+      if (composer is null && Updater?.IsCompleted is false)
       {
         return Updater;
       }
@@ -113,7 +115,7 @@ namespace Canvas.Views.Web
           await Server.Stream.Writer.WriteAsync(data);
         }
 
-        if (message is not null)
+        if (composer is not null)
         {
           OnUpdate(await CreateMessage());
         }

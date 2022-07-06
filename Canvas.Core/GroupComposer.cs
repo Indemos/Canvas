@@ -86,6 +86,16 @@ namespace Canvas.Core
         return AutoValueDomain;
       }
 
+      if (min < 0 && max > 0)
+      {
+        var extreme = Math.Max(Math.Abs(min), Math.Abs(max));
+
+        AutoValueDomain[0] = -extreme;
+        AutoValueDomain[1] = extreme;
+
+        return AutoValueDomain;
+      }
+
       AutoValueDomain[0] = min;
       AutoValueDomain[1] = max;
 
