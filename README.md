@@ -102,7 +102,7 @@ The simplest format used by the library is a list of models with a single `Point
       await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
       {
         Name = "Demo",
-        Points = points,
+        Items = points,
         Engine = new CanvasEngine(dimensions.X, dimensions.Y)
       });
     }
