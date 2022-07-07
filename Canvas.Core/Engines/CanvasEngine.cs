@@ -41,7 +41,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public override void CreateLine(IList<IPointModel> points, IShapeModel shape)
+    public override void CreateLine(IList<IPointModel> points, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -76,7 +76,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="point"></param>
     /// <param name="shape"></param>
-    public override void CreateCircle(IPointModel point, IShapeModel shape)
+    public override void CreateCircle(IPointModel point, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -102,7 +102,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public override void CreateBox(IList<IPointModel> points, IShapeModel shape)
+    public override void CreateBox(IList<IPointModel> points, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -129,7 +129,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public override void CreateShape(IList<IPointModel> points, IShapeModel shape)
+    public override void CreateShape(IList<IPointModel> points, IComponentModel shape)
     {
       var origin = points.ElementAtOrDefault(0);
       var curve = new SKPath();
@@ -162,7 +162,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="point"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabel(IPointModel point, IShapeModel shape, string content)
+    public override void CreateLabel(IPointModel point, IComponentModel shape, string content)
     {
       var pen = new SKPaint
       {
@@ -198,7 +198,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="points"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabelShape(IList<IPointModel> points, IShapeModel shape, string content)
+    public override void CreateLabelShape(IList<IPointModel> points, IComponentModel shape, string content)
     {
       var origin = points.ElementAtOrDefault(0);
       var curve = new SKPath();

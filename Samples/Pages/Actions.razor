@@ -62,7 +62,7 @@
     await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
     {
       Name = Selection,
-      Points = GetPoints(Selection).ToList(),
+      Items = GetPoints(Selection).ToList(),
       Engine = new CanvasEngine(dimensions.X, dimensions.Y)
     });
   }

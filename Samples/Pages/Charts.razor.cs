@@ -46,7 +46,7 @@ namespace Canvas.Client.Pages
             view.Value.Composer = new GroupComposer
             {
               Name = view.Key,
-              Points = _points,
+              Items = _points,
               Engine = new CanvasEngine(message.X, message.Y)
             };
 
@@ -123,10 +123,10 @@ namespace Canvas.Client.Pages
       _views.ForEach(panel =>
       {
         var composer = panel.Value.Composer;
-        composer.Points = _points;
+        composer.Items = _points;
         composer.IndexDomain ??= new int[2];
-        composer.IndexDomain[0] = composer.Points.Count - composer.IndexCount;
-        composer.IndexDomain[1] = composer.Points.Count;
+        composer.IndexDomain[0] = composer.Items.Count - 100;
+        composer.IndexDomain[1] = composer.Items.Count;
         panel.Value.Update();
       });
     }

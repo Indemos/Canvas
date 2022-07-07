@@ -33,11 +33,11 @@ namespace Canvas.Client.Controllers
           new PointModel { Index = 0, Value = 0 },
           new PointModel { Index = 600, Value = 600 }
         },
-        new ShapeModel { Color = SKColors.Yellow });
+        new ComponentModel { Color = SKColors.Yellow });
 
         canvas.CreateCircle(
           new PointModel { Index = pos, Value = pos },
-          new ShapeModel { Size = 20, Color = SKColors.Black });
+          new ComponentModel { Size = 20, Color = SKColors.Black });
 
         var data = canvas.Map.Encode(SKEncodedImageFormat.Webp, 100).ToArray();
 

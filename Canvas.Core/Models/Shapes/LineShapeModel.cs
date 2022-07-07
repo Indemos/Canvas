@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public class LineShapeModel : ShapeModel, IShapeModel
+  public class LineShapeModel : ComponentModel, IComponentModel
   {
     public virtual IList<int> IndexLevels { get; set; }
     public virtual IList<double> ValueLevels { get; set; }

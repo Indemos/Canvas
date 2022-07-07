@@ -43,7 +43,7 @@ namespace Canvas.Views.Web
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = (double)Composer.IndexLabelCount + 1.0;
+        var cnt = (double)Composer.IndexCount + 1.0;
         var step = (double)Composer.Engine.IndexSize / cnt;
         var stepValue = (double)(Composer.MaxIndex - Composer.MinIndex) / cnt;
 
@@ -65,7 +65,7 @@ namespace Canvas.Views.Web
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = (double)Composer.ValueLabelCount + 1.0;
+        var cnt = (double)Composer.ValueCount + 1.0;
         var step = (double)Composer.Engine.ValueSize / cnt;
         var stepValue = (double)(Composer.MaxValue - Composer.MinValue) / cnt;
 

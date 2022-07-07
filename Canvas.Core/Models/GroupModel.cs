@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Canvas.Core.ModelSpace
 {
-  public interface IGroupModel : IShapeModel
+  public interface IGroupModel : IComponentModel
   {
     /// <summary>
     /// Shape groups
@@ -11,7 +11,7 @@ namespace Canvas.Core.ModelSpace
     IDictionary<string, IGroupModel> Groups { get; set; }
   }
 
-  public class GroupModel : ShapeModel, IGroupModel
+  public class GroupModel : ComponentModel, IGroupModel
   {
     /// <summary>
     /// Shape groups

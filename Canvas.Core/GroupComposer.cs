@@ -48,7 +48,7 @@ namespace Canvas.Core
 
       foreach (var i in GetEnumerator())
       {
-        var group = Points.ElementAtOrDefault(i) as IGroupModel;
+        var group = Items.ElementAtOrDefault(i) as IGroupModel;
 
         if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupModel series) is false)
         {
@@ -60,7 +60,7 @@ namespace Canvas.Core
           shape.Value.Composer = this;
           shape.Value.Engine = Engine;
 
-          var domain = shape.Value.CreateDomain(i, shape.Key, Points);
+          var domain = shape.Value.CreateDomain(i, shape.Key, Items);
 
           if (domain is not null)
           {
@@ -109,7 +109,7 @@ namespace Canvas.Core
     {
       foreach (var i in GetEnumerator())
       {
-        var group = Points.ElementAtOrDefault(i) as IGroupModel;
+        var group = Items.ElementAtOrDefault(i) as IGroupModel;
 
         if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupModel seriesGroup) is false)
         {
@@ -120,7 +120,7 @@ namespace Canvas.Core
         {
           series.Value.Engine = Engine;
           series.Value.Composer = this;
-          series.Value.CreateShape(i, series.Key, Points);
+          series.Value.CreateShape(i, series.Key, Items);
         }
       }
     }

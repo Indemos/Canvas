@@ -21,17 +21,18 @@ namespace Canvas.Core
     /// <summary>
     /// Data
     /// </summary>
-    public virtual IList<IPointModel> Points { get; set; }
-    public virtual IList<IShapeModel> Shapes { get; set; }
+    public virtual int Count { get; set; }
+    public virtual IList<IPointModel> Items { get; set; }
+    public virtual IList<IPointModel> Samples { get; set; }
+    public virtual IList<IComponentModel> Components { get; set; }
 
     /// <summary>
     /// Index axis
     /// </summary>
     public virtual int IndexCount { get; set; }
-    public virtual int IndexLabelCount { get; set; }
     public virtual IList<int> IndexDomain { get; set; }
     public virtual IList<int> AutoIndexDomain { get; protected set; }
-    public virtual Func<dynamic, dynamic> ShowIndexAction { get; set; }
+    public virtual Func<object, string> ShowIndexAction { get; set; }
     public virtual int MinIndex => IndexDomain?.ElementAtOrDefault(0) ?? AutoIndexDomain?.ElementAtOrDefault(0) ?? 0;
     public virtual int MaxIndex => IndexDomain?.ElementAtOrDefault(1) ?? AutoIndexDomain?.ElementAtOrDefault(1) ?? IndexCount;
 
@@ -39,10 +40,9 @@ namespace Canvas.Core
     /// Value axis
     /// </summary>
     public virtual int ValueCount { get; set; }
-    public virtual int ValueLabelCount { get; set; }
     public virtual IList<double> ValueDomain { get; set; }
     public virtual IList<double> AutoValueDomain { get; protected set; }
-    public virtual Func<dynamic, dynamic> ShowValueAction { get; set; }
+    public virtual Func<object, string> ShowValueAction { get; set; }
     public virtual double MinValue => ValueDomain?.ElementAtOrDefault(0) ?? AutoValueDomain?.ElementAtOrDefault(0) ?? 0.0;
     public virtual double MaxValue => ValueDomain?.ElementAtOrDefault(1) ?? AutoValueDomain?.ElementAtOrDefault(1) ?? ValueCount;
 
@@ -51,14 +51,12 @@ namespace Canvas.Core
     /// </summary>
     public Composer()
     {
-      IndexCount = 90;
-      IndexLabelCount = 9;
+      Count = 100;
+      IndexCount = 9;
+      ValueCount = 3;
 
-      ValueCount = 6;
-      ValueLabelCount = 3;
-
-      Points = new List<IPointModel>();
-      Shapes = new List<IShapeModel>();
+      Items = new List<IPointModel>();
+      Components = new List<IComponentModel>();
 
       CreateIndexDomain();
     }
@@ -143,7 +141,7 @@ namespace Canvas.Core
     /// <summary>
     /// Format index label
     /// </summary>
-    public virtual string ShowIndex(dynamic input)
+    public virtual string ShowIndex(object input)
     {
       return ShowIndexAction is null ? $"{input:0.00}" : ShowIndexAction(input);
     }
@@ -151,7 +149,7 @@ namespace Canvas.Core
     /// <summary>
     /// Format value label
     /// </summary>
-    public virtual string ShowValue(dynamic input)
+    public virtual string ShowValue(object input)
     {
       return ShowValueAction is null ? $"{input:0.00}" : ShowValueAction(input);
     }
@@ -215,7 +213,7 @@ namespace Canvas.Core
 
       IndexDomain ??= new List<int>(AutoIndexDomain);
 
-      var increment = IndexLabelCount / 2 * delta;
+      var increment = Count / IndexCount / 2 * delta;
       var isInRange = MaxIndex - MinIndex > increment * 2;
 
       if (isInRange)
@@ -241,7 +239,7 @@ namespace Canvas.Core
 
       IndexDomain ??= new List<int>(AutoIndexDomain);
 
-      var increment = IndexLabelCount / 2 * delta;
+      var increment = IndexCount / 2 * delta;
 
       switch (true)
       {
@@ -269,7 +267,7 @@ namespace Canvas.Core
     {
       AutoIndexDomain ??= new int[2];
       AutoIndexDomain[0] = 0;
-      AutoIndexDomain[1] = Math.Max(Points.Count, IndexCount);
+      AutoIndexDomain[1] = Math.Max(Items.Count, Count);
 
       return AutoIndexDomain;
     }
@@ -286,7 +284,7 @@ namespace Canvas.Core
 
       foreach (var i in GetEnumerator())
       {
-        var point = Points.ElementAtOrDefault(i);
+        var point = Items.ElementAtOrDefault(i);
 
         if (point?.Value?.Point is null)
         {
@@ -337,7 +335,7 @@ namespace Canvas.Core
     {
       foreach (var i in GetEnumerator())
       {
-        var point = Points.ElementAtOrDefault(i);
+        var point = Items.ElementAtOrDefault(i);
 
         if (point?.Value?.Point is null)
         {
@@ -346,7 +344,7 @@ namespace Canvas.Core
 
         point.Engine = Engine;
         point.Composer = this;
-        point.CreateShape(i, null, Points);
+        point.CreateShape(i, null, Items);
       }
     }
 

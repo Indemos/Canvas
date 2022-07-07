@@ -61,7 +61,7 @@ namespace Canvas.Core.ModelSpace
         Composer.GetPixels(Engine, position - size, upSide)
       };
 
-      var linePoints = new IPointModel[]
+      var rangePoints = new IPointModel[]
       {
         Composer.GetPixels(Engine, position, L),
         Composer.GetPixels(Engine, position, H),
@@ -70,7 +70,7 @@ namespace Canvas.Core.ModelSpace
       Color = currentModel.Color ?? Color;
 
       Engine.CreateShape(points, this);
-      Engine.CreateLine(linePoints, this);
+      Engine.CreateLine(rangePoints, this);
     }
   }
 }

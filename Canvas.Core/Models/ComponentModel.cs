@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public interface IShapeModel : IPointModel
+  public interface IComponentModel : IPointModel
   {
     /// <summary>
     /// Index
@@ -38,7 +38,7 @@ namespace Canvas.Core.ModelSpace
     void UpdateShape();
   }
 
-  public class ShapeModel : PointModel, IShapeModel
+  public class ComponentModel : PointModel, IComponentModel
   {
     /// <summary>
     /// Index
@@ -76,7 +76,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Constructor
     /// </summary>
-    public ShapeModel()
+    public ComponentModel()
     {
       Size = 1;
       Color = SKColors.Black;
