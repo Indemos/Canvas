@@ -20,15 +20,13 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var size = 1.0 / 4.0;
-
       var points = new IPointModel[]
       {
-        Composer.GetPixels(Engine, position - size, currentModel.Point),
-        Composer.GetPixels(Engine, position + size, currentModel.Point),
-        Composer.GetPixels(Engine, position + size, 0.0),
-        Composer.GetPixels(Engine, position - size, 0.0),
-        Composer.GetPixels(Engine, position - size, currentModel.Point)
+        Composer.GetPixels(Engine, position - Composer.ItemSize, currentModel.Point),
+        Composer.GetPixels(Engine, position + Composer.ItemSize, currentModel.Point),
+        Composer.GetPixels(Engine, position + Composer.ItemSize, 0.0),
+        Composer.GetPixels(Engine, position - Composer.ItemSize, 0.0),
+        Composer.GetPixels(Engine, position - Composer.ItemSize, currentModel.Point)
       };
 
       Color = currentModel.Color ?? Color;

@@ -22,6 +22,7 @@ namespace Canvas.Core
     /// Data
     /// </summary>
     public virtual int Count { get; set; }
+    public virtual double ItemSize { get; set; }
     public virtual IList<IPointModel> Items { get; set; }
     public virtual IList<IPointModel> Samples { get; set; }
     public virtual IList<IComponentModel> Components { get; set; }
@@ -54,8 +55,10 @@ namespace Canvas.Core
       Count = 100;
       IndexCount = 9;
       ValueCount = 3;
+      ItemSize = 0.25;
 
       Items = new List<IPointModel>();
+      Samples = new List<IPointModel>();
       Components = new List<IComponentModel>();
 
       CreateIndexDomain();
@@ -68,7 +71,7 @@ namespace Canvas.Core
     {
       CreateIndexDomain();
       CreateValueDomain();
-      UpdatePoints();
+      UpdateItems();
     }
 
     /// <summary>
@@ -331,7 +334,7 @@ namespace Canvas.Core
     /// <summary>
     /// Update series and collections
     /// </summary>
-    protected virtual void UpdatePoints()
+    protected virtual void UpdateItems()
     {
       foreach (var i in GetEnumerator())
       {
@@ -351,7 +354,6 @@ namespace Canvas.Core
     /// <summary>
     /// Dispose
     /// </summary>
-    /// <exception cref="NotImplementedException"></exception>
     public virtual void Dispose()
     {
       Engine?.Dispose();

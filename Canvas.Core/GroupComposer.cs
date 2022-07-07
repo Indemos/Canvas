@@ -105,7 +105,7 @@ namespace Canvas.Core
     /// <summary>
     /// Update series and collections
     /// </summary>
-    protected override void UpdatePoints()
+    protected override void UpdateItems()
     {
       foreach (var i in GetEnumerator())
       {

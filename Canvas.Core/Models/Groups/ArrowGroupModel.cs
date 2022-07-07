@@ -20,13 +20,11 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var size = 1.0 / 4.0;
-
       var points = new PointModel[]
       {
         Composer.GetPixels(Engine, position, currentModel.Point),
-        Composer.GetPixels(Engine, position + size, currentModel.Point),
-        Composer.GetPixels(Engine, position - size, currentModel.Point)
+        Composer.GetPixels(Engine, position + Composer.ItemSize, currentModel.Point),
+        Composer.GetPixels(Engine, position - Composer.ItemSize, currentModel.Point)
       };
 
       points[0].Value -= (points[1].Index - points[2].Index) * currentModel.Direction / 2;

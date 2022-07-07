@@ -48,17 +48,16 @@ namespace Canvas.Core.ModelSpace
       var H = currentModel.High ?? currentModel.Point;
       var O = currentModel.Open ?? currentModel.Point;
       var C = currentModel.Close ?? currentModel.Point;
-      var size = 1.0 / 4.0;
       var upSide = Math.Max(O, C);
       var downSide = Math.Min(O, C);
 
       var points = new IPointModel[]
       {
-        Composer.GetPixels(Engine, position - size, upSide),
-        Composer.GetPixels(Engine, position + size, upSide),
-        Composer.GetPixels(Engine, position + size, downSide),
-        Composer.GetPixels(Engine, position - size, downSide),
-        Composer.GetPixels(Engine, position - size, upSide)
+        Composer.GetPixels(Engine, position - Composer.ItemSize, upSide),
+        Composer.GetPixels(Engine, position + Composer.ItemSize, upSide),
+        Composer.GetPixels(Engine, position + Composer.ItemSize, downSide),
+        Composer.GetPixels(Engine, position - Composer.ItemSize, downSide),
+        Composer.GetPixels(Engine, position - Composer.ItemSize, upSide)
       };
 
       var rangePoints = new IPointModel[]
