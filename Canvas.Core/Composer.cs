@@ -23,8 +23,7 @@ namespace Canvas.Core
     /// </summary>
     public virtual int Count { get; set; }
     public virtual double ItemSize { get; set; }
-    public virtual IList<IPointModel> Items { get; set; }
-    public virtual IList<IPointModel> Samples { get; set; }
+    public virtual IList<IItemModel> Items { get; set; }
     public virtual IList<IComponentModel> Components { get; set; }
 
     /// <summary>
@@ -53,12 +52,11 @@ namespace Canvas.Core
     public Composer()
     {
       Count = 100;
+      ItemSize = 0.5;
       IndexCount = 9;
       ValueCount = 3;
-      ItemSize = 0.25;
 
-      Items = new List<IPointModel>();
-      Samples = new List<IPointModel>();
+      Items = new List<IItemModel>();
       Components = new List<IComponentModel>();
 
       CreateIndexDomain();
@@ -94,12 +92,12 @@ namespace Canvas.Core
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="input"></param>
-    public virtual IPointModel GetPixels(IEngine engine, IPointModel input)
+    public virtual IItemModel GetPixels(IEngine engine, IItemModel input)
     {
       // Convert to device pixels
 
-      var index = Equals(MaxIndex, MinIndex) ? 1.0 : (input.Index - MinIndex) / (MaxIndex - MinIndex);
-      var value = Equals(MaxValue, MinValue) ? 1.0 : (input.Value - MinValue) / (MaxValue - MinValue);
+      var index = Equals(MinIndex, MaxIndex) ? 1.0 : (input.Index - MinIndex) / (MaxIndex - MinIndex);
+      var value = Equals(MinValue, MaxValue) ? 1.0 : (input.Value - MinValue) / (MaxValue - MinValue);
 
       // Percentage to pixels, Y is inverted
 
@@ -116,9 +114,9 @@ namespace Canvas.Core
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public virtual IPointModel GetPixels(IEngine engine, double index, double value)
+    public virtual IItemModel GetPixels(IEngine engine, double index, double value)
     {
-      return GetPixels(engine, new PointModel { Index = index, Value = value });
+      return GetPixels(engine, new ItemModel { Index = index, Value = value });
     }
 
     /// <summary>
@@ -126,7 +124,7 @@ namespace Canvas.Core
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="input"></param>
-    public virtual IPointModel GetValues(IEngine engine, IPointModel input)
+    public virtual IItemModel GetValues(IEngine engine, IItemModel input)
     {
       // Convert to values
 
@@ -155,18 +153,6 @@ namespace Canvas.Core
     public virtual string ShowValue(object input)
     {
       return ShowValueAction is null ? $"{input:0.00}" : ShowValueAction(input);
-    }
-
-    /// <summary>
-    /// Get specific group by position and name
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="name"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
-    public virtual dynamic GetPoint(int position, string name, IList<IPointModel> items)
-    {
-      return items.ElementAtOrDefault(position)?.Value;
     }
 
     /// <summary>

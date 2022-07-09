@@ -11,20 +11,22 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IPointModel> items)
+    public override void CreateShape(int position, string name, IList<IItemModel> items)
     {
-      var currentModel = Composer.GetPoint(position, name, items);
+      var currentModel = Value;
 
       if (currentModel?.Point is null)
       {
         return;
       }
 
-      var points = new PointModel[]
+      var size = Composer.ItemSize / 2.0;
+
+      var points = new ItemModel[]
       {
         Composer.GetPixels(Engine, position, currentModel.Point),
-        Composer.GetPixels(Engine, position + Composer.ItemSize, currentModel.Point),
-        Composer.GetPixels(Engine, position - Composer.ItemSize, currentModel.Point)
+        Composer.GetPixels(Engine, position + size, currentModel.Point),
+        Composer.GetPixels(Engine, position - size, currentModel.Point)
       };
 
       points[0].Value -= (points[1].Index - points[2].Index) * currentModel.Direction / 2;

@@ -8,6 +8,7 @@ using ScriptContainer;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -35,21 +36,22 @@ namespace Canvas.Views.Web
     protected virtual ScriptService Service { get; set; }
     protected virtual ElementReference ScaleContainer { get; set; }
     protected virtual ElementReference CanvasContainer { get; set; }
+    protected virtual IDictionary<string, IList<double>> Series { get; set; }
 
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    public virtual IEnumerable<IPointModel> GetIndexEnumerator()
+    public virtual IEnumerable<IItemModel> GetIndexEnumerator()
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = (double)Composer.IndexCount + 1.0;
-        var step = (double)Composer.Engine.IndexSize / cnt;
-        var stepValue = (double)(Composer.MaxIndex - Composer.MinIndex) / cnt;
+        var count = (double)Composer.IndexCount + 1.0;
+        var step = (double)Composer.Engine.IndexSize / count;
+        var stepValue = (double)(Composer.MaxIndex - Composer.MinIndex) / count;
 
-        for (var i = 1.0; i < cnt; i++)
+        for (var i = 1; i < count; i++)
         {
-          yield return new PointModel
+          yield return new ItemModel
           {
             Index = step * i,
             Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
@@ -61,23 +63,23 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Enumerate values
     /// </summary>
-    public virtual IEnumerable<IPointModel> GetValueEnumerator()
+    public virtual IEnumerable<IItemModel> GetValueEnumerator()
     {
       if (Composer?.Engine is not null)
       {
-        var cnt = (double)Composer.ValueCount + 1.0;
-        var step = (double)Composer.Engine.ValueSize / cnt;
-        var stepValue = (double)(Composer.MaxValue - Composer.MinValue) / cnt;
+        var count = (double)Composer.ValueCount + 1.0;
+        var distance = (double)Composer.Engine.ValueSize / count;
+        var stepValue = (double)(Composer.MaxValue - Composer.MinValue) / count;
 
-        for (var i = 1.0; i < cnt; i++)
+        for (var i = 1; i < count; i++)
         {
-          var Index = step * i;
-          var Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue);
+          var Index = distance * i;
+          var Value = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue);
 
-          yield return new PointModel
+          yield return new ItemModel
           {
-            Index = step * i,
-            Value = Composer.ShowValue(Composer.MinValue + (cnt - i) * stepValue)
+            Index = distance * i,
+            Value = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
           };
         }
       }
@@ -190,11 +192,20 @@ namespace Canvas.Views.Web
         return null;
       }
 
-      var values = Composer.GetValues(Composer.Engine, new PointModel
+      var values = Composer.GetValues(Composer.Engine, new ItemModel
       {
         Index = e.OffsetX,
         Value = e.OffsetY
       });
+
+      var index = (int)values.Index;
+      var point = Composer.Items.ElementAtOrDefault(index);
+
+      if (point is not null)
+      {
+        point.Composer = Composer;
+        Series = point.GetSeries(index, Composer.Items);
+      }
 
       return new ViewMessage
       {

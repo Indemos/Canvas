@@ -8,35 +8,6 @@ namespace Canvas.Core
   public class GroupComposer : Composer
   {
     /// <summary>
-    /// Get specific group by position and name
-    /// </summary>
-    /// <param name="position"></param>
-    /// <param name="name"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
-    public override dynamic GetPoint(int position, string name, IList<IPointModel> items)
-    {
-      var point = items.ElementAtOrDefault(position);
-      var group = point as IGroupModel;
-
-      if (group?.Groups is null)
-      {
-        return null;
-      }
-
-      group.Groups.TryGetValue(Name, out IGroupModel series);
-
-      if (series?.Groups is null)
-      {
-        return null;
-      }
-
-      series.Groups.TryGetValue(name, out IGroupModel shape);
-
-      return shape?.Value;
-    }
-
-    /// <summary>
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>

@@ -21,9 +21,9 @@ namespace Canvas.Core.ModelSpace
     /// </summary>
     public override void UpdateShape()
     {
-      var pointMin = new PointModel { Index = 0, Value = 0 };
-      var pointMax = new PointModel { Index = 0, Value = 0 };
-      var points = new IPointModel[]
+      var pointMin = new ItemModel { Index = 0, Value = 0 };
+      var pointMax = new ItemModel { Index = 0, Value = 0 };
+      var points = new IItemModel[]
       {
         pointMin, 
         pointMax

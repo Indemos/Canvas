@@ -32,7 +32,7 @@
         Index = i,
         Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
 
-      } as IPointModel).ToList();
+      } as IItemModel).ToList();
 
       await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
       {

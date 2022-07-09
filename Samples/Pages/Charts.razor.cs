@@ -17,7 +17,7 @@ namespace Canvas.Client.Pages
     protected Random _generator = new();
     protected double _pointValue = 0;
     protected DateTime _pointTime = DateTime.Now;
-    protected List<IPointModel> _points = new();
+    protected List<IItemModel> _points = new();
     protected Dictionary<string, CanvasWebView> _views = new()
     {
       ["Candles"] = null,

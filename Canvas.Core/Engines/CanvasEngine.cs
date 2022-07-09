@@ -41,7 +41,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public override void CreateLine(IList<IPointModel> points, IComponentModel shape)
+    public override void CreateLine(IList<IItemModel> points, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -76,7 +76,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="point"></param>
     /// <param name="shape"></param>
-    public override void CreateCircle(IPointModel point, IComponentModel shape)
+    public override void CreateCircle(IItemModel point, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -102,7 +102,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public override void CreateBox(IList<IPointModel> points, IComponentModel shape)
+    public override void CreateBox(IList<IItemModel> points, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -129,7 +129,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public override void CreateShape(IList<IPointModel> points, IComponentModel shape)
+    public override void CreateShape(IList<IItemModel> points, IComponentModel shape)
     {
       var origin = points.ElementAtOrDefault(0);
       var curve = new SKPath();
@@ -162,7 +162,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="point"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabel(IPointModel point, IComponentModel shape, string content)
+    public override void CreateLabel(IItemModel point, IComponentModel shape, string content)
     {
       var pen = new SKPaint
       {
@@ -198,7 +198,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="points"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabelShape(IList<IPointModel> points, IComponentModel shape, string content)
+    public override void CreateLabelShape(IList<IItemModel> points, IComponentModel shape, string content)
     {
       var origin = points.ElementAtOrDefault(0);
       var curve = new SKPath();
@@ -234,14 +234,14 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    public override IPointModel GetContentMeasure(string content, double size)
+    public override IItemModel GetContentMeasure(string content, double size)
     {
       var pen = new SKPaint
       {
         TextSize = (float)size
       };
 
-      var point = new PointModel
+      var point = new ItemModel
       {
         Index = content.Length * pen.FontMetrics.MaxCharacterWidth,
         Value = pen.FontSpacing

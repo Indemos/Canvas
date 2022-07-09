@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public interface IComponentModel : IPointModel
+  public interface IComponentModel : IItemModel
   {
     /// <summary>
     /// Index
@@ -29,7 +29,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Points
     /// </summary>
-    IList<IPointModel> Points { get; set; }
+    IList<IItemModel> Points { get; set; }
 
     /// <summary>
     /// Create the shape
@@ -38,7 +38,7 @@ namespace Canvas.Core.ModelSpace
     void UpdateShape();
   }
 
-  public class ComponentModel : PointModel, IComponentModel
+  public class ComponentModel : ItemModel, IComponentModel
   {
     /// <summary>
     /// Index
@@ -63,7 +63,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Points
     /// </summary>
-    public virtual IList<IPointModel> Points { get; set; }
+    public virtual IList<IItemModel> Points { get; set; }
 
     /// <summary>
     /// Create the shape
@@ -80,7 +80,7 @@ namespace Canvas.Core.ModelSpace
     {
       Size = 1;
       Color = SKColors.Black;
-      Points = new List<IPointModel>();
+      Points = new List<IItemModel>();
     }
   }
 }

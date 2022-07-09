@@ -25,28 +25,28 @@ namespace Canvas.Core.EngineSpace
     /// Create circle
     /// </summary>
     /// <param name="point"></param>
-    void CreateCircle(IPointModel point, IComponentModel shape);
+    void CreateCircle(IItemModel point, IComponentModel shape);
 
     /// <summary>
     /// Create box
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    void CreateBox(IList<IPointModel> points, IComponentModel shape);
+    void CreateBox(IList<IItemModel> points, IComponentModel shape);
 
     /// <summary>
     /// Create line
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    void CreateLine(IList<IPointModel> points, IComponentModel shape);
+    void CreateLine(IList<IItemModel> points, IComponentModel shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    void CreateShape(IList<IPointModel> points, IComponentModel shape);
+    void CreateShape(IList<IItemModel> points, IComponentModel shape);
 
     /// <summary>
     /// Create label
@@ -54,7 +54,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="point"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabel(IPointModel point, IComponentModel shape, string content);
+    void CreateLabel(IItemModel point, IComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -62,14 +62,14 @@ namespace Canvas.Core.EngineSpace
     /// <param name="points"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabelShape(IList<IPointModel> points, IComponentModel shape, string content);
+    void CreateLabelShape(IList<IItemModel> points, IComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    IPointModel GetContentMeasure(string content, double size);
+    IItemModel GetContentMeasure(string content, double size);
 
     /// <summary>
     /// Clear canvas
@@ -98,7 +98,7 @@ namespace Canvas.Core.EngineSpace
     /// Create circle
     /// </summary>
     /// <param name="point"></param>
-    public virtual void CreateCircle(IPointModel point, IComponentModel shape)
+    public virtual void CreateCircle(IItemModel point, IComponentModel shape)
     {
     }
 
@@ -107,7 +107,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public virtual void CreateBox(IList<IPointModel> points, IComponentModel shape)
+    public virtual void CreateBox(IList<IItemModel> points, IComponentModel shape)
     {
     }
 
@@ -116,7 +116,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public virtual void CreateLine(IList<IPointModel> points, IComponentModel shape)
+    public virtual void CreateLine(IList<IItemModel> points, IComponentModel shape)
     { 
     }
 
@@ -125,7 +125,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="points"></param>
     /// <param name="shape"></param>
-    public virtual void CreateShape(IList<IPointModel> points, IComponentModel shape)
+    public virtual void CreateShape(IList<IItemModel> points, IComponentModel shape)
     {
     }
 
@@ -135,7 +135,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="point"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public virtual void CreateLabel(IPointModel point, IComponentModel shape, string content)
+    public virtual void CreateLabel(IItemModel point, IComponentModel shape, string content)
     {
     }
 
@@ -145,7 +145,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="points"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public virtual void CreateLabelShape(IList<IPointModel> points, IComponentModel shape, string content)
+    public virtual void CreateLabelShape(IList<IItemModel> points, IComponentModel shape, string content)
     {
     }
 
@@ -154,7 +154,7 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    public virtual IPointModel GetContentMeasure(string content, double size) => null;
+    public virtual IItemModel GetContentMeasure(string content, double size) => null;
 
     /// <summary>
     /// Clear canvas

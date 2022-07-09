@@ -11,17 +11,17 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IPointModel> items)
+    public override void CreateShape(int position, string name, IList<IItemModel> items)
     {
-      var currentModel = Composer.GetPoint(position, name, items);
-      var previousModel = Composer.GetPoint(position - 1, name, items);
+      var currentModel = Value;
+      var previousModel = GetItem(position - 1, name, items);
 
       if (currentModel?.Point is null || previousModel?.Point is null)
       {
         return;
       }
 
-      var points = new IPointModel[]
+      var points = new IItemModel[]
       {
         Composer.GetPixels(Engine, position - 1, previousModel.Point),
         Composer.GetPixels(Engine, position, currentModel.Point)

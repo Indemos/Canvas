@@ -11,22 +11,24 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IPointModel> items)
+    public override void CreateShape(int position, string name, IList<IItemModel> items)
     {
-      var currentModel = Composer.GetPoint(position, name, items);
+      var currentModel = Value;
 
       if (currentModel?.Point is null)
       {
         return;
       }
 
-      var points = new IPointModel[]
+      var size = Composer.ItemSize / 2.0;
+
+      var points = new IItemModel[]
       {
-        Composer.GetPixels(Engine, position - Composer.ItemSize, currentModel.Point),
-        Composer.GetPixels(Engine, position + Composer.ItemSize, currentModel.Point),
-        Composer.GetPixels(Engine, position + Composer.ItemSize, 0.0),
-        Composer.GetPixels(Engine, position - Composer.ItemSize, 0.0),
-        Composer.GetPixels(Engine, position - Composer.ItemSize, currentModel.Point)
+        Composer.GetPixels(Engine, position - size, currentModel.Point),
+        Composer.GetPixels(Engine, position + size, currentModel.Point),
+        Composer.GetPixels(Engine, position + size, 0.0),
+        Composer.GetPixels(Engine, position - size, 0.0),
+        Composer.GetPixels(Engine, position - size, currentModel.Point)
       };
 
       Color = currentModel.Color ?? Color;

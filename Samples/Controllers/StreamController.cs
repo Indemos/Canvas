@@ -28,15 +28,15 @@ namespace Canvas.Client.Controllers
         var pos = _generator.Next(50, 150);
         var canvas = new CanvasEngine(600, 600);
 
-        canvas.CreateBox(new List<IPointModel>
+        canvas.CreateBox(new List<IItemModel>
         {
-          new PointModel { Index = 0, Value = 0 },
-          new PointModel { Index = 600, Value = 600 }
+          new ItemModel { Index = 0, Value = 0 },
+          new ItemModel { Index = 600, Value = 600 }
         },
         new ComponentModel { Color = SKColors.Yellow });
 
         canvas.CreateCircle(
-          new PointModel { Index = pos, Value = pos },
+          new ItemModel { Index = pos, Value = pos },
           new ComponentModel { Size = 20, Color = SKColors.Black });
 
         var data = canvas.Map.Encode(SKEncodedImageFormat.Webp, 100).ToArray();

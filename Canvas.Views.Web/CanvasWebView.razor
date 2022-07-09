@@ -83,7 +83,7 @@
       positionE.Add($"0 { o.Index }px");
       positionVY.Add($"100% { o.Index }px");
 
-      <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
+      <span class="canvas-label" style="top: @(o.Index)px" alt="Canvas"><b>@o.Value</b></span>
     }
 
   </div>
@@ -94,7 +94,24 @@
     @onmousemove="OnMouseMove"
     @onmouseout="OnMouseLeave"
     @onmousedown="OnMouseDown">
-    <div class="canvas-cross" style="background-position: @(Cursor?.X ?? -1)px 100%, 100% @(Cursor?.Y ?? -1)px"></div>
+
+    @if (Cursor is not null)
+    {
+      <div class="canvas-cross" style="background-position: @(Cursor.X)px 100%, 100% @(Cursor.Y)px"></div>
+
+      @if (Series?.Count > 0)
+      {
+        <div class="canvas-board">
+
+          @foreach (var series in Series)
+          {
+            <div class="canvas-board-item"><b>@series.Key:</b> @string.Join(" / ", series.Value)</div>
+          }
+
+        </div>
+      }
+    }
+
     <img @ref="CanvasContainer" src="@Server?.Source" />
   </div>
 

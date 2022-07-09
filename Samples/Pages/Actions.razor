@@ -72,16 +72,16 @@
     return await (await (new ScriptService(_scriptService)).CreateModule()).GetElementBounds(container);
   }
 
-  protected IEnumerable<IPointModel> GetPoints(string input)
+  protected IEnumerable<IItemModel> GetPoints(string input)
   {
     var generator = new Random();
     var range = Enumerable.Range(1, 100);
 
     switch (input)
     {
-      case "Bars": return range.Select(i => new BarGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IPointModel);
-      case "Lines": return range.Select(i => new LineGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IPointModel);
-      case "Areas": return range.Select(i => new AreaGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IPointModel);
+      case "Bars": return range.Select(i => new BarGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IItemModel);
+      case "Lines": return range.Select(i => new LineGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IItemModel);
+      case "Areas": return range.Select(i => new AreaGroupModel { Index = i, Value = new Model { ["Point"] = generator.Next(-5000, 5000) }} as IItemModel);
     }
 
     return null;
