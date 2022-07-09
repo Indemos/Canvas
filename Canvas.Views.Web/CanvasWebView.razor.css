@@ -149,12 +149,16 @@
 }
 
 .canvas-board {
-  background: #fff;
+  background: #FFF;
   position: absolute;
   padding: 0 5px;
   border: 1px solid #ccc;
   z-index: 25;
   margin: 5px;
+}
+
+.canvas-board * {
+  color: #000;
 }
 
 .canvas-board-item {
