@@ -109,7 +109,7 @@ namespace Canvas.Views.Web
         Composer.Engine.Clear();
         Composer.Update();
 
-        using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 100))
+        using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 5))
         {
           var data = image.ToArray();
 

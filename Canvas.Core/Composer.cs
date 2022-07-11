@@ -21,7 +21,6 @@ namespace Canvas.Core
     /// <summary>
     /// Data
     /// </summary>
-    public virtual int Count { get; set; }
     public virtual double ItemSize { get; set; }
     public virtual IList<IItemModel> Items { get; set; }
     public virtual IList<IComponentModel> Components { get; set; }
@@ -51,7 +50,6 @@ namespace Canvas.Core
     /// </summary>
     public Composer()
     {
-      Count = 100;
       ItemSize = 0.5;
       IndexCount = 9;
       ValueCount = 3;
@@ -166,7 +164,7 @@ namespace Canvas.Core
         return delta;
       }
 
-      ValueDomain ??= new List<double>(AutoValueDomain);
+      ValueDomain ??= AutoValueDomain.ToList();
 
       var increment = (MaxValue - MinValue) / 10;
       var isInRange = MaxValue - MinValue > increment * 2;
@@ -200,9 +198,9 @@ namespace Canvas.Core
         return delta;
       }
 
-      IndexDomain ??= new List<int>(AutoIndexDomain);
+      IndexDomain ??= AutoIndexDomain.ToList();
 
-      var increment = Count / IndexCount / 2 * delta;
+      var increment = 100 / IndexCount / 2 * delta;
       var isInRange = MaxIndex - MinIndex > increment * 2;
 
       if (isInRange)
@@ -226,7 +224,7 @@ namespace Canvas.Core
         return delta;
       }
 
-      IndexDomain ??= new List<int>(AutoIndexDomain);
+      IndexDomain ??= AutoIndexDomain.ToList();
 
       var increment = IndexCount / 2 * delta;
 
@@ -256,7 +254,7 @@ namespace Canvas.Core
     {
       AutoIndexDomain ??= new int[2];
       AutoIndexDomain[0] = 0;
-      AutoIndexDomain[1] = Math.Max(Items.Count, Count);
+      AutoIndexDomain[1] = Math.Max(Items.Count, IndexCount);
 
       return AutoIndexDomain;
     }
@@ -293,7 +291,7 @@ namespace Canvas.Core
         return AutoValueDomain = null;
       }
 
-      if (min == max)
+      if (Equals(min, max))
       {
         AutoValueDomain[0] = Math.Min(0, min);
         AutoValueDomain[1] = Math.Max(0, max);

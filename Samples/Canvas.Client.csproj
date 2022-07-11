@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Canvas.Views.Web\Canvas.Views.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\Heatmap.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>
