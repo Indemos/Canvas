@@ -28,10 +28,10 @@
     {
       var generator = new Random();
 
-      var points = Enumerable.Range(0, 10).Select(i => new BarGroupModel
+      var points = Enumerable.Range(0, 10).Select(i => new HeatmapGroupModel
       {
         Index = i,
-        Value = new Model { ["Point"] = i }
+        Value = new Model { ["Points"] = Enumerable.Range(1, 100).Select(o => (double)o).OrderBy(o => generator.Next()).ToList() }
 
       } as IItemModel).ToList();
 

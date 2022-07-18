@@ -40,9 +40,9 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create line
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public override void CreateLine(IList<IItemModel> points, IComponentModel shape)
+    public override void CreateLine(IList<IItemModel> coordinates, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -62,10 +62,10 @@ namespace Canvas.Core.EngineSpace
       }
 
       Canvas.DrawLine(
-        (float)points[0].Index,
-        (float)points[0].Value,
-        (float)points[1].Index,
-        (float)points[1].Value,
+        (float)coordinates[0].Index,
+        (float)coordinates[0].Value,
+        (float)coordinates[1].Index,
+        (float)coordinates[1].Value,
         pen);
 
       pen?.PathEffect?.Dispose();
@@ -75,9 +75,9 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create circle
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="coordinate"></param>
     /// <param name="shape"></param>
-    public override void CreateCircle(IItemModel point, IComponentModel shape)
+    public override void CreateCircle(IItemModel coordinate, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -90,8 +90,8 @@ namespace Canvas.Core.EngineSpace
       };
 
       Canvas.DrawCircle(
-        (float)point.Index,
-        (float)point.Value,
+        (float)coordinate.Index,
+        (float)coordinate.Value,
         (float)shape.Size,
         pen);
 
@@ -101,9 +101,9 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create box
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public override void CreateBox(IList<IItemModel> points, IComponentModel shape)
+    public override void CreateBox(IList<IItemModel> coordinates, IComponentModel shape)
     {
       var pen = new SKPaint
       {
@@ -116,10 +116,10 @@ namespace Canvas.Core.EngineSpace
       };
 
       Canvas.DrawRect(
-        (float)points[0].Index,
-        (float)points[0].Value,
-        (float)(points[1].Index - points[0].Index),
-        (float)(points[1].Value - points[0].Value),
+        (float)coordinates[0].Index,
+        (float)coordinates[0].Value,
+        (float)(coordinates[1].Index - coordinates[0].Index),
+        (float)(coordinates[1].Value - coordinates[0].Value),
         pen);
 
       pen.Dispose();
@@ -128,11 +128,11 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create shape
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public override void CreateShape(IList<IItemModel> points, IComponentModel shape)
+    public override void CreateShape(IList<IItemModel> coordinates, IComponentModel shape)
     {
-      var origin = points.ElementAtOrDefault(0);
+      var origin = coordinates.ElementAtOrDefault(0);
       var curve = new SKPath();
       var pen = new SKPaint
       {
@@ -146,9 +146,9 @@ namespace Canvas.Core.EngineSpace
 
       curve.MoveTo((float)origin.Index.Value, (float)origin.Value);
 
-      for (var i = 1; i < points.Count; i++)
+      for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)points[i].Index.Value, (float)points[i].Value);
+        curve.LineTo((float)coordinates[i].Index.Value, (float)coordinates[i].Value);
       }
 
       Canvas.DrawPath(curve, pen);
@@ -160,10 +160,10 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create label
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabel(IItemModel point, IComponentModel shape, string content)
+    public override void CreateLabel(IItemModel coordinate, IComponentModel shape, string content)
     {
       var pen = new SKPaint
       {
@@ -186,8 +186,8 @@ namespace Canvas.Core.EngineSpace
 
       Canvas.DrawText(
         content,
-        (float)point.Index,
-        (float)(point.Value - space),
+        (float)coordinate.Index,
+        (float)(coordinate.Value - space),
         pen);
 
       pen.Dispose();
@@ -196,12 +196,12 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Draw label along the path
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabelShape(IList<IItemModel> points, IComponentModel shape, string content)
+    public override void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content)
     {
-      var origin = points.ElementAtOrDefault(0);
+      var origin = coordinates.ElementAtOrDefault(0);
       var curve = new SKPath();
       var pen = new SKPaint
       {
@@ -216,9 +216,9 @@ namespace Canvas.Core.EngineSpace
 
       curve.MoveTo((float)origin.Index.Value, (float)origin.Value);
 
-      for (var i = 1; i < points.Count; i++)
+      for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)points[i].Index.Value, (float)points[i].Value);
+        curve.LineTo((float)coordinates[i].Index.Value, (float)coordinates[i].Value);
       }
 
       pen.Color = shape.Color.Value;

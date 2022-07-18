@@ -30,28 +30,28 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Get Min and Max for the current point
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    double[] CreateDomain(int position, string name, IList<IItemModel> items);
+    double[] CreateDomain(int index, string name, IList<IItemModel> items);
 
     /// <summary>
     /// Create the shape
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    void CreateShape(int position, string name, IList<IItemModel> items);
+    void CreateShape(int index, string name, IList<IItemModel> items);
 
     /// <summary>
     /// Get series by position
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    IDictionary<string, IList<double>> GetSeries(int position, IList<IItemModel> items);
+    IDictionary<string, IList<double>> GetSeries(int index, IList<IItemModel> items);
 
     /// <summary>
     /// Get values
@@ -62,11 +62,11 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Get specific group by position and name
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    dynamic GetItem(int position, string name, IList<IItemModel> items);
+    dynamic GetItem(int index, string name, IList<IItemModel> items);
   }
 
   public class ItemModel : IItemModel
@@ -94,13 +94,13 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Get Min and Max for the current point
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual double[] CreateDomain(int position, string name, IList<IItemModel> items)
+    public virtual double[] CreateDomain(int index, string name, IList<IItemModel> items)
     {
-      var currentModel = GetItem(position, name, items);
+      var currentModel = GetItem(index, name, items);
 
       if (currentModel?.Point is null)
       {
@@ -117,23 +117,23 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Create the shape
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual void CreateShape(int position, string name, IList<IItemModel> items)
+    public virtual void CreateShape(int index, string name, IList<IItemModel> items)
     {
     }
 
     /// <summary>
     /// Get series by position
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual IDictionary<string, IList<double>> GetSeries(int position, IList<IItemModel> items)
+    public virtual IDictionary<string, IList<double>> GetSeries(int index, IList<IItemModel> items)
     {
-      var point = GetItem(position, null, items);
+      var point = GetItem(index, null, items);
       var groups = new Dictionary<string, IList<double>>();
 
       if (point is null)
@@ -152,19 +152,26 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public virtual IList<double> GetValues()
     {
-      return new double[] { Value.Point ?? 0 };
+      var currentModel = Value;
+
+      if (currentModel is null)
+      {
+        return null;
+      }
+
+      return new double[] { currentModel.Point ?? 0 };
     }
 
     /// <summary>
     /// Get specific group by position and name
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual dynamic GetItem(int position, string name, IList<IItemModel> items)
+    public virtual dynamic GetItem(int index, string name, IList<IItemModel> items)
     {
-      return items.ElementAtOrDefault(position)?.Value;
+      return items.ElementAtOrDefault(index)?.Value;
     }
 
     /// <summary>

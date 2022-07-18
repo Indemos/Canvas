@@ -89,20 +89,20 @@ namespace Canvas.Core
     /// Convert values to canvas coordinates
     /// </summary>
     /// <param name="engine"></param>
-    /// <param name="input"></param>
-    public virtual IItemModel GetPixels(IEngine engine, IItemModel input)
+    /// <param name="item"></param>
+    public virtual IItemModel GetPixels(IEngine engine, IItemModel item)
     {
       // Convert to device pixels
 
-      var index = Equals(MinIndex, MaxIndex) ? 1.0 : (input.Index - MinIndex) / (MaxIndex - MinIndex);
-      var value = Equals(MinValue, MaxValue) ? 1.0 : (input.Value - MinValue) / (MaxValue - MinValue);
+      var index = Equals(MinIndex, MaxIndex) ? 1.0 : (item.Index - MinIndex) / (MaxIndex - MinIndex);
+      var value = Equals(MinValue, MaxValue) ? 1.0 : (item.Value - MinValue) / (MaxValue - MinValue);
 
       // Percentage to pixels, Y is inverted
 
-      input.Index = engine.IndexSize * index.Value;
-      input.Value = engine.ValueSize - engine.ValueSize * value;
+      item.Index = engine.IndexSize * index.Value;
+      item.Value = engine.ValueSize - engine.ValueSize * value;
 
-      return input;
+      return item;
     }
 
     /// <summary>
@@ -121,20 +121,20 @@ namespace Canvas.Core
     /// Convert canvas coordinates to values
     /// </summary>
     /// <param name="engine"></param>
-    /// <param name="input"></param>
-    public virtual IItemModel GetValues(IEngine engine, IItemModel input)
+    /// <param name="item"></param>
+    public virtual IItemModel GetValues(IEngine engine, IItemModel item)
     {
       // Convert to values
 
-      var index = input.Index / engine.IndexSize;
-      var value = input.Value / engine.ValueSize;
+      var index = item.Index / engine.IndexSize;
+      var value = item.Value / engine.ValueSize;
 
       // Percentage to values, Y is inverted
 
-      input.Index = MinIndex + (MaxIndex - MinIndex) * index;
-      input.Value = MaxValue - (MaxValue - MinValue) * value;
+      item.Index = MinIndex + (MaxIndex - MinIndex) * index;
+      item.Value = MaxValue - (MaxValue - MinValue) * value;
 
-      return input;
+      return item;
     }
 
     /// <summary>
@@ -272,15 +272,16 @@ namespace Canvas.Core
       foreach (var i in GetEnumerator())
       {
         var point = Items.ElementAtOrDefault(i);
+        var domain = point?.CreateDomain(i, null, Items);
 
-        if (point?.Value?.Point is null)
+        if (domain is null)
         {
           continue;
         }
 
         point.Value.Composer = this;
-        min = Math.Min(min, point.Value.Point);
-        max = Math.Max(max, point.Value.Point);
+        min = Math.Min(min, domain[0]);
+        max = Math.Max(max, domain[1]);
         average += max - min;
       }
 
@@ -323,8 +324,9 @@ namespace Canvas.Core
       foreach (var i in GetEnumerator())
       {
         var point = Items.ElementAtOrDefault(i);
+        var domain = point?.CreateDomain(i, null, Items);
 
-        if (point?.Value?.Point is null)
+        if (domain is null)
         {
           continue;
         }

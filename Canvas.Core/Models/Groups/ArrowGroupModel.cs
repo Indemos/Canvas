@@ -7,11 +7,11 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Render the shape
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IItemModel> items)
+    public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
       var currentModel = Value;
 
@@ -22,18 +22,18 @@ namespace Canvas.Core.ModelSpace
 
       var size = Composer.ItemSize / 2.0;
 
-      var points = new ItemModel[]
+      var coordinates = new ItemModel[]
       {
-        Composer.GetPixels(Engine, position, currentModel.Point),
-        Composer.GetPixels(Engine, position + size, currentModel.Point),
-        Composer.GetPixels(Engine, position - size, currentModel.Point)
+        Composer.GetPixels(Engine, index, currentModel.Point),
+        Composer.GetPixels(Engine, index + size, currentModel.Point),
+        Composer.GetPixels(Engine, index - size, currentModel.Point)
       };
 
-      points[0].Value -= (points[1].Index - points[2].Index) * currentModel.Direction / 2;
+      coordinates[0].Value -= (coordinates[1].Index - coordinates[2].Index) * currentModel.Direction / 2;
 
       Color = currentModel.Color ?? Color;
 
-      Engine.CreateShape(points, this);
+      Engine.CreateShape(coordinates, this);
     }
   }
 }

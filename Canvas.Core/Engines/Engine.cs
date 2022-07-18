@@ -24,45 +24,45 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create circle
     /// </summary>
-    /// <param name="point"></param>
-    void CreateCircle(IItemModel point, IComponentModel shape);
+    /// <param name="coordinate"></param>
+    void CreateCircle(IItemModel coordinate, IComponentModel shape);
 
     /// <summary>
     /// Create box
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateBox(IList<IItemModel> points, IComponentModel shape);
+    void CreateBox(IList<IItemModel> coordinates, IComponentModel shape);
 
     /// <summary>
     /// Create line
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateLine(IList<IItemModel> points, IComponentModel shape);
+    void CreateLine(IList<IItemModel> coordinates, IComponentModel shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateShape(IList<IItemModel> points, IComponentModel shape);
+    void CreateShape(IList<IItemModel> coordinates, IComponentModel shape);
 
     /// <summary>
     /// Create label
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabel(IItemModel point, IComponentModel shape, string content);
+    void CreateLabel(IItemModel coordinate, IComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabelShape(IList<IItemModel> points, IComponentModel shape, string content);
+    void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
@@ -97,55 +97,55 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create circle
     /// </summary>
-    /// <param name="point"></param>
-    public virtual void CreateCircle(IItemModel point, IComponentModel shape)
+    /// <param name="coordinate"></param>
+    public virtual void CreateCircle(IItemModel coordinate, IComponentModel shape)
     {
     }
 
     /// <summary>
     /// Create box
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public virtual void CreateBox(IList<IItemModel> points, IComponentModel shape)
+    public virtual void CreateBox(IList<IItemModel> coordinates, IComponentModel shape)
     {
     }
 
     /// <summary>
     /// Create line
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public virtual void CreateLine(IList<IItemModel> points, IComponentModel shape)
+    public virtual void CreateLine(IList<IItemModel> coordinates, IComponentModel shape)
     { 
     }
 
     /// <summary>
     /// Create shape
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public virtual void CreateShape(IList<IItemModel> points, IComponentModel shape)
+    public virtual void CreateShape(IList<IItemModel> coordinates, IComponentModel shape)
     {
     }
 
     /// <summary>
     /// Create label
     /// </summary>
-    /// <param name="point"></param>
+    /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public virtual void CreateLabel(IItemModel point, IComponentModel shape, string content)
+    public virtual void CreateLabel(IItemModel coordinate, IComponentModel shape, string content)
     {
     }
 
     /// <summary>
     /// Draw label along the path
     /// </summary>
-    /// <param name="points"></param>
+    /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public virtual void CreateLabelShape(IList<IItemModel> points, IComponentModel shape, string content)
+    public virtual void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content)
     {
     }
 
@@ -166,7 +166,6 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Dispose
     /// </summary>
-    /// <exception cref="NotImplementedException"></exception>
     public virtual void Dispose()
     {
     }

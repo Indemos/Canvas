@@ -7,29 +7,29 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Render the shape
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int position, string name, IList<IItemModel> items)
+    public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
       var currentModel = Value;
-      var previousModel = GetItem(position - 1, name, items);
+      var previousModel = GetItem(index - 1, name, items);
 
       if (currentModel?.Point is null || previousModel?.Point is null)
       {
         return;
       }
 
-      var points = new IItemModel[]
+      var coordinates = new IItemModel[]
       {
-        Composer.GetPixels(Engine, position - 1, previousModel.Point),
-        Composer.GetPixels(Engine, position, currentModel.Point)
+        Composer.GetPixels(Engine, index - 1, previousModel.Point),
+        Composer.GetPixels(Engine, index, currentModel.Point)
       };
 
       Color = currentModel.Color ?? Color;
 
-      Engine.CreateLine(points, this);
+      Engine.CreateLine(coordinates, this);
     }
   }
 }

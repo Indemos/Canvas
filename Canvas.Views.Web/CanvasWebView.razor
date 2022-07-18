@@ -112,7 +112,7 @@
       }
     }
 
-    <img @ref="CanvasContainer" src="@Server?.Source" />
+    <iframe @ref="CanvasContainer" src="@Server?.Source"></iframe>
   </div>
 
 </div>
@@ -144,7 +144,7 @@
     background-position: @(string.Join(",", positionVX));
   }
 
-  .canvas-container[space] .canvas-view img {
+  .canvas-container[space] .canvas-view img, .canvas-container[space] .canvas-view iframe {
     background-image: @(string.Join(",", imageVY));
     background-position: @(string.Join(",", positionVY));
   }
