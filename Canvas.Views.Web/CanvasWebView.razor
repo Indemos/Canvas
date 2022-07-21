@@ -105,7 +105,7 @@
 
           @foreach (var series in Series)
           {
-            <div class="canvas-board-item"><b>@series.Key:</b> @string.Join(" / ", series.Value)</div>
+            <div class="canvas-board-item"><b>@series.Key:</b> @string.Join(" / ", series.Value ?? new double[1] { 0 })</div>
           }
 
         </div>

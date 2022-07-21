@@ -1,4 +1,6 @@
+using Canvas.Core.ServiceSpace;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Canvas.Core.ModelSpace
 {
@@ -13,16 +15,14 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override double[] CreateDomain(int index, string name, IList<IItemModel> items)
     {
-      var currentModel = Value;
+      var points = Value?.Points as IList<double>;
 
-      if (currentModel is null)
+      if (points is null)
       {
         return null;
       }
 
-      var points = currentModel.Points as IList<double>;
-
-      return new double[] { 0, points.Count };
+      return new double[] { points.Min(), points.Max() };
     }
 
     /// <summary>
@@ -31,16 +31,14 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override IList<double> GetValues()
     {
-      var currentModel = Value;
+      var points = Value?.Points as IList<double>;
 
-      if (currentModel is null)
+      if (points is null)
       {
         return null;
       }
 
-      var points = currentModel.Points as IList<double>;
-
-      return new double[] { 0, points.Count };
+      return new double[] { points.Count };
     }
 
     /// <summary>
@@ -64,20 +62,20 @@ namespace Canvas.Core.ModelSpace
       var coordinate = 0.0;
       var coordinateStep = Engine.ValueSize / pointsCount;
 
-      foreach (var color in points)
+      foreach (var point in points)
       {
-        var open = Composer.GetPixels(Engine, index - 1, 0.0);
-        var close = Composer.GetPixels(Engine, index, 0.0);
+        var open = Composer.GetPixels(Engine, index, 0.0);
+        var close = Composer.GetPixels(Engine, index + 1, 0.0);
 
         open.Value = coordinate;
         close.Value = coordinate + coordinateStep;
-        coordinate =+ coordinateStep;
+        coordinate += coordinateStep;
 
         var coordinates = new IItemModel[] { open, close };
 
-        Color = currentModel.Color ?? Color;
+        Color = currentModel.Color ?? Composer?.ColorService?.GetColor(point) ?? Color;
 
-        Engine.CreateShape(coordinates, this);
+        Engine.CreateBox(coordinates, this);
       }
     }
   }

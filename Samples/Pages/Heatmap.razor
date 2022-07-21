@@ -4,6 +4,7 @@
 @using Canvas.Core
 @using Canvas.Core.EngineSpace
 @using Canvas.Core.ModelSpace
+@using Canvas.Core.ServiceSpace
 @using ScriptContainer
 
 <div class="demo">
@@ -26,19 +27,21 @@
   {
     if (setup)
     {
+      var min = 0;
+      var max = 100;
       var generator = new Random();
 
-      var points = Enumerable.Range(0, 10).Select(i => new HeatmapGroupModel
+      var points = Enumerable.Range(min, max).Select(i => new HeatmapGroupModel
       {
         Index = i,
-        Value = new Model { ["Points"] = Enumerable.Range(1, 100).Select(o => (double)o).OrderBy(o => generator.Next()).ToList() }
-
+        Value = new Model { ["Points"] = Enumerable.Range(min, max).Select(o => (double)o).OrderBy(o => generator.Next()).ToList() }
       } as IItemModel).ToList();
 
       await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
       {
         Name = "Demo",
         Items = points,
+        ColorService = new ColorService { Max = max },
         Engine = new CanvasEngine(dimensions.X, dimensions.Y)
       });
     }

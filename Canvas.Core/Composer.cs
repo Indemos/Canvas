@@ -1,5 +1,6 @@
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
+using Canvas.Core.ServiceSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,11 @@ namespace Canvas.Core
     /// Engine
     /// </summary>
     public virtual IEngine Engine { get; set; }
+
+    /// <summary>
+    /// Color service
+    /// </summary>
+    public virtual ColorService ColorService { get; set; }
 
     /// <summary>
     /// Data

@@ -32,7 +32,8 @@ At the moment, there are four built-in chart types.
 * Bar - polygon
 * Area - polygon
 * Arrow - polygon
-* Candle - OHLC box, a mix of a line and a rectangle polygon
+* Candle - OHLC box, a mix of a line and a polygon
+* HeatMap - polygon 
 
 To add new chart types, e.g. `Error Bars` or `Bubbles`, implement `IGroupModel` interface. 
 
