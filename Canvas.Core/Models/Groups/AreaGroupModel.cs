@@ -16,18 +16,18 @@ namespace Canvas.Core.ModelSpace
       var currentModel = Value;
       var previousModel = GetItem(index - 1, name, items);
 
-      if (currentModel?.Point is null || previousModel?.Point is null)
+      if (currentModel?.Point is null)
       {
         return;
       }
 
       var coordinates = new IItemModel[]
       {
-        Composer.GetPixels(Engine, index - 1, previousModel.Point),
-        Composer.GetPixels(Engine, index, currentModel.Point),
+        Composer.GetPixels(Engine, index, previousModel?.Point ?? currentModel.Point),
+        Composer.GetPixels(Engine, index + 1, currentModel.Point),
+        Composer.GetPixels(Engine, index + 1, 0.0),
         Composer.GetPixels(Engine, index, 0.0),
-        Composer.GetPixels(Engine, index - 1, 0.0),
-        Composer.GetPixels(Engine, index - 1, previousModel.Point)
+        Composer.GetPixels(Engine, index, previousModel?.Point ?? currentModel.Point)
       };
 
       Color = currentModel.Color ?? Color;
