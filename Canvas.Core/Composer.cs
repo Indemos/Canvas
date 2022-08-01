@@ -37,7 +37,7 @@ namespace Canvas.Core
     public virtual int IndexCount { get; set; }
     public virtual IList<int> IndexDomain { get; set; }
     public virtual IList<int> AutoIndexDomain { get; protected set; }
-    public virtual Func<object, string> ShowIndexAction { get; set; }
+    public virtual Func<IItemModel, string> ShowIndexAction { get; set; }
     public virtual int MinIndex => IndexDomain?.ElementAtOrDefault(0) ?? AutoIndexDomain?.ElementAtOrDefault(0) ?? 0;
     public virtual int MaxIndex => IndexDomain?.ElementAtOrDefault(1) ?? AutoIndexDomain?.ElementAtOrDefault(1) ?? IndexCount;
 
@@ -47,7 +47,7 @@ namespace Canvas.Core
     public virtual int ValueCount { get; set; }
     public virtual IList<double> ValueDomain { get; set; }
     public virtual IList<double> AutoValueDomain { get; protected set; }
-    public virtual Func<object, string> ShowValueAction { get; set; }
+    public virtual Func<IItemModel, string> ShowValueAction { get; set; }
     public virtual double MinValue => ValueDomain?.ElementAtOrDefault(0) ?? AutoValueDomain?.ElementAtOrDefault(0) ?? 0.0;
     public virtual double MaxValue => ValueDomain?.ElementAtOrDefault(1) ?? AutoValueDomain?.ElementAtOrDefault(1) ?? ValueCount;
 
@@ -146,17 +146,17 @@ namespace Canvas.Core
     /// <summary>
     /// Format index label
     /// </summary>
-    public virtual string ShowIndex(object input)
+    public virtual string ShowIndex(IItemModel input)
     {
-      return ShowIndexAction is null ? $"{input:0.00}" : ShowIndexAction(input);
+      return ShowIndexAction is null ? $"{input?.Y:0.00}" : ShowIndexAction(input);
     }
 
     /// <summary>
     /// Format value label
     /// </summary>
-    public virtual string ShowValue(object input)
+    public virtual string ShowValue(IItemModel input)
     {
-      return ShowValueAction is null ? $"{input:0.00}" : ShowValueAction(input);
+      return ShowValueAction is null ? $"{input?.Y:0.00}" : ShowValueAction(input);
     }
 
     /// <summary>

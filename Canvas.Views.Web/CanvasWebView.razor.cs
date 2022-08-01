@@ -46,15 +46,15 @@ namespace Canvas.Views.Web
       if (Composer?.Engine is not null)
       {
         var count = (double)Composer.IndexCount + 1.0;
-        var step = (double)Composer.Engine.IndexSize / count;
+        var distance = (double)Composer.Engine.IndexSize / count;
         var stepValue = (double)(Composer.MaxIndex - Composer.MinIndex) / count;
 
         for (var i = 1; i < count; i++)
         {
           yield return new
           {
-            X = step * i,
-            Y = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
+            X = distance * i,
+            Y = Composer.ShowIndex(new ItemModel { X = i, Y = Composer.MinIndex + i * stepValue })
           };
         }
       }
@@ -73,13 +73,10 @@ namespace Canvas.Views.Web
 
         for (var i = 1; i < count; i++)
         {
-          var Index = distance * i;
-          var Value = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue);
-
           yield return new 
           {
             X = distance * i,
-            Y = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
+            Y = Composer.ShowValue(new ItemModel { X = i, Y = Composer.MinValue + (count - i) * stepValue })
           };
         }
       }
@@ -211,8 +208,8 @@ namespace Canvas.Views.Web
       {
         X = e.OffsetX,
         Y = e.OffsetY,
-        ValueX = Composer.ShowIndex(values.X.Value),
-        ValueY = Composer.ShowValue(values.Y)
+        ValueX = Composer.ShowIndex(new ItemModel { Y = values.X }),
+        ValueY = Composer.ShowValue(new ItemModel { Y = values.Y })
       };
     }
 
