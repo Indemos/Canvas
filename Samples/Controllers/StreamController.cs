@@ -30,13 +30,13 @@ namespace Canvas.Client.Controllers
 
         canvas.CreateBox(new List<IItemModel>
         {
-          new ItemModel { Index = 0, Value = 0 },
-          new ItemModel { Index = 600, Value = 600 }
+          new ItemModel { X = 0, Y = 0 },
+          new ItemModel { X = 600, Y = 600 }
         },
         new ComponentModel { Color = SKColors.Yellow });
 
         canvas.CreateCircle(
-          new ItemModel { Index = pos, Value = pos },
+          new ItemModel { X = pos, Y = pos },
           new ComponentModel { Size = 20, Color = SKColors.Black });
 
         var data = canvas.Map.Encode(SKEncodedImageFormat.Webp, 100).ToArray();

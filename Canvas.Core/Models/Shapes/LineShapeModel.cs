@@ -21,8 +21,8 @@ namespace Canvas.Core.ModelSpace
     /// </summary>
     public override void UpdateShape()
     {
-      var pointMin = new ItemModel { Index = 0, Value = 0 };
-      var pointMax = new ItemModel { Index = 0, Value = 0 };
+      var pointMin = new ItemModel { X = 0, Y = 0 };
+      var pointMax = new ItemModel { X = 0, Y = 0 };
       var points = new IItemModel[]
       {
         pointMin, 
@@ -33,9 +33,9 @@ namespace Canvas.Core.ModelSpace
       {
         var pixelLevel = Composer.GetPixels(Engine, level, 0);
 
-        points[0].Index = pointMax.Index = pixelLevel.Index;
-        points[0].Value = 0;
-        points[1].Value = Engine.ValueSize;
+        points[0].X = pointMax.X = pixelLevel.X;
+        points[0].Y = 0;
+        points[1].Y = Engine.ValueSize;
 
         Engine.CreateLine(points, this);
       }
@@ -44,9 +44,9 @@ namespace Canvas.Core.ModelSpace
       {
         var pixelLevel = Composer.GetPixels(Engine, 0, level);
 
-        points[0].Value = pointMax.Value = pixelLevel.Value;
-        points[0].Index = 0;
-        points[1].Index = Engine.IndexSize;
+        points[0].Y = pointMax.Y = pixelLevel.Y;
+        points[0].X = 0;
+        points[1].X = Engine.IndexSize;
 
         Engine.CreateLine(points, this);
       }

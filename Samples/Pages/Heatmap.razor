@@ -33,8 +33,12 @@
 
       var points = Enumerable.Range(min, max).Select(i => new HeatmapGroupModel
       {
-        Index = i,
-        Value = new Model { ["Points"] = Enumerable.Range(min, max).Select(o => (double)o).OrderBy(o => generator.Next()).ToList() }
+        Points = Enumerable
+          .Range(min, max)
+          .Select(o => new ItemModel { X = i, Y = o, Z = o } as IItemModel)
+          .OrderBy(o => generator.Next())
+          .ToList()
+
       } as IItemModel).ToList();
 
       await ViewControl.Create(dimensions => ViewControl.Composer = new Composer

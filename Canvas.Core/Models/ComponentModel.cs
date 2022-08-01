@@ -12,11 +12,6 @@ namespace Canvas.Core.ModelSpace
     double? Size { get; set; }
 
     /// <summary>
-    /// Color
-    /// </summary>
-    SKColor? Color { get; set; }
-
-    /// <summary>
     /// Position and alignment
     /// </summary>
     LocationEnum? Location { get; set; }
@@ -44,11 +39,6 @@ namespace Canvas.Core.ModelSpace
     /// Index
     /// </summary>
     public virtual double? Size { get; set; }
-
-    /// <summary>
-    /// Color
-    /// </summary>
-    public virtual SKColor? Color { get; set; }
 
     /// <summary>
     /// Position and alignment

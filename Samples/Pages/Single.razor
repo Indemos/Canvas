@@ -29,8 +29,8 @@
 
       var points = Enumerable.Range(1, 100000).Select(i => new BarGroupModel
       {
-        Index = i,
-        Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
+        X = i,
+        Y = generator.Next(-5000, 5000)
 
       } as IItemModel).ToList();
 

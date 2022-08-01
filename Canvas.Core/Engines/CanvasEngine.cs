@@ -62,10 +62,10 @@ namespace Canvas.Core.EngineSpace
       }
 
       Canvas.DrawLine(
-        (float)coordinates[0].Index,
-        (float)coordinates[0].Value,
-        (float)coordinates[1].Index,
-        (float)coordinates[1].Value,
+        (float)coordinates[0].X,
+        (float)coordinates[0].Y,
+        (float)coordinates[1].X,
+        (float)coordinates[1].Y,
         pen);
 
       pen?.PathEffect?.Dispose();
@@ -90,8 +90,8 @@ namespace Canvas.Core.EngineSpace
       };
 
       Canvas.DrawCircle(
-        (float)coordinate.Index,
-        (float)coordinate.Value,
+        (float)coordinate.X,
+        (float)coordinate.Y,
         (float)shape.Size,
         pen);
 
@@ -116,10 +116,10 @@ namespace Canvas.Core.EngineSpace
       };
 
       Canvas.DrawRect(
-        (float)coordinates[0].Index,
-        (float)coordinates[0].Value,
-        (float)(coordinates[1].Index - coordinates[0].Index),
-        (float)(coordinates[1].Value - coordinates[0].Value),
+        (float)coordinates[0].X,
+        (float)coordinates[0].Y,
+        (float)(coordinates[1].X - coordinates[0].X),
+        (float)(coordinates[1].Y - coordinates[0].Y),
         pen);
 
       pen.Dispose();
@@ -144,11 +144,11 @@ namespace Canvas.Core.EngineSpace
         IsDither = false
       };
 
-      curve.MoveTo((float)origin.Index.Value, (float)origin.Value);
+      curve.MoveTo((float)origin.X.Value, (float)origin.Y);
 
       for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)coordinates[i].Index.Value, (float)coordinates[i].Value);
+        curve.LineTo((float)coordinates[i].X.Value, (float)coordinates[i].Y);
       }
 
       Canvas.DrawPath(curve, pen);
@@ -186,8 +186,8 @@ namespace Canvas.Core.EngineSpace
 
       Canvas.DrawText(
         content,
-        (float)coordinate.Index,
-        (float)(coordinate.Value - space),
+        (float)coordinate.X,
+        (float)(coordinate.Y - space),
         pen);
 
       pen.Dispose();
@@ -214,11 +214,11 @@ namespace Canvas.Core.EngineSpace
         IsDither = false
       };
 
-      curve.MoveTo((float)origin.Index.Value, (float)origin.Value);
+      curve.MoveTo((float)origin.X.Value, (float)origin.Y);
 
       for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)coordinates[i].Index.Value, (float)coordinates[i].Value);
+        curve.LineTo((float)coordinates[i].X.Value, (float)coordinates[i].Y);
       }
 
       pen.Color = shape.Color.Value;
@@ -244,8 +244,8 @@ namespace Canvas.Core.EngineSpace
 
       var point = new ItemModel
       {
-        Index = content.Length * pen.FontMetrics.MaxCharacterWidth,
-        Value = pen.FontSpacing
+        X = content.Length * pen.FontMetrics.MaxCharacterWidth,
+        Y = pen.FontSpacing
       };
 
       pen.Dispose();

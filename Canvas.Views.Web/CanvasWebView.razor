@@ -27,7 +27,7 @@
 
     @foreach (var o in GetIndexEnumerator())
     {
-      <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
+      <span class="canvas-label" style="left: @(o.X)px"><b>@o.Y</b></span>
     }
 
   </div>
@@ -44,11 +44,11 @@
       imageN.Add(grid);
       imageS.Add(grid);
       imageVX.Add(grid);
-      positionN.Add($"{ o.Index }px 100%");
-      positionS.Add($"{ o.Index }px 0");
-      positionVX.Add($"{ o.Index }px 100%");
+      positionN.Add($"{ o.X }px 100%");
+      positionS.Add($"{ o.X }px 0");
+      positionVX.Add($"{ o.X }px 100%");
 
-      <span class="canvas-label" style="left: @(o.Index)px"><b>@o.Value</b></span>
+      <span class="canvas-label" style="left: @(o.X)px"><b>@o.Y</b></span>
     }
 
   </div>
@@ -62,7 +62,7 @@
 
     @foreach (var o in GetValueEnumerator())
     {
-      <span class="canvas-label" style="top: @(o.Index)px"><b>@o.Value</b></span>
+      <span class="canvas-label" style="top: @(o.X)px"><b>@o.Y</b></span>
     }
 
   </div>
@@ -79,11 +79,11 @@
       imageW.Add(grid);
       imageE.Add(grid);
       imageVY.Add(grid);
-      positionW.Add($"100% { o.Index }px");
-      positionE.Add($"0 { o.Index }px");
-      positionVY.Add($"100% { o.Index }px");
+      positionW.Add($"100% { o.X }px");
+      positionE.Add($"0 { o.X }px");
+      positionVY.Add($"100% { o.X }px");
 
-      <span class="canvas-label" style="top: @(o.Index)px" alt="Canvas"><b>@o.Value</b></span>
+      <span class="canvas-label" style="top: @(o.X)px" alt="Canvas"><b>@o.Y</b></span>
     }
 
   </div>

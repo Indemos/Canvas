@@ -41,7 +41,7 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    public virtual IEnumerable<IItemModel> GetIndexEnumerator()
+    public virtual IEnumerable<dynamic> GetIndexEnumerator()
     {
       if (Composer?.Engine is not null)
       {
@@ -51,10 +51,10 @@ namespace Canvas.Views.Web
 
         for (var i = 1; i < count; i++)
         {
-          yield return new ItemModel
+          yield return new
           {
-            Index = step * i,
-            Value = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
+            X = step * i,
+            Y = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
           };
         }
       }
@@ -63,7 +63,7 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Enumerate values
     /// </summary>
-    public virtual IEnumerable<IItemModel> GetValueEnumerator()
+    public virtual IEnumerable<dynamic> GetValueEnumerator()
     {
       if (Composer?.Engine is not null)
       {
@@ -76,10 +76,10 @@ namespace Canvas.Views.Web
           var Index = distance * i;
           var Value = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue);
 
-          yield return new ItemModel
+          yield return new 
           {
-            Index = distance * i,
-            Value = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
+            X = distance * i,
+            Y = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
           };
         }
       }
@@ -194,11 +194,11 @@ namespace Canvas.Views.Web
 
       var values = Composer.GetValues(Composer.Engine, new ItemModel
       {
-        Index = e.OffsetX,
-        Value = e.OffsetY
+        X = e.OffsetX,
+        Y = e.OffsetY
       });
 
-      var index = (int)values.Index;
+      var index = (int)values.X;
       var point = Composer.Items.ElementAtOrDefault(index);
 
       if (point is not null)
@@ -211,8 +211,8 @@ namespace Canvas.Views.Web
       {
         X = e.OffsetX,
         Y = e.OffsetY,
-        ValueX = Composer.ShowIndex(values.Index.Value),
-        ValueY = Composer.ShowValue(values.Value)
+        ValueX = Composer.ShowIndex(values.X.Value),
+        ValueY = Composer.ShowValue(values.Y)
       };
     }
 

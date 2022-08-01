@@ -85,39 +85,39 @@ namespace Canvas.Client.Pages
     protected void Counter()
     {
       var candle = CreatePoint();
-      var point = new Model { ["Point"] = candle.Close };
-      var pointDelta = new Model { ["Point"] = _generator.Next(2000, 5000) };
-      var pointMirror = new Model { ["Point"] = _generator.Next(2000, 5000) };
-      var arrow = new Model { ["Point"] = candle.Close, ["Direction"] = 1 };
+      var point = candle.Close;
+      var pointDelta = _generator.Next(2000, 5000);
+      var pointMirror = _generator.Next(2000, 5000);
+      var arrow = candle.Close;
 
       if (IsNextFrame())
       {
-        _pointValue = candle.Close;
+        _pointValue = candle.Close.Value;
         _pointTime = DateTime.UtcNow;
         _points.Add(new GroupModel
         {
-          Index = _pointTime.Ticks,
+          X = _pointTime.Ticks,
           Groups = new Dictionary<string, IGroupModel>
           {
-            ["Bars"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = point } } },
-            ["Areas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaGroupModel { Value = point } } },
-            ["Deltas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Value = pointDelta } } },
-            ["Lines"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Value = point }, ["V2"] = new LineGroupModel { Value = pointMirror } } },
-            ["Candles"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new CandleGroupModel { Value = candle }, ["V2"] = new ArrowGroupModel { Value = arrow } } }
+            ["Bars"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Y = point } } },
+            ["Areas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaGroupModel { Y = point } } },
+            ["Deltas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Y = pointDelta } } },
+            ["Lines"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Y = point }, ["V2"] = new LineGroupModel { Y = pointMirror } } },
+            ["Candles"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = candle, ["V2"] = new ArrowGroupModel { Y = arrow, Direction = 1 } } }
           }
         });
       }
 
       var grp = _points.Last() as IGroupModel;
       var currentDelta = grp.Groups["Deltas"].Groups["V1"];
-      var currentCandle = grp.Groups["Candles"].Groups["V1"];
+      var currentCandle = grp.Groups["Candles"].Groups["V1"] as CandleGroupModel;
 
-      currentCandle.Value.Low = candle.Low;
-      currentCandle.Value.High = candle.High;
-      currentCandle.Value.Close = candle.Close;
-      currentCandle.Color = currentCandle.Value.Close > currentCandle.Value.Open ? SKColors.LimeGreen : SKColors.OrangeRed;
+      currentCandle.Low = candle.Low;
+      currentCandle.High = candle.High;
+      currentCandle.Close = candle.Close;
+      currentCandle.Color = currentCandle.Close > currentCandle.Open ? SKColors.LimeGreen : SKColors.OrangeRed;
 
-      currentDelta.Value.Point = currentCandle.Value.Close > currentCandle.Value.Open ? candle.Close : -candle.Close;
+      currentDelta.Y = currentCandle.Close > currentCandle.Open ? candle.Close : -candle.Close;
       currentDelta.Color = currentCandle.Color;
 
       _views.ForEach(panel =>
@@ -134,17 +134,17 @@ namespace Canvas.Client.Pages
     /// <summary>
     /// Generate candle
     /// </summary>
-    protected dynamic CreatePoint()
+    protected CandleGroupModel CreatePoint()
     {
       var open = (double)_generator.Next(1000, 5000);
       var close = (double)_generator.Next(1000, 5000);
       var shadow = (double)_generator.Next(500, 1000);
-      var candle = new Model
+      var candle = new CandleGroupModel
       {
-        ["Low"] = Math.Min(open, close) - shadow,
-        ["High"] = Math.Max(open, close) + shadow,
-        ["Open"] = _pointValue,
-        ["Close"] = close
+        Low = Math.Min(open, close) - shadow,
+        High = Math.Max(open, close) + shadow,
+        Open = _pointValue,
+        Close = close
       };
 
       return candle;

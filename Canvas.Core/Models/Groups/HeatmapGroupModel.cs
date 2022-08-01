@@ -15,14 +15,12 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override double[] CreateDomain(int index, string name, IList<IItemModel> items)
     {
-      var points = Value?.Points as IList<double>;
-
-      if (points is null)
+      if (Points is null)
       {
         return null;
       }
 
-      return new double[] { points.Min(), points.Max() };
+      return new double[] { Points.Min(o => o.Y ?? 0), Points.Max(o => o.Y ?? 0) };
     }
 
     /// <summary>
@@ -31,14 +29,12 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override IList<double> GetValues()
     {
-      var points = Value?.Points as IList<double>;
-
-      if (points is null)
+      if (Points is null)
       {
         return null;
       }
 
-      return new double[] { points.Count };
+      return new double[] { Points.Count };
     }
 
     /// <summary>
@@ -50,9 +46,8 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
-      var currentModel = Value;
-      var points = currentModel.Points as IList<double>;
-      var pointsCount = points?.Count ?? 0;
+      var currentModel = Y;
+      var pointsCount = Points?.Count ?? 0;
 
       if (Equals(pointsCount, 0))
       {
@@ -62,18 +57,18 @@ namespace Canvas.Core.ModelSpace
       var coordinate = 0.0;
       var coordinateStep = Engine.ValueSize / pointsCount;
 
-      foreach (var point in points)
+      foreach (var point in Points)
       {
         var open = Composer.GetPixels(Engine, index, 0.0);
         var close = Composer.GetPixels(Engine, index + 1, 0.0);
 
-        open.Value = coordinate;
-        close.Value = coordinate + coordinateStep;
+        open.Y = coordinate;
+        close.Y = coordinate + coordinateStep;
         coordinate += coordinateStep;
 
         var coordinates = new IItemModel[] { open, close };
 
-        Color = currentModel.Color ?? Composer?.ColorService?.GetColor(point) ?? Color;
+        Color = Composer?.ColorService?.GetColor(point.Z.Value) ?? Color;
 
         Engine.CreateBox(coordinates, this);
       }

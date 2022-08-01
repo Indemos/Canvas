@@ -61,7 +61,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override dynamic GetItem(int position, string name, IList<IItemModel> items)
+    public override IItemModel GetItem(int position, string name, IList<IItemModel> items)
     {
       if (name is null)
       {
@@ -84,7 +84,7 @@ namespace Canvas.Core.ModelSpace
 
       series.Groups.TryGetValue(name, out IGroupModel shape);
 
-      return shape?.Value;
+      return shape;
     }
 
     /// <summary>

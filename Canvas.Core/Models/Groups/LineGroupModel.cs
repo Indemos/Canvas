@@ -13,21 +13,19 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
-      var currentModel = Value;
-      var previousModel = GetItem(index - 1, name, items);
+      var currentModel = Y;
+      var previousModel = GetItem(index - 1, name, items)?.Y;
 
-      if (currentModel?.Point is null)
+      if (currentModel is null)
       {
         return;
       }
 
       var coordinates = new IItemModel[]
       {
-        Composer.GetPixels(Engine, index, previousModel?.Point ?? currentModel.Point),
-        Composer.GetPixels(Engine, index + 1, currentModel.Point)
+        Composer.GetPixels(Engine, index, (previousModel ?? currentModel).Value),
+        Composer.GetPixels(Engine, index + 1, currentModel.Value)
       };
-
-      Color = currentModel.Color ?? Color;
 
       Engine.CreateLine(coordinates, this);
     }

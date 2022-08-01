@@ -13,9 +13,9 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
-      var currentModel = Value;
+      var currentModel = Y;
 
-      if (currentModel?.Point is null)
+      if (currentModel is null)
       {
         return;
       }
@@ -25,10 +25,8 @@ namespace Canvas.Core.ModelSpace
       var coordinates = new IItemModel[]
       {
         Composer.GetPixels(Engine, index - size, 0.0),
-        Composer.GetPixels(Engine, index + size, currentModel.Point)
+        Composer.GetPixels(Engine, index + size, currentModel.Value)
       };
-
-      Color = currentModel.Color ?? Color;
 
       Engine.CreateBox(coordinates, this);
     }
