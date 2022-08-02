@@ -242,7 +242,7 @@ namespace Canvas.Core.EngineSpace
         TextSize = (float)size
       };
 
-      var point = new ItemModel
+      var item = new ItemModel
       {
         X = content.Length * pen.FontMetrics.MaxCharacterWidth,
         Y = pen.FontSpacing
@@ -250,7 +250,7 @@ namespace Canvas.Core.EngineSpace
 
       pen.Dispose();
 
-      return point;
+      return item;
     }
 
     /// <summary>

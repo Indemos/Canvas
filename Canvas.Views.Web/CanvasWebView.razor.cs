@@ -54,7 +54,7 @@ namespace Canvas.Views.Web
           yield return new
           {
             X = distance * i,
-            Y = Composer.ShowIndex(new ItemModel { X = i, Y = Composer.MinIndex + i * stepValue })
+            Y = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
           };
         }
       }
@@ -76,7 +76,7 @@ namespace Canvas.Views.Web
           yield return new 
           {
             X = distance * i,
-            Y = Composer.ShowValue(new ItemModel { X = i, Y = Composer.MinValue + (count - i) * stepValue })
+            Y = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
           };
         }
       }
@@ -188,28 +188,32 @@ namespace Canvas.Views.Web
       {
         return null;
       }
-
       var values = Composer.GetValues(Composer.Engine, new ItemModel
       {
         X = e.OffsetX,
         Y = e.OffsetY
       });
 
-      var index = (int)values.X;
-      var point = Composer.Items.ElementAtOrDefault(index);
+      var item = Composer.Items.ElementAtOrDefault((int)values.X);
 
-      if (point is not null)
+      if (item is not null)
       {
-        point.Composer = Composer;
-        Series = point.GetSeries(index, Composer.Items);
+        var coordinates = new ItemModel
+        {
+          X = e.OffsetX,
+          Y = e.OffsetY
+        };
+
+        item.Composer = Composer;
+        Series = item.GetSeries(coordinates, values);
       }
 
       return new ViewMessage
       {
         X = e.OffsetX,
         Y = e.OffsetY,
-        ValueX = Composer.ShowIndex(new ItemModel { Y = values.X }),
-        ValueY = Composer.ShowValue(new ItemModel { Y = values.Y })
+        ValueX = Composer.ShowIndex(values.X.Value),
+        ValueY = Composer.ShowValue(values.Y.Value)
       };
     }
 

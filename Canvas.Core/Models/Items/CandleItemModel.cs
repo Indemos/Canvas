@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public class CandleGroupModel : GroupModel, IGroupModel
+  public class CandleItemModel : GroupModel, IGroupModel
   {
     /// <summary>
     /// Open
@@ -47,10 +47,12 @@ namespace Canvas.Core.ModelSpace
     }
 
     /// <summary>
-    /// Get values
+    /// Get series values
     /// </summary>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    public override IList<double> GetValues()
+    public override IList<double> GetSeriesValues(IItemModel coordinates, IItemModel values)
     {
       var L = Low ?? 0;
       var H = High ?? 0;

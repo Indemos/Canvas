@@ -1,10 +1,9 @@
-using Canvas.Core.ServiceSpace;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.ModelSpace
 {
-  public class HeatmapGroupModel : GroupModel, IGroupModel
+  public class HeatmapItemModel : GroupModel, IGroupModel
   {
     /// <summary>
     /// Get Min and Max for the current point
@@ -24,17 +23,23 @@ namespace Canvas.Core.ModelSpace
     }
 
     /// <summary>
-    /// Get values
+    /// Get series values
     /// </summary>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    public override IList<double> GetValues()
+    public override IList<double> GetSeriesValues(IItemModel coordinates, IItemModel values)
     {
-      if (Points is null)
+      if (Equals(Points.Count, 0))
       {
-        return null;
+        return new double[] { 0 };
       }
 
-      return new double[] { Points.Count };
+      var percentage = coordinates.Y / Composer.Engine.ValueSize;
+      var position = Points.Count * percentage;
+      var point = Points.ElementAtOrDefault((int)position);
+
+      return new double[] { point?.Z ?? 0 };
     }
 
     /// <summary>

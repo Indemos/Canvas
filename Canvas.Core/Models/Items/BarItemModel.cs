@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public class LineGroupModel : GroupModel, IGroupModel
+  public class BarItemModel : GroupModel, IGroupModel
   {
     /// <summary>
     /// Render the shape
@@ -14,20 +14,21 @@ namespace Canvas.Core.ModelSpace
     public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
       var currentModel = Y;
-      var previousModel = GetItem(index - 1, name, items)?.Y;
 
       if (currentModel is null)
       {
         return;
       }
 
+      var size = Composer.ItemSize / 2.0;
+
       var coordinates = new IItemModel[]
       {
-        Composer.GetPixels(Engine, index, (previousModel ?? currentModel).Value),
-        Composer.GetPixels(Engine, index + 1, currentModel.Value)
+        Composer.GetPixels(Engine, index - size, 0.0),
+        Composer.GetPixels(Engine, index + size, currentModel.Value)
       };
 
-      Engine.CreateLine(coordinates, this);
+      Engine.CreateBox(coordinates, this);
     }
   }
 }

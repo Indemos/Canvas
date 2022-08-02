@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public class AreaGroupModel : GroupModel, IGroupModel
+  public class AreaItemModel : GroupModel, IGroupModel
   {
     /// <summary>
     /// Render the shape

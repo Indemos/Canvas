@@ -99,18 +99,18 @@ namespace Canvas.Client.Pages
           X = _pointTime.Ticks,
           Groups = new Dictionary<string, IGroupModel>
           {
-            ["Bars"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Y = point } } },
-            ["Areas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaGroupModel { Y = point } } },
-            ["Deltas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarGroupModel { Y = pointDelta } } },
-            ["Lines"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineGroupModel { Y = point }, ["V2"] = new LineGroupModel { Y = pointMirror } } },
-            ["Candles"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = candle, ["V2"] = new ArrowGroupModel { Y = arrow, Direction = 1 } } }
+            ["Bars"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarItemModel { Y = point } } },
+            ["Areas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaItemModel { Y = point } } },
+            ["Deltas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarItemModel { Y = pointDelta } } },
+            ["Lines"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineItemModel { Y = point }, ["V2"] = new LineItemModel { Y = pointMirror } } },
+            ["Candles"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = candle, ["V2"] = new ArrowItemModel { Y = arrow, Direction = 1 } } }
           }
         });
       }
 
       var grp = _points.Last() as IGroupModel;
       var currentDelta = grp.Groups["Deltas"].Groups["V1"];
-      var currentCandle = grp.Groups["Candles"].Groups["V1"] as CandleGroupModel;
+      var currentCandle = grp.Groups["Candles"].Groups["V1"] as CandleItemModel;
 
       currentCandle.Low = candle.Low;
       currentCandle.High = candle.High;
@@ -134,12 +134,12 @@ namespace Canvas.Client.Pages
     /// <summary>
     /// Generate candle
     /// </summary>
-    protected CandleGroupModel CreatePoint()
+    protected CandleItemModel CreatePoint()
     {
       var open = (double)_generator.Next(1000, 5000);
       var close = (double)_generator.Next(1000, 5000);
       var shadow = (double)_generator.Next(500, 1000);
-      var candle = new CandleGroupModel
+      var candle = new CandleItemModel
       {
         Low = Math.Min(open, close) - shadow,
         High = Math.Max(open, close) + shadow,

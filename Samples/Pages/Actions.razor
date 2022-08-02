@@ -79,9 +79,9 @@
 
     switch (input)
     {
-      case "Bars": return range.Select(i => new BarGroupModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel);
-      case "Lines": return range.Select(i => new LineGroupModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel);
-      case "Areas": return range.Select(i => new AreaGroupModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel);
+      case "Bars": return range.Select(i => new BarItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel);
+      case "Lines": return range.Select(i => new LineItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel);
+      case "Areas": return range.Select(i => new AreaItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel);
     }
 
     return null;

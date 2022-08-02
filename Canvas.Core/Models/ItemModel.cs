@@ -57,18 +57,20 @@ namespace Canvas.Core.ModelSpace
     void CreateShape(int index, string name, IList<IItemModel> items);
 
     /// <summary>
-    /// Get series by position
+    /// Get series
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="items"></param>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    IDictionary<string, IList<double>> GetSeries(int index, IList<IItemModel> items);
+    IDictionary<string, IList<double>> GetSeries(IItemModel coordinates, IItemModel values);
 
     /// <summary>
-    /// Get values
+    /// Get series values
     /// </summary>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    IList<double> GetValues();
+    IList<double> GetSeriesValues(IItemModel coordinates, IItemModel values);
 
     /// <summary>
     /// Get specific group by position and name
@@ -147,31 +149,26 @@ namespace Canvas.Core.ModelSpace
     }
 
     /// <summary>
-    /// Get series by position
+    /// Get series
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="items"></param>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    public virtual IDictionary<string, IList<double>> GetSeries(int index, IList<IItemModel> items)
+    public virtual IDictionary<string, IList<double>> GetSeries(IItemModel coordinates, IItemModel values)
     {
-      var point = GetItem(index, null, items);
-      var groups = new Dictionary<string, IList<double>>();
-
-      if (point is null)
+      return new Dictionary<string, IList<double>>
       {
-        return groups;
-      }
-
-      groups[Composer.Name] = GetValues();
-
-      return groups;
+        [Composer.Name] = GetSeriesValues(coordinates, values)
+      };
     }
 
     /// <summary>
-    /// Get values
+    /// Get series values
     /// </summary>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    public virtual IList<double> GetValues()
+    public virtual IList<double> GetSeriesValues(IItemModel coordinates, IItemModel values)
     {
       return new double[] { Y ?? 0 };
     }

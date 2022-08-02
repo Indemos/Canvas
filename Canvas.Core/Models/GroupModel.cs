@@ -27,19 +27,19 @@ namespace Canvas.Core.ModelSpace
     }
 
     /// <summary>
-    /// Get series by position
+    /// Get series
     /// </summary>
-    /// <param name="position"></param>
-    /// <param name="items"></param>
+    /// <param name="coordinates"></param>
+    /// <param name="values"></param>
     /// <returns></returns>
-    public override IDictionary<string, IList<double>> GetSeries(int position, IList<IItemModel> items)
+    public override IDictionary<string, IList<double>> GetSeries(IItemModel coordinates, IItemModel values)
     {
-      var group = items.ElementAtOrDefault(position) as IGroupModel;
+      var group = this;
       var groups = new Dictionary<string, IList<double>>();
 
       if (group?.Groups?.Count <= 0)
       {
-        return base.GetSeries(position, items);
+        return base.GetSeries(coordinates, values);
       }
 
       group.Groups.TryGetValue(Composer.Name, out IGroupModel series);
@@ -49,7 +49,7 @@ namespace Canvas.Core.ModelSpace
         return null;
       }
 
-      series.Groups.ForEach(o => groups[o.Key] = o.Value?.GetValues());
+      series.Groups.ForEach(o => groups[o.Key] = o.Value?.GetSeriesValues(coordinates, values));
 
       return groups;
     }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.ModelSpace
 {
-  public class ArrowGroupModel : GroupModel, IGroupModel
+  public class ArrowItemModel : GroupModel, IGroupModel
   {
     /// <summary>
     /// Direction
