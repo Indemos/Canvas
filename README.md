@@ -93,10 +93,10 @@ The simplest format used by the library is a list of models with a single `Point
     {
       var generator = new Random();
 
-      var points = Enumerable.Range(1, 100).Select(i => new BarGroupModel
+      var points = Enumerable.Range(1, 100).Select(i => new BarItemModel
       {
-        Index = i,
-        Value = new Model { ["Point"] = generator.Next(-5000, 5000) }
+        X = i,
+        Y = generator.Next(-5000, 5000)
 
       } as IPointModel).ToList();
 
