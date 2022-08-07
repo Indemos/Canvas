@@ -6,6 +6,11 @@ namespace Canvas.Core.ModelSpace
   public class HeatmapItemModel : GroupModel, IGroupModel
   {
     /// <summary>
+    /// Visible values
+    /// </summary>
+    protected IList<IItemModel> _values = new List<IItemModel>();
+
+    /// <summary>
     /// Get Min and Max for the current point
     /// </summary>
     /// <param name="index"></param>
@@ -35,11 +40,20 @@ namespace Canvas.Core.ModelSpace
         return new double[] { 0 };
       }
 
-      var percentage = coordinates.Y / Composer.Engine.ValueSize;
-      var position = Points.Count * percentage;
-      var point = Points.ElementAtOrDefault((int)position);
+      var item = values;
+      var min = Composer.MinValue;
+      var points = Composer.Items.ElementAt((int)values.X) as HeatmapItemModel;
 
-      return new double[] { point?.Z ?? 0 };
+      foreach (var point in points.Points)
+      {
+        if (values.Y - point.Y <= values.Y - min && point.Y <= values.Y)
+        {
+          min = point.Y.Value;
+          item = point;
+        }
+      }
+
+      return new double[] { item?.Z ?? 0 };
     }
 
     /// <summary>
@@ -51,7 +65,6 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IItemModel> items)
     {
-      var currentModel = Y;
       var pointsCount = Points?.Count ?? 0;
 
       if (Equals(pointsCount, 0))
@@ -59,23 +72,24 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var coordinate = 0.0;
-      var coordinateStep = Engine.ValueSize / pointsCount;
+      var step = (Composer.MaxValue - Composer.MinValue + 1) / pointsCount;
+
+      _values.Clear();
 
       foreach (var point in Points)
       {
-        var open = Composer.GetPixels(Engine, index, 0.0);
-        var close = Composer.GetPixels(Engine, index + 1, 0.0);
+        var open = Composer.GetPixels(Engine, index, point.Y.Value);
+        var close = Composer.GetPixels(Engine, index + 1, point.Y.Value + step);
+        var points = new IItemModel[] { open, close };
 
-        open.Y = coordinate;
-        close.Y = coordinate + coordinateStep;
-        coordinate += coordinateStep;
-
-        var coordinates = new IItemModel[] { open, close };
+        if (open.X >= 0 && open.Y >= 0 && close.X <= Composer.Engine.IndexSize && close.Y <= Composer.Engine.ValueSize)
+        {
+          _values.Add(point);
+        }
 
         Color = Composer?.ColorService?.GetColor(point.Z.Value) ?? Color;
 
-        Engine.CreateBox(coordinates, this);
+        Engine.CreateBox(points, this);
       }
     }
   }

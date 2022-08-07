@@ -36,7 +36,7 @@
         Points = Enumerable
           .Range(min, max)
           .Select(o => new ItemModel { X = i, Y = o, Z = o } as IItemModel)
-          .OrderBy(o => generator.Next())
+          //.OrderBy(o => generator.Next())
           .ToList()
 
       } as IItemModel).ToList();
@@ -45,7 +45,7 @@
       {
         Name = "Demo",
         Items = points,
-        ColorService = new ColorService { Max = max },
+        ColorService = new ColorService { Min = min, Max = max },
         Engine = new CanvasEngine(dimensions.X, dimensions.Y)
       });
     }
