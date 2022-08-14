@@ -41,7 +41,7 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    public virtual IEnumerable<dynamic> GetIndexEnumerator()
+    public virtual IEnumerable<ViewMessage> GetIndexEnumerator()
     {
       if (Composer?.Engine is not null)
       {
@@ -51,10 +51,10 @@ namespace Canvas.Views.Web
 
         for (var i = 1; i < count; i++)
         {
-          yield return new
+          yield return new ViewMessage
           {
             X = distance * i,
-            Y = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
+            ValueX = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
           };
         }
       }
@@ -63,7 +63,7 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Enumerate values
     /// </summary>
-    public virtual IEnumerable<dynamic> GetValueEnumerator()
+    public virtual IEnumerable<ViewMessage> GetValueEnumerator()
     {
       if (Composer?.Engine is not null)
       {
@@ -73,10 +73,10 @@ namespace Canvas.Views.Web
 
         for (var i = 1; i < count; i++)
         {
-          yield return new 
+          yield return new ViewMessage
           {
-            X = distance * i,
-            Y = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
+            Y = distance * i,
+            ValueY = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
           };
         }
       }

@@ -6,11 +6,6 @@ namespace Canvas.Core.ModelSpace
   public class HeatmapItemModel : GroupModel, IGroupModel
   {
     /// <summary>
-    /// Visible values
-    /// </summary>
-    protected IList<IItemModel> _values = new List<IItemModel>();
-
-    /// <summary>
     /// Get Min and Max for the current point
     /// </summary>
     /// <param name="index"></param>
@@ -74,18 +69,11 @@ namespace Canvas.Core.ModelSpace
 
       var step = (Composer.MaxValue - Composer.MinValue + 1) / pointsCount;
 
-      _values.Clear();
-
       foreach (var point in Points)
       {
         var open = Composer.GetPixels(Engine, index, point.Y.Value);
         var close = Composer.GetPixels(Engine, index + 1, point.Y.Value + step);
         var points = new IItemModel[] { open, close };
-
-        if (open.X >= 0 && open.Y >= 0 && close.X <= Composer.Engine.IndexSize && close.Y <= Composer.Engine.ValueSize)
-        {
-          _values.Add(point);
-        }
 
         Color = Composer?.ColorService?.GetColor(point.Z.Value) ?? Color;
 
