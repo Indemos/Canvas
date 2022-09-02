@@ -1,4 +1,5 @@
 using Canvas.Core;
+using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
 using Canvas.Views.Web;
@@ -18,7 +19,7 @@ namespace Canvas.Client.Pages
     protected double _pointValue = 0;
     protected DateTime _pointTime = DateTime.Now;
     protected List<IItemModel> _points = new();
-    protected Dictionary<string, CanvasWebView> _views = new()
+    protected Dictionary<string, ScreenView> _views = new()
     {
       ["Candles"] = null,
       ["Bars"] = null,
@@ -38,29 +39,28 @@ namespace Canvas.Client.Pages
         foreach (var view in _views)
         {
           var source = new TaskCompletionSource();
+          var composer = new GroupComposer
+          {
+            Name = view.Key,
+            Items = _points
+          };
 
           sources.Add(source);
 
-          await view.Value.Create(message =>
+          await view.Value.Create<CanvasEngine>(message =>
           {
-            view.Value.Composer = new GroupComposer
-            {
-              Name = view.Key,
-              Items = _points,
-              Engine = new CanvasEngine(message.X, message.Y)
-            };
-
             source.TrySetResult();
+            return composer;
           });
 
-          view.Value.OnUpdate = message => _views.ForEach(o =>
-          {
-            if (Equals(o.Value.Composer.Name, message.View.Composer.Name) is false)
-            {
-              o.Value.Composer.IndexDomain = message.View.Composer.IndexDomain;
-              o.Value.Update();
-            }
-          });
+          //view.Value.OnMessage = message => _views.ForEach(o =>
+          //{
+          //  if (Equals(o.Value.Composer.Name, message.Name) is false)
+          //  {
+          //    o.Value.Composer.IndexDomain = message.IndexDomain;
+          //    o.Value.Update();
+          //  }
+          //});
         }
 
         await Task.WhenAll(sources.Select(o => o.Task));
@@ -122,12 +122,10 @@ namespace Canvas.Client.Pages
 
       _views.ForEach(panel =>
       {
-        var composer = panel.Value.Composer;
-        composer.Items = _points;
-        composer.IndexDomain ??= new int[2];
-        composer.IndexDomain[0] = composer.Items.Count - 100;
-        composer.IndexDomain[1] = composer.Items.Count;
-        panel.Value.Update();
+        //var composer = panel.Value.Composer;
+        //composer.Items = _points;
+        //composer.UpdateIndexDomain(new[] { composer.Items.Count - 100, composer.Items.Count });
+        //panel.Value.Update();
       });
     }
 

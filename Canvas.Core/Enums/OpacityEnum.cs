@@ -1,6 +1,6 @@
 namespace Canvas.Core.EnumSpace
 {
-  public enum ColorationEnum : byte
+  public enum OpacityEnum : byte
   {
     None = 0,
     Opacity = 1

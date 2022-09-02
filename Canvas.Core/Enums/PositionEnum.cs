@@ -1,12 +1,13 @@
 namespace Canvas.Core.EnumSpace
 {
-  public enum LocationEnum : byte
+  public enum PositionEnum : byte
   {
     None = 0,
     T = 1,
     L = 2,
     R = 3,
     B = 4,
-    Center = 5
+    Screen = 5,
+    Center = 6
   }
 }

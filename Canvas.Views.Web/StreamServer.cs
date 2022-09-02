@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Channels;
@@ -12,25 +13,18 @@ namespace Canvas.Views.Web
 {
   public class StreamServer : IDisposable
   {
-    public virtual string Route { get; set; }
     public virtual string Source { get; protected set; }
-    public virtual Channel<byte[]> Stream { get; protected set; }
     public virtual WebApplication Application { get; protected set; }
+    public virtual IDictionary<string, Channel<byte[]>> Streams { get; protected set; }
 
     /// <summary>
-    /// Constructor
+    /// Create
     /// </summary>
-    public StreamServer()
+    public async Task<StreamServer> Create(IList<string> routes)
     {
-      Route = "/source";
-    }
+      Streams = new Dictionary<string, Channel<byte[]>>();
 
-    /// <summary>
-    /// Setup
-    /// </summary>
-    public async Task<StreamServer> Create()
-    {
-      Stream = Channel.CreateUnbounded<byte[]>();
+      routes.ForEach(route => Streams[route] = Channel.CreateUnbounded<byte[]>());
 
       var server = WebApplication.CreateBuilder();
 
@@ -39,7 +33,7 @@ namespace Canvas.Views.Web
           serverOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3));
 
       Application = server.Build();
-      Application.Use((context, next) => OnRoute(context, next));
+      Application.Use((context, next) => OnRoute(routes, context, next));
 
       await Application.StartAsync();
 
@@ -49,9 +43,8 @@ namespace Canvas.Views.Web
         var sourceProps = new UriBuilder(source);
 
         sourceProps.Host = $"{ IPAddress.Loopback }";
-        sourceProps.Path = Route;
 
-        Source = $"{ sourceProps }";
+        Source = $"{ sourceProps }".Trim('/');
       }
 
       return this;
@@ -60,24 +53,28 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Process route
     /// </summary>
+    /// <param name="routes"></param>
     /// <param name="context"></param>
     /// <param name="next"></param>
     /// <returns></returns>
-    protected virtual Task OnRoute(HttpContext context, Func<Task> next)
+    protected virtual Task OnRoute(IList<string> routes, HttpContext context, Func<Task> next)
     {
-      if (context.Request.Path.Value.Contains(Route))
+      foreach (var route in routes)
       {
-        return Task.Run(async () =>
+        if (context.Request.Path.Value.Equals(route))
         {
-          var response = new StreamResponse();
-
-          response.SetHeader(context);
-
-          await foreach (var content in Stream.Reader.ReadAllAsync())
+          return Task.Run(async () =>
           {
-            await response.SetDocument(context, content);
-          }
-        });
+            var response = new StreamResponse();
+
+            response.SendHeader(context);
+
+            await foreach (var content in Streams[route].Reader.ReadAllAsync())
+            {
+              await response.SendDocument(context, content);
+            }
+          });
+        }
       }
 
       return next();
@@ -88,18 +85,22 @@ namespace Canvas.Views.Web
     /// </summary>
     public virtual void Dispose()
     {
-      if (Stream.Writer.TryComplete())
+      Streams.ForEach(stream =>
       {
-        Stream.Reader.Completion.ContinueWith(async o =>
+        if (stream.Value.Writer.TryComplete())
         {
-          await Application.StopAsync();
+          stream.Value.Reader.Completion.ContinueWith(async o =>
+          {
+            await Application.StopAsync();
 
-          Application = null;
-          Stream = null;
-          Source = null;
+            Application = null;
+            Source = null;
 
-        }).Unwrap();
-      }
+          }).Unwrap();
+        }
+      });
+
+      Streams.Clear();
     }
   }
 }

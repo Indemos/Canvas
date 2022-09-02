@@ -1,3 +1,4 @@
+using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using SkiaSharp;
 using System;
@@ -31,7 +32,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Reference to composer
     /// </summary>
-    Composer Composer { get; set; }
+    IComposer Composer { get; set; }
 
     /// <summary>
     /// Reference to panel
@@ -107,7 +108,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Reference to composer
     /// </summary>
-    public virtual Composer Composer { get; set; }
+    public virtual IComposer Composer { get; set; }
 
     /// <summary>
     /// Reference to panel

@@ -35,7 +35,7 @@ namespace Canvas.Core.ModelSpace
 
         points[0].X = pointMax.X = pixelLevel.X;
         points[0].Y = 0;
-        points[1].Y = Engine.ValueSize;
+        points[1].Y = Engine.Y;
 
         Engine.CreateLine(points, this);
       }
@@ -46,7 +46,7 @@ namespace Canvas.Core.ModelSpace
 
         points[0].Y = pointMax.Y = pixelLevel.Y;
         points[0].X = 0;
-        points[1].X = Engine.IndexSize;
+        points[1].X = Engine.X;
 
         Engine.CreateLine(points, this);
       }

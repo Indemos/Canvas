@@ -52,11 +52,11 @@ namespace Canvas.Views.Web
     /// <returns></returns>
     public virtual async Task ExecuteResultAsync(ActionContext context)
     {
-      SetHeader(context.HttpContext);
+      SendHeader(context.HttpContext);
 
       await foreach (var content in Stream.Reader.ReadAllAsync())
       {
-        await SetDocument(context.HttpContext, content);
+        await SendDocument(context.HttpContext, content);
       }
     }
 
@@ -64,7 +64,7 @@ namespace Canvas.Views.Web
     /// Set HTTP stream content type
     /// </summary>
     /// <param name="context"></param>
-    public virtual void SetHeader(HttpContext context)
+    public virtual void SendHeader(HttpContext context)
     {
       var response = context.Response;
 
@@ -83,7 +83,7 @@ namespace Canvas.Views.Web
     /// <param name="context"></param>
     /// <param name="content"></param>
     /// <returns></returns>
-    public virtual async Task SetDocument(HttpContext context, byte[] content)
+    public virtual async Task SendDocument(HttpContext context, byte[] content)
     {
       var response = context.Response;
       var bounds = Encode($"--{ Bounds }{ Line }Content-Type: image/webp{ Line }Content-Length: { content.Length }{ Line }{ Line }");

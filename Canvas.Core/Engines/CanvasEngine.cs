@@ -1,7 +1,6 @@
 using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using SkiaSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,21 +19,36 @@ namespace Canvas.Core.EngineSpace
     public virtual SKCanvas Canvas { get; protected set; }
 
     /// <summary>
-    /// Constructor
+    /// Get instance
     /// </summary>
-    /// <param name="indexSize"></param>
-    /// <param name="valueSize"></param>
     /// <returns></returns>
-    public CanvasEngine(double indexSize, double valueSize)
+    public override IEngine GetInstance()
     {
-      IndexSize = indexSize;
-      ValueSize = valueSize;
+      if (Map is null)
+      {
+        return null;
+      }
 
-      Map = new SKBitmap(
-        (int)indexSize,
-        (int)valueSize);
+      return this;
+    }
 
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public override IEngine Create(double x, double y)
+    {
+      Dispose();
+
+      X = x;
+      Y = y;
+
+      Map = new SKBitmap((int)x, (int)y);
       Canvas = new SKCanvas(Map);
+
+      return this;
     }
 
     /// <summary>
@@ -68,8 +82,7 @@ namespace Canvas.Core.EngineSpace
         (float)coordinates[1].Y,
         pen);
 
-      pen?.PathEffect?.Dispose();
-      pen?.Dispose();
+      pen.Dispose();
     }
 
     /// <summary>
@@ -178,8 +191,8 @@ namespace Canvas.Core.EngineSpace
 
       switch (shape.Location)
       {
-        case LocationEnum.L: pen.TextAlign = SKTextAlign.Left; break;
-        case LocationEnum.R: pen.TextAlign = SKTextAlign.Right; break;
+        case PositionEnum.L: pen.TextAlign = SKTextAlign.Left; break;
+        case PositionEnum.R: pen.TextAlign = SKTextAlign.Right; break;
       }
 
       var space = (pen.FontSpacing - pen.TextSize) / 2;
@@ -259,6 +272,20 @@ namespace Canvas.Core.EngineSpace
     public override void Clear()
     {
       Canvas.Clear(SKColors.Transparent);
+    }
+
+    /// <summary>
+    /// Encode as image
+    /// </summary>
+    /// <param name="imageType"></param>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    public override byte[] Encode(SKEncodedImageFormat imageType, int quality)
+    {
+      using (var image = Map.Encode(imageType, quality))
+      {
+        return image.ToArray();
+      }
     }
 
     /// <summary>

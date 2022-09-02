@@ -1,5 +1,7 @@
 using Canvas.Core;
+using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
+using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -10,114 +12,53 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace Canvas.Views.Web
 {
-  public partial class CanvasWebView : IDisposable
+  public partial class ScreenView : IMessenger, IDisposable
   {
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
-    /// <summary>
-    /// Parameters
-    /// </summary>
-    public virtual Composer Composer { get; set; }
-    public virtual Action<ViewMessage> OnUpdate { get; set; } = o => { };
-
-    /// <summary>
-    /// Accessors
-    /// </summary>
+    protected virtual string Route { get; set; }
     protected virtual Task Updater { get; set; }
-    protected virtual Timer Preparer { get; set; }
+    protected virtual IEngine Engine { get; set; }
+    protected virtual IComposer Composer { get; set; }
     protected virtual ViewMessage Move { get; set; }
     protected virtual ViewMessage Cursor { get; set; }
-    protected virtual StreamServer Server { get; set; }
-    protected virtual ScriptMessage Bounds { get; set; }
     protected virtual ScriptService Service { get; set; }
-    protected virtual ElementReference ScaleContainer { get; set; }
     protected virtual ElementReference CanvasContainer { get; set; }
     protected virtual IDictionary<string, IList<double>> Series { get; set; }
-
-    /// <summary>
-    /// Enumerate indices
-    /// </summary>
-    public virtual IEnumerable<ViewMessage> GetIndexEnumerator()
-    {
-      if (Composer?.Engine is not null)
-      {
-        var count = (double)Composer.IndexCount + 1.0;
-        var distance = (double)Composer.Engine.IndexSize / count;
-        var stepValue = (double)(Composer.MaxIndex - Composer.MinIndex) / count;
-
-        for (var i = 1; i < count; i++)
-        {
-          yield return new ViewMessage
-          {
-            X = distance * i,
-            ValueX = Composer.ShowIndex(Composer.MinIndex + i * stepValue)
-          };
-        }
-      }
-    }
-
-    /// <summary>
-    /// Enumerate values
-    /// </summary>
-    public virtual IEnumerable<ViewMessage> GetValueEnumerator()
-    {
-      if (Composer?.Engine is not null)
-      {
-        var count = (double)Composer.ValueCount + 1.0;
-        var distance = (double)Composer.Engine.ValueSize / count;
-        var stepValue = (double)(Composer.MaxValue - Composer.MinValue) / count;
-
-        for (var i = 1; i < count; i++)
-        {
-          yield return new ViewMessage
-          {
-            Y = distance * i,
-            ValueY = Composer.ShowValue(Composer.MinValue + (count - i) * stepValue)
-          };
-        }
-      }
-    }
+    protected virtual string Name => $"{ GetHashCode() }";
 
     /// <summary>
     /// Render
     /// </summary>
-    /// <param name="composer"></param>
+    /// <param name="message"></param>
     /// <returns></returns>
-    public virtual Task Update(Composer composer = null)
+    public virtual void Update(DomainMessage message = null)
     {
-      if (composer is null && Updater?.IsCompleted is false)
+      if (message is null && Updater?.IsCompleted is false)
       {
-        return Updater;
+        return;
       }
 
-      return Updater = InvokeAsync(async () =>
+      Updater = InvokeAsync(() =>
       {
-        var engine = Composer?.Engine as CanvasEngine;
-
-        if (engine?.Map is null)
+        if (Engine?.GetInstance() is null)
         {
           return;
         }
 
-        Composer.Engine.Clear();
-        Composer.Update();
+        Engine.Clear();
 
-        using (var image = engine.Map.Encode(SKEncodedImageFormat.Webp, 100))
+        if (message is not null)
         {
-          var data = image.ToArray();
-
-          await Server.Stream.Writer.WriteAsync(data);
-          await Server.Stream.Writer.WriteAsync(data);
+          Composer.Update(message);
         }
 
-        if (composer is not null)
-        {
-          OnUpdate(await CreateMessage());
-        }
+        Composer.UpdateItems(Engine);
+
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
         StateHasChanged();
       });
@@ -128,35 +69,38 @@ namespace Canvas.Views.Web
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    public virtual async Task Create(Action<ViewMessage> action)
+    public virtual async Task Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new()
     {
-      Dispose(0);
-
-      Server = await (new StreamServer()).Create();
-      Service = await (new ScriptService(RuntimeService)).CreateModule();
-      Service.OnSize = async o =>
+      async Task setup()
       {
-        action(await CreateMessage());
-        await Update();
-      };
+        Dispose(0);
 
-      action(await CreateMessage());
-      await Update();
+        var engine = new T();
+        var dimensions = await CreateViewMessage();
+
+        Engine = engine.Create(dimensions.X, dimensions.Y);
+        Composer = action(Engine);
+        Composer.Views[Name] = this;
+      }
+
+      Service = await (new ScriptService(RuntimeService)).CreateModule();
+      Service.OnSize = async o => await setup();
+
+      await setup();
     }
 
     /// <summary>
     /// Get information about event
     /// </summary>
     /// <returns></returns>
-    protected async Task<ViewMessage> CreateMessage()
+    protected async Task<ViewMessage> CreateViewMessage()
     {
-      Bounds = await Service.GetElementBounds(CanvasContainer);
+      var bounds = await Service.GetElementBounds(CanvasContainer);
 
       return new ViewMessage
       {
-        View = this,
-        X = Bounds.X,
-        Y = Bounds.Y
+        X = bounds.X,
+        Y = bounds.Y
       };
     }
 
@@ -165,8 +109,12 @@ namespace Canvas.Views.Web
     /// </summary>
     protected void Dispose(int o)
     {
-      Composer?.Dispose();
-      Server?.Dispose();
+      Engine?.Dispose();
+
+      if (Composer is not null && Composer.Views.ContainsKey(Name))
+      {
+        Composer.Views.Remove(Name);
+      }
     }
 
     /// <summary>
@@ -184,11 +132,12 @@ namespace Canvas.Views.Web
     /// <returns></returns>
     protected ViewMessage GetDelta(MouseEventArgs e)
     {
-      if (Composer?.Engine is null)
+      if (Engine?.GetInstance() is null)
       {
         return null;
       }
-      var values = Composer.GetValues(Composer.Engine, new ItemModel
+
+      var values = Composer.GetValues(Engine, new ItemModel
       {
         X = e.OffsetX,
         Y = e.OffsetY
@@ -223,20 +172,24 @@ namespace Canvas.Views.Web
     /// <param name="e"></param>
     protected void OnWheel(WheelEventArgs e)
     {
-      if (Composer?.Engine is null)
+      if (Engine?.GetInstance() is null)
       {
         return;
       }
 
       var isZoom = e.ShiftKey;
+      var message = new DomainMessage
+      {
+        Name = Name
+      };
 
       switch (true)
       {
-        case true when e.DeltaY > 0: _ = isZoom ? Composer.ZoomIndexScale(-1) : Composer.PanIndexScale(1); break;
-        case true when e.DeltaY < 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(-1); break;
+        case true when e.DeltaY > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
+        case true when e.DeltaY < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
       }
 
-      Update(Composer);
+      Update(message);
     }
 
     /// <summary>
@@ -245,7 +198,7 @@ namespace Canvas.Views.Web
     /// <param name="e"></param>
     protected void OnMouseMove(MouseEventArgs e)
     {
-      if (Composer?.Engine is null)
+      if (Engine?.GetInstance() is null)
       {
         return;
       }
@@ -259,14 +212,18 @@ namespace Canvas.Views.Web
         var isZoom = e.ShiftKey;
         var deltaX = Cursor.X - position.X;
         var deltaY = Cursor.Y - position.Y;
+        var message = new DomainMessage
+        {
+          Name = Name
+        };
 
         switch (true)
         {
-          case true when deltaX > 0: _ = isZoom ? Composer.ZoomIndexScale(-1) : Composer.PanIndexScale(1); break;
-          case true when deltaX < 0: _ = isZoom ? Composer.ZoomIndexScale(1) : Composer.PanIndexScale(-1); break;
+          case true when deltaX > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
+          case true when deltaX < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
         }
 
-        Update(Composer);
+        Update(message);
       }
 
       Cursor = position;
@@ -279,7 +236,7 @@ namespace Canvas.Views.Web
     /// <param name="direction"></param>
     protected void OnScaleMove(MouseEventArgs e, int direction = 0)
     {
-      if (Composer?.Engine is null)
+      if (Engine?.GetInstance() is null)
       {
         return;
       }
@@ -293,20 +250,24 @@ namespace Canvas.Views.Web
         var isZoom = e.ShiftKey;
         var deltaX = Move.X - position.X;
         var deltaY = Move.Y - position.Y;
+        var message = new DomainMessage
+        {
+          Name = Name
+        };
 
         switch (direction > 0)
         {
-          case true when deltaX > 0: _ = Composer.ZoomIndexScale(-1); break;
-          case true when deltaX < 0: _ = Composer.ZoomIndexScale(1); break;
+          case true when deltaX > 0: message.IndexDomain = Composer.ZoomIndexScale(Engine, -1); break;
+          case true when deltaX < 0: message.IndexDomain = Composer.ZoomIndexScale(Engine, 1); break;
         }
 
         switch (direction < 0)
         {
-          case true when deltaY > 0: Composer.ZoomValueScale(-1); break;
-          case true when deltaY < 0: Composer.ZoomValueScale(1); break;
+          case true when deltaY > 0: message.ValueDomain = Composer.ZoomValueScale(Engine, -1); break;
+          case true when deltaY < 0: message.ValueDomain = Composer.ZoomValueScale(Engine, 1); break;
         }
 
-        Update(Composer);
+        Update(message);
       }
 
       Move = position;
@@ -318,15 +279,20 @@ namespace Canvas.Views.Web
     /// <param name="e"></param>
     protected void OnMouseDown(MouseEventArgs e)
     {
-      if (Composer?.Engine is null)
+      if (Engine?.GetInstance() is null)
       {
         return;
       }
 
       if (e.CtrlKey)
       {
-        Composer.ValueDomain = null;
-        Update(Composer);
+        var message = new DomainMessage
+        {
+          Name = Name,
+          ValueUpdate = true
+        };
+
+        Update(message);
       }
     }
 
@@ -336,7 +302,7 @@ namespace Canvas.Views.Web
     /// <param name="e"></param>
     protected void OnMouseLeave(MouseEventArgs e)
     {
-      if (Composer?.Engine is null)
+      if (Engine?.GetInstance() is null)
       {
         return;
       }

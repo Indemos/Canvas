@@ -19,7 +19,7 @@
   <div class="grid-content" @ref="ViewContainer">
     @if (Selection is not null)
     {
-      <CanvasWebView @ref="ViewControl"></CanvasWebView>
+      <ScreenView @ref="ViewControl"></ScreenView>
     }
   </div>
 </div>
@@ -48,7 +48,7 @@
 @code
 {
   public string Selection { get; set; }
-  public CanvasWebView ViewControl { get; set; }
+  public ScreenView ViewControl { get; set; }
   public ElementReference ViewContainer { get; set; }
 
   protected async Task OnChange(ChangeEventArgs e)
@@ -59,12 +59,11 @@
 
     StateHasChanged();
 
-    await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
-    {
-      Name = Selection,
-      Items = GetPoints(Selection).ToList(),
-      Engine = new CanvasEngine(dimensions.X, dimensions.Y)
-    });
+    //await ViewControl.Create<CanvasEngine>(dimensions => ViewControl.Composer = new Composer
+    //{
+    //  Name = Selection,
+    //  Items = GetPoints(Selection).ToList()
+    //});
   }
 
   protected async Task<ScriptMessage> GetDimensions(ElementReference container)

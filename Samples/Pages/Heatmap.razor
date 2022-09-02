@@ -1,4 +1,3 @@
-@page "/"
 @page "/heatmap"
 
 @using Canvas.Core
@@ -8,7 +7,7 @@
 @using ScriptContainer
 
 <div class="demo">
-  <CanvasWebView @ref="ViewControl"></CanvasWebView>
+  <ScreenView @ref="ViewControl"></ScreenView>
 </div>
 
 <style type="text/css">
@@ -21,7 +20,7 @@
 
 @code
 {
-  public CanvasWebView ViewControl { get; set; }
+  public ScreenView ViewControl { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
@@ -33,7 +32,7 @@
 
       var points = Enumerable.Range(min, max).Select(i => new HeatmapItemModel
       {
-        Points = Enumerable
+        Items = Enumerable
           .Range(min, max)
           .Select(o => new ItemModel { X = i, Y = o, Z = o } as IItemModel)
           //.OrderBy(o => generator.Next())
@@ -41,13 +40,12 @@
 
       } as IItemModel).ToList();
 
-      await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
-      {
-        Name = "Demo",
-        Items = points,
-        ColorService = new ColorService { Min = min, Max = max },
-        Engine = new CanvasEngine(dimensions.X, dimensions.Y)
-      });
+      //await ViewControl.Create<CanvasEngine>(dimensions => ViewControl.Composer = new Composer
+      //{
+      //  Name = "Demo",
+      //  Items = points,
+      //  ColorService = new ColorService { Min = min, Max = max }
+      //});
     }
 
     await base.OnAfterRenderAsync(setup);

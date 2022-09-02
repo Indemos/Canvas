@@ -1,4 +1,4 @@
-namespace Canvas.Views.Web
+namespace Canvas.Core.MessageSpace
 {
   public class ViewMessage
   {
@@ -6,6 +6,5 @@ namespace Canvas.Views.Web
     public virtual double Y { get; set; }
     public virtual string ValueX { get; set; }
     public virtual string ValueY { get; set; }
-    public virtual CanvasWebView View { get; set; }
   }
 }

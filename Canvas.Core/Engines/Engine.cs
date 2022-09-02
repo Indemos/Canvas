@@ -1,4 +1,5 @@
 using Canvas.Core.ModelSpace;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 
@@ -7,19 +8,28 @@ namespace Canvas.Core.EngineSpace
   public interface IEngine : IDisposable
   {
     /// <summary>
-    /// Name
-    /// </summary>
-    string Name { get; set; }
-
-    /// <summary>
     /// Width
     /// </summary>
-    double IndexSize { get; set; }
+    double X { get; set; }
 
     /// <summary>
     /// Height
     /// </summary>
-    double ValueSize { get; set; }
+    double Y { get; set; }
+
+    /// <summary>
+    /// Get instance
+    /// </summary>
+    /// <returns></returns>
+    IEngine GetInstance();
+
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="indexSize"></param>
+    /// <param name="valueSize"></param>
+    /// <returns></returns>
+    IEngine Create(double indexSize, double valueSize);
 
     /// <summary>
     /// Create circle
@@ -72,6 +82,14 @@ namespace Canvas.Core.EngineSpace
     IItemModel GetContentMeasure(string content, double size);
 
     /// <summary>
+    /// Encode as image
+    /// </summary>
+    /// <param name="imageType"></param>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    byte[] Encode(SKEncodedImageFormat imageType, int quality);
+
+    /// <summary>
     /// Clear canvas
     /// </summary>
     void Clear();
@@ -80,54 +98,55 @@ namespace Canvas.Core.EngineSpace
   public abstract class Engine : IEngine
   {
     /// <summary>
-    /// Name
-    /// </summary>
-    public virtual string Name { get; set; }
-
-    /// <summary>
     /// Width
     /// </summary>
-    public virtual double IndexSize { get; set; }
+    public virtual double X { get; set; }
 
     /// <summary>
     /// Height
     /// </summary>
-    public virtual double ValueSize { get; set; }
+    public virtual double Y { get; set; }
+
+    /// <summary>
+    /// Get instance
+    /// </summary>
+    /// <returns></returns>
+    public abstract IEngine GetInstance();
+
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public abstract IEngine Create(double x, double y);
 
     /// <summary>
     /// Create circle
     /// </summary>
     /// <param name="coordinate"></param>
-    public virtual void CreateCircle(IItemModel coordinate, IComponentModel shape)
-    {
-    }
+    public abstract void CreateCircle(IItemModel coordinate, IComponentModel shape);
 
     /// <summary>
     /// Create box
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public virtual void CreateBox(IList<IItemModel> coordinates, IComponentModel shape)
-    {
-    }
+    public abstract void CreateBox(IList<IItemModel> coordinates, IComponentModel shape);
 
     /// <summary>
     /// Create line
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public virtual void CreateLine(IList<IItemModel> coordinates, IComponentModel shape)
-    { 
-    }
+    public abstract void CreateLine(IList<IItemModel> coordinates, IComponentModel shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public virtual void CreateShape(IList<IItemModel> coordinates, IComponentModel shape)
-    {
-    }
+    public abstract void CreateShape(IList<IItemModel> coordinates, IComponentModel shape);
 
     /// <summary>
     /// Create label
@@ -135,9 +154,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public virtual void CreateLabel(IItemModel coordinate, IComponentModel shape, string content)
-    {
-    }
+    public abstract void CreateLabel(IItemModel coordinate, IComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -145,29 +162,31 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public virtual void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content)
-    {
-    }
+    public abstract void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    public virtual IItemModel GetContentMeasure(string content, double size) => null;
+    public abstract IItemModel GetContentMeasure(string content, double size);
+
+    /// <summary>
+    /// Encode as image
+    /// </summary>
+    /// <param name="imageType"></param>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    public abstract byte[] Encode(SKEncodedImageFormat imageType, int quality);
 
     /// <summary>
     /// Clear canvas
     /// </summary>
-    public virtual void Clear()
-    {
-    }
+    public abstract void Clear();
 
     /// <summary>
     /// Dispose
     /// </summary>
-    public virtual void Dispose()
-    {
-    }
+    public abstract void Dispose();
   }
 }

@@ -1,0 +1,8 @@
+<div class="canvas-view"
+  @onwheel="OnWheel"
+  @onmousewheel="OnWheel"
+  @onmousemove="OnMouseMove"
+  @onmouseout="OnMouseLeave"
+  @onmousedown="OnMouseDown">
+  <img @ref="CanvasContainer" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
+</div>

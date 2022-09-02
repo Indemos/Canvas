@@ -26,7 +26,7 @@ namespace Canvas.Client.Controllers
       aTimer.Elapsed += async (sender, e) =>
       {
         var pos = _generator.Next(50, 150);
-        var canvas = new CanvasEngine(600, 600);
+        var canvas = new CanvasEngine().Create(600, 600);
 
         canvas.CreateBox(new List<IItemModel>
         {
@@ -39,7 +39,7 @@ namespace Canvas.Client.Controllers
           new ItemModel { X = pos, Y = pos },
           new ComponentModel { Size = 20, Color = SKColors.Black });
 
-        var data = canvas.Map.Encode(SKEncodedImageFormat.Webp, 100).ToArray();
+        var data = (canvas as CanvasEngine).Map.Encode(SKEncodedImageFormat.Webp, 100).ToArray();
 
         await response.Stream.Writer.WriteAsync(data);
       };

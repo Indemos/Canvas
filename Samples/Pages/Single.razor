@@ -1,45 +1,65 @@
+@page "/"
 @page "/single"
 
 @using Canvas.Core
-@using Canvas.Core.EngineSpace
+@using Canvas.Core.ComposerSpace
+@using Canvas.Core.EnumSpace
 @using Canvas.Core.ModelSpace
-@using ScriptContainer
+@using Canvas.Core.EngineSpace
 
-<div class="demo">
-  <CanvasWebView @ref="ViewControl"></CanvasWebView>
+<div class="grid">
+  <div class="view"><ScreenView @ref="View"></ScreenView></div>
+  <div class="scaleT"><IndexScaleView View="PositionEnum.T" @ref="XT"></IndexScaleView></div>
+  <div class="scaleB"><IndexScaleView View="PositionEnum.B" @ref="XB"></IndexScaleView></div>
+  <div class="scaleL"><ValueScaleView View="PositionEnum.L" @ref="YL"></ValueScaleView></div>
+  <div class="scaleR"><ValueScaleView View="PositionEnum.R" @ref="YR"></ValueScaleView></div>
 </div>
 
 <style type="text/css">
-  .demo {
-    display: flex;
-    flex-grow: 1;
-    height: 100%;
+
+  .grid {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 2rem 1fr 2rem;
+      grid-template-columns: 4rem 1fr 4rem;
+      grid-template-areas:
+          ". T ."
+          "L V R"
+          ". B .";
   }
+
+  .view { grid-area: V; }
+  .scaleT { grid-area: T; }
+  .scaleB { grid-area: B; }
+  .scaleL { grid-area: L; }
+  .scaleR { grid-area: R; }
+
 </style>
 
 @code
 {
-  public CanvasWebView ViewControl { get; set; }
+  public ScreenView View { get; set; }
+  public IndexScaleView XT { get; set; }
+  public IndexScaleView XB { get; set; }
+  public ValueScaleView YL { get; set; }
+  public ValueScaleView YR { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
     if (setup)
     {
       var generator = new Random();
+      var points = Enumerable.Range(1, 1000).Select(i => new BarItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel).ToList();
+      var composer = new Composer { Name = "Demo", Items = points };
 
-      var points = Enumerable.Range(1, 100000).Select(i => new BarItemModel
-      {
-        X = i,
-        Y = generator.Next(-5000, 5000)
+      //await XT.Create<CanvasEngine>(engine => composer);
+      //await XB.Create<CanvasEngine>(engine => composer);
+      //await YL.Create<CanvasEngine>(engine => composer);
+      //await YR.Create<CanvasEngine>(engine => composer);
+      await View.Create<CanvasEngine>(engine => composer);
 
-      } as IItemModel).ToList();
-
-      await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
-      {
-        Name = "Demo",
-        Items = points,
-        Engine = new CanvasEngine(dimensions.X, dimensions.Y)
-      });
+      composer.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

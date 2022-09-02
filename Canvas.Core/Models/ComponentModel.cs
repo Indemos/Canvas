@@ -14,7 +14,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Position and alignment
     /// </summary>
-    LocationEnum? Location { get; set; }
+    PositionEnum? Location { get; set; }
 
     /// <summary>
     /// Format and density 
@@ -24,7 +24,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Points
     /// </summary>
-    IList<IItemModel> Points { get; set; }
+    IList<IItemModel> Items { get; set; }
 
     /// <summary>
     /// Create the shape
@@ -43,7 +43,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Position and alignment
     /// </summary>
-    public virtual LocationEnum? Location { get; set; }
+    public virtual PositionEnum? Location { get; set; }
 
     /// <summary>
     /// Format and density 
@@ -53,7 +53,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Points
     /// </summary>
-    public virtual IList<IItemModel> Points { get; set; }
+    public virtual IList<IItemModel> Items { get; set; }
 
     /// <summary>
     /// Create the shape
@@ -70,7 +70,7 @@ namespace Canvas.Core.ModelSpace
     {
       Size = 1;
       Color = SKColors.Black;
-      Points = new List<IItemModel>();
+      Items = new List<IItemModel>();
     }
   }
 }
