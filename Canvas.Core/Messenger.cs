@@ -1,4 +1,5 @@
 using Canvas.Core.MessageSpace;
+using System.Threading.Tasks;
 
 namespace Canvas.Core
 {
@@ -8,6 +9,6 @@ namespace Canvas.Core
     /// Update
     /// </summary>
     /// <param name="message"></param>
-    void Update(DomainMessage message = null);
+    Task Update(DomainMessage message = null);
   }
 }

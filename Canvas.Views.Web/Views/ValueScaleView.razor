@@ -1,3 +1,5 @@
-<div class="canvas-view canvas-scale canvas-scale-x" @onmousemove="e => OnScaleMove(e, 1)">
+@inherits BaseView
+
+<div class="canvas-view" @onmousemove="e => OnScaleMove(e, -1)">
   <img @ref="CanvasContainer" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
 </div>

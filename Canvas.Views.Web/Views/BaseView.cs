@@ -1,6 +1,7 @@
 using Canvas.Core;
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
+using Canvas.Core.EnumSpace;
 using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
@@ -13,36 +14,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Canvas.Views.Web
+namespace Canvas.Views.Web.Views
 {
-  public partial class ScreenView : IMessenger, IDisposable
+  public class BaseView : ComponentBase, IMessenger
   {
+    [Parameter] public PositionEnum View { get; set; }
+
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
+    public virtual Task Updater { get; set; }
+    public virtual IEngine Engine { get; set; }
+    public virtual IComposer Composer { get; set; }
+    public virtual ViewMessage Move { get; set; }
+    public virtual ViewMessage Cursor { get; set; }
+    public virtual ScriptService Service { get; set; }
+    public virtual IDictionary<string, IList<double>> Series { get; set; }
+
     protected virtual string Route { get; set; }
-    protected virtual Task Updater { get; set; }
-    protected virtual IEngine Engine { get; set; }
-    protected virtual IComposer Composer { get; set; }
-    protected virtual ViewMessage Move { get; set; }
-    protected virtual ViewMessage Cursor { get; set; }
-    protected virtual ScriptService Service { get; set; }
     protected virtual ElementReference CanvasContainer { get; set; }
-    protected virtual IDictionary<string, IList<double>> Series { get; set; }
-    protected virtual string Name => $"{ GetHashCode() }";
+
+    /// <summary>
+    /// Name
+    /// </summary>
+    public virtual string Name => $"{ GetHashCode() }";
+
+    /// <summary>
+    /// Create to override
+    /// </summary>
+    public virtual void CreateView() { }
+
+    /// <summary>
+    /// Update to override
+    /// </summary>
+    public virtual void UpdateView() { }
 
     /// <summary>
     /// Render
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public virtual void Update(DomainMessage message = null)
+    public virtual Task Update(DomainMessage message = null)
     {
       if (message is null && Updater?.IsCompleted is false)
       {
-        return;
+        return Updater;
       }
 
-      Updater = InvokeAsync(() =>
+      return Updater = InvokeAsync(() =>
       {
         if (Engine?.GetInstance() is null)
         {
@@ -56,7 +74,7 @@ namespace Canvas.Views.Web
           Composer.Update(message);
         }
 
-        Composer.UpdateItems(Engine);
+        UpdateView();
 
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
@@ -73,7 +91,7 @@ namespace Canvas.Views.Web
     {
       async Task setup()
       {
-        Dispose(0);
+        Dispose();
 
         var engine = new T();
         var dimensions = await CreateViewMessage();
@@ -81,6 +99,8 @@ namespace Canvas.Views.Web
         Engine = engine.Create(dimensions.X, dimensions.Y);
         Composer = action(Engine);
         Composer.Views[Name] = this;
+
+        CreateView();
       }
 
       Service = await (new ScriptService(RuntimeService)).CreateModule();
@@ -93,7 +113,7 @@ namespace Canvas.Views.Web
     /// Get information about event
     /// </summary>
     /// <returns></returns>
-    protected async Task<ViewMessage> CreateViewMessage()
+    public virtual async Task<ViewMessage> CreateViewMessage()
     {
       var bounds = await Service.GetElementBounds(CanvasContainer);
 
@@ -107,7 +127,7 @@ namespace Canvas.Views.Web
     /// <summary>
     /// Dispose
     /// </summary>
-    protected void Dispose(int o)
+    public virtual void Dispose()
     {
       Engine?.Dispose();
 
@@ -118,19 +138,11 @@ namespace Canvas.Views.Web
     }
 
     /// <summary>
-    /// Dispose
-    /// </summary>
-    void IDisposable.Dispose()
-    {
-      Dispose(0);
-    }
-
-    /// <summary>
     /// Get cursor position
     /// </summary>
     /// <param name="e"></param>
     /// <returns></returns>
-    protected ViewMessage GetDelta(MouseEventArgs e)
+    public virtual ViewMessage GetDelta(MouseEventArgs e)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -170,7 +182,7 @@ namespace Canvas.Views.Web
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    protected void OnWheel(WheelEventArgs e)
+    public virtual void OnWheel(WheelEventArgs e)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -196,7 +208,7 @@ namespace Canvas.Views.Web
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    protected void OnMouseMove(MouseEventArgs e)
+    public virtual void OnMouseMove(MouseEventArgs e)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -234,7 +246,7 @@ namespace Canvas.Views.Web
     /// </summary>
     /// <param name="e"></param>
     /// <param name="direction"></param>
-    protected void OnScaleMove(MouseEventArgs e, int direction = 0)
+    public virtual void OnScaleMove(MouseEventArgs e, int direction = 0)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -277,7 +289,7 @@ namespace Canvas.Views.Web
     /// Double clck event in the view area
     /// </summary>
     /// <param name="e"></param>
-    protected void OnMouseDown(MouseEventArgs e)
+    public virtual void OnMouseDown(MouseEventArgs e)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -300,7 +312,7 @@ namespace Canvas.Views.Web
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    protected void OnMouseLeave(MouseEventArgs e)
+    public virtual void OnMouseLeave(MouseEventArgs e)
     {
       if (Engine?.GetInstance() is null)
       {

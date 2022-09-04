@@ -7,17 +7,18 @@
 @using Canvas.Core.ModelSpace
 @using Canvas.Core.EngineSpace
 
-<div class="grid">
-  <div class="view"><ScreenView @ref="View"></ScreenView></div>
-  <div class="scaleT"><IndexScaleView View="PositionEnum.T" @ref="XT"></IndexScaleView></div>
-  <div class="scaleB"><IndexScaleView View="PositionEnum.B" @ref="XB"></IndexScaleView></div>
-  <div class="scaleL"><ValueScaleView View="PositionEnum.L" @ref="YL"></ValueScaleView></div>
-  <div class="scaleR"><ValueScaleView View="PositionEnum.R" @ref="YR"></ValueScaleView></div>
+<div class="combo-container">
+  <div class="view grid"><GridView @ref="Grid"></GridView></div>
+  <div class="view screen"><ScreenView @ref="View"></ScreenView></div>
+  <div class="view T"><IndexScaleView View="PositionEnum.T" @ref="T"></IndexScaleView></div>
+  <div class="view B"><IndexScaleView View="PositionEnum.B" @ref="B"></IndexScaleView></div>
+  <div class="view L"><ValueScaleView View="PositionEnum.L" @ref="L"></ValueScaleView></div>
+  <div class="view R"><ValueScaleView View="PositionEnum.R" @ref="R"></ValueScaleView></div>
 </div>
 
 <style type="text/css">
 
-  .grid {
+  .combo-container {
       width: 100%;
       height: 100%;
       display: grid;
@@ -29,21 +30,24 @@
           ". B .";
   }
 
-  .view { grid-area: V; }
-  .scaleT { grid-area: T; }
-  .scaleB { grid-area: B; }
-  .scaleL { grid-area: L; }
-  .scaleR { grid-area: R; }
+  .T { grid-area: T; }
+  .B { grid-area: B; }
+  .L { grid-area: L; }
+  .R { grid-area: R; }
+  .view { display: flex; flex-grow: 1; }
+  .grid { grid-area: V; z-index: 5; }
+  .screen { grid-area: V; z-index: 10; }
 
 </style>
 
 @code
 {
+  public GridView Grid { get; set; }
   public ScreenView View { get; set; }
-  public IndexScaleView XT { get; set; }
-  public IndexScaleView XB { get; set; }
-  public ValueScaleView YL { get; set; }
-  public ValueScaleView YR { get; set; }
+  public IndexScaleView T { get; set; }
+  public IndexScaleView B { get; set; }
+  public ValueScaleView L { get; set; }
+  public ValueScaleView R { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
@@ -53,13 +57,14 @@
       var points = Enumerable.Range(1, 1000).Select(i => new BarItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel).ToList();
       var composer = new Composer { Name = "Demo", Items = points };
 
-      //await XT.Create<CanvasEngine>(engine => composer);
-      //await XB.Create<CanvasEngine>(engine => composer);
-      //await YL.Create<CanvasEngine>(engine => composer);
-      //await YR.Create<CanvasEngine>(engine => composer);
+      await T.Create<CanvasEngine>(engine => composer);
+      await B.Create<CanvasEngine>(engine => composer);
+      await L.Create<CanvasEngine>(engine => composer);
+      await R.Create<CanvasEngine>(engine => composer);
+      await Grid.Create<CanvasEngine>(engine => composer);
       await View.Create<CanvasEngine>(engine => composer);
 
-      composer.Update();
+      await composer.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

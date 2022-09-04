@@ -64,7 +64,7 @@ namespace Canvas.Core.EngineSpace
         Style = SKPaintStyle.Stroke,
         FilterQuality = SKFilterQuality.High,
         StrokeWidth = (float)shape.Size,
-        IsAntialias = true,
+        IsAntialias = false,
         IsStroke = false,
         IsDither = false
       };
@@ -222,7 +222,7 @@ namespace Canvas.Core.EngineSpace
         TextAlign = SKTextAlign.Center,
         FilterQuality = SKFilterQuality.High,
         TextSize = (float)shape.Size,
-        IsAntialias = true,
+        IsAntialias = false,
         IsStroke = false,
         IsDither = false
       };

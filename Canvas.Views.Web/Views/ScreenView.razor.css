@@ -20,11 +20,3 @@
 .canvas-view iframe, .canvas-view img, .canvas-view canvas {
   pointer-events: none;
 }
-
-.canvas-scale-x {
-  cursor: ew-resize;
-}
-
-.canvas-scale-y {
-  cursor: ns-resize;
-}

@@ -4,6 +4,7 @@ using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Canvas.Core.ComposerSpace
 {
@@ -20,6 +21,16 @@ namespace Canvas.Core.ComposerSpace
     double Size { get; set; }
 
     /// <summary>
+    /// Index label space
+    /// </summary>
+    double IndexSpace { get; set; }
+
+    /// <summary>
+    /// Value label space
+    /// </summary>
+    double ValueSpace { get; set; }
+
+    /// <summary>
     /// Index ticks
     /// </summary>
     int IndexCount { get; set; }
@@ -28,6 +39,26 @@ namespace Canvas.Core.ComposerSpace
     /// Value ticks
     /// </summary>
     int ValueCount { get; set; }
+
+    /// <summary>
+    /// Min index
+    /// </summary>
+    int MinIndex { get; }
+
+    /// <summary>
+    /// Max index
+    /// </summary>
+    int MaxIndex { get; }
+
+    /// <summary>
+    /// Min value
+    /// </summary>
+    double MinValue { get; }
+
+    /// <summary>
+    /// Max value
+    /// </summary>
+    double MaxValue { get; }
 
     /// <summary>
     /// Items
@@ -135,6 +166,16 @@ namespace Canvas.Core.ComposerSpace
     public virtual double Size { get; set; }
 
     /// <summary>
+    /// Index label space
+    /// </summary>
+    public virtual double IndexSpace { get; set; }
+
+    /// <summary>
+    /// Value label space
+    /// </summary>
+    public virtual double ValueSpace { get; set; }
+
+    /// <summary>
     /// Index ticks
     /// </summary>
     public virtual int IndexCount { get; set; }
@@ -155,6 +196,26 @@ namespace Canvas.Core.ComposerSpace
     public virtual IDictionary<string, IMessenger> Views { get; set; }
 
     /// <summary>
+    /// Min index
+    /// </summary>
+    public virtual int MinIndex => Domain.MinIndex;
+
+    /// <summary>
+    /// Max index
+    /// </summary>
+    public virtual int MaxIndex => Domain.MaxIndex;
+
+    /// <summary>
+    /// Min value
+    /// </summary>
+    public virtual double MinValue => Domain.MinValue;
+
+    /// <summary>
+    /// Max value
+    /// </summary>
+    public virtual double MaxValue => Domain.MaxValue;
+
+    /// <summary>
     /// Format indices
     /// </summary>
     public virtual Func<double, string> ShowIndex { get; set; } = input => $"{input:0.00}";
@@ -170,7 +231,11 @@ namespace Canvas.Core.ComposerSpace
     public Composer()
     {
       Size = 0.5;
-      ValueCount = 5;
+
+      ValueSpace = 5;
+      IndexSpace = 5;
+
+      ValueCount = 4;
       IndexCount = 10;
 
       Domain = new Domain();
@@ -182,7 +247,7 @@ namespace Canvas.Core.ComposerSpace
     /// Update
     /// </summary>
     /// <param name="name"></param>
-    public virtual void Update(DomainMessage message = null)
+    public virtual Task Update(DomainMessage message = null)
     {
       Domain.AutoIndexDomain = GetIndexDomain();
       Domain.AutoValueDomain = GetValueDomain();
@@ -204,6 +269,8 @@ namespace Canvas.Core.ComposerSpace
           view.Value.Update();
         }
       }
+
+      return Task.FromResult(0);
     }
 
     /// <summary>

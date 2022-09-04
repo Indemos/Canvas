@@ -1,21 +1,20 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
-using SkiaSharp;
 using System;
 
 namespace Canvas.Core.DecoratorSpace
 {
-  public interface IDecorator : IDisposable
+  public interface IDecorator
   {
     /// <summary>
     /// Create shape
     /// </summary>
-    Action<IEngine> Create { get; set; }
+    Action<IEngine> CreateIndex { get; set; }
 
     /// <summary>
     /// Update shape
     /// </summary>
-    Action<IEngine> Update { get; set; }
+    Action<IEngine> CreateValue { get; set; }
 
     /// <summary>
     /// Composer
@@ -28,23 +27,16 @@ namespace Canvas.Core.DecoratorSpace
     /// <summary>
     /// Create shape
     /// </summary>
-    public virtual Action<IEngine> Create { get; set; }
+    public virtual Action<IEngine> CreateIndex { get; set; } = o => { };
 
     /// <summary>
     /// Update shape
     /// </summary>
-    public virtual Action<IEngine> Update { get; set; }
+    public virtual Action<IEngine> CreateValue { get; set; } = o => { };
 
     /// <summary>
     /// Composer
     /// </summary>
     public virtual IComposer Composer { get; set; }
-
-    /// <summary>
-    /// Dispose
-    /// </summary>
-    public virtual void Dispose()
-    {
-    }
   }
 }

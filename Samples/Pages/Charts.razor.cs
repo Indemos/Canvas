@@ -3,6 +3,7 @@ using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
 using Canvas.Views.Web;
+using Canvas.Views.Web.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
