@@ -1,6 +1,7 @@
 using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -176,7 +177,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabel(IItemModel coordinate, IComponentModel shape, string content)
+    public override void CreateCaption(IItemModel coordinate, IComponentModel shape, string content)
     {
       var pen = new SKPaint
       {
@@ -189,7 +190,7 @@ namespace Canvas.Core.EngineSpace
         IsDither = false
       };
 
-      switch (shape.Location)
+      switch (shape.Position)
       {
         case PositionEnum.L: pen.TextAlign = SKTextAlign.Left; break;
         case PositionEnum.R: pen.TextAlign = SKTextAlign.Right; break;
@@ -257,7 +258,7 @@ namespace Canvas.Core.EngineSpace
 
       var item = new ItemModel
       {
-        X = content.Length * pen.FontMetrics.MaxCharacterWidth,
+        X = content.Length * Math.Min(pen.FontMetrics.MaxCharacterWidth, size),
         Y = pen.FontSpacing
       };
 

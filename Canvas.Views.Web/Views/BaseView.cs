@@ -3,50 +3,48 @@ using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
 using Canvas.Core.MessageSpace;
-using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using ScriptContainer;
 using SkiaSharp;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
 {
-  public class BaseView : ComponentBase, IMessenger
+  public class BaseView : ComponentBase, IView
   {
-    [Parameter] public PositionEnum View { get; set; }
+    [Parameter] public virtual PositionEnum Position { get; set; }
 
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
-    public virtual Task Updater { get; set; }
-    public virtual IEngine Engine { get; set; }
-    public virtual IComposer Composer { get; set; }
-    public virtual ViewMessage Move { get; set; }
-    public virtual ViewMessage Cursor { get; set; }
-    public virtual ScriptService Service { get; set; }
-    public virtual IDictionary<string, IList<double>> Series { get; set; }
-
+    protected virtual int? Code { get; set; }
     protected virtual string Route { get; set; }
+    protected virtual Task Updater { get; set; }
+    protected virtual IComposer Composer { get; set; }
+    protected virtual Reactor Reactor { get; set; }
+    protected virtual ScriptService Service { get; set; }
     protected virtual ElementReference CanvasContainer { get; set; }
 
     /// <summary>
-    /// Name
+    /// Id
     /// </summary>
-    public virtual string Name => $"{ GetHashCode() }";
+    public virtual int Id => Code ??= GetHashCode();
 
     /// <summary>
-    /// Create to override
+    /// Engine
     /// </summary>
-    public virtual void CreateView() { }
+    public virtual IEngine Engine { get; protected set; }
 
     /// <summary>
-    /// Update to override
+    /// Events
     /// </summary>
-    public virtual void UpdateView() { }
+    public virtual Action<ViewMessage> OnLoad { get; set; } = e => { };
+    public virtual Action<ViewMessage> OnWheel { get; set; } = e => { };
+    public virtual Action<ViewMessage> OnMouseMove { get; set; } = e => { };
+    public virtual Action<ViewMessage> OnMouseDown { get; set; } = e => { };
+    public virtual Action<ViewMessage> OnMouseLeave { get; set; } = e => { };
 
     /// <summary>
     /// Render
@@ -55,7 +53,7 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual Task Update(DomainMessage message = null)
     {
-      if (message is null && Updater?.IsCompleted is false)
+      if (Updater?.IsCompleted is false)
       {
         return Updater;
       }
@@ -87,33 +85,48 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    public virtual async Task Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new()
+    public virtual async Task<IView> Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new()
     {
       async Task setup()
       {
         Dispose();
 
         var engine = new T();
-        var dimensions = await CreateViewMessage();
+        var message = await CreateViewMessage();
 
-        Engine = engine.Create(dimensions.X, dimensions.Y);
+        Engine = engine.Create(message.X, message.Y);
         Composer = action(Engine);
-        Composer.Views[Name] = this;
 
-        CreateView();
+        await Update();
+
+        Reactor = new Reactor
+        {
+          Engine = Engine,
+          Composer = Composer,
+          View = this
+        };
+
+        OnLoad(message);
       }
 
       Service = await (new ScriptService(RuntimeService)).CreateModule();
       Service.OnSize = async o => await setup();
 
       await setup();
+
+      return this;
     }
+
+    /// <summary>
+    /// Update to override
+    /// </summary>
+    protected virtual void UpdateView() { }
 
     /// <summary>
     /// Get information about event
     /// </summary>
     /// <returns></returns>
-    public virtual async Task<ViewMessage> CreateViewMessage()
+    protected virtual async Task<ViewMessage> CreateViewMessage()
     {
       var bounds = await Service.GetElementBounds(CanvasContainer);
 
@@ -127,118 +140,43 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Dispose
     /// </summary>
-    public virtual void Dispose()
+    protected virtual void Dispose()
     {
       Engine?.Dispose();
-
-      if (Composer is not null && Composer.Views.ContainsKey(Name))
-      {
-        Composer.Views.Remove(Name);
-      }
-    }
-
-    /// <summary>
-    /// Get cursor position
-    /// </summary>
-    /// <param name="e"></param>
-    /// <returns></returns>
-    public virtual ViewMessage GetDelta(MouseEventArgs e)
-    {
-      if (Engine?.GetInstance() is null)
-      {
-        return null;
-      }
-
-      var values = Composer.GetValues(Engine, new ItemModel
-      {
-        X = e.OffsetX,
-        Y = e.OffsetY
-      });
-
-      var item = Composer.Items.ElementAtOrDefault((int)values.X);
-
-      if (item is not null)
-      {
-        var coordinates = new ItemModel
-        {
-          X = e.OffsetX,
-          Y = e.OffsetY
-        };
-
-        item.Composer = Composer;
-        Series = item.GetSeries(coordinates, values);
-      }
-
-      return new ViewMessage
-      {
-        X = e.OffsetX,
-        Y = e.OffsetY,
-        ValueX = Composer.ShowIndex(values.X.Value),
-        ValueY = Composer.ShowValue(values.Y.Value)
-      };
     }
 
     /// <summary>
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnWheel(WheelEventArgs e)
+    protected virtual void OnWheelAction(WheelEventArgs e)
     {
-      if (Engine?.GetInstance() is null)
+      var message = new ViewMessage
       {
-        return;
-      }
-
-      var isZoom = e.ShiftKey;
-      var message = new DomainMessage
-      {
-        Name = Name
+        X = e.DeltaX,
+        Y = e.DeltaY,
+        IsShape = e.ShiftKey
       };
 
-      switch (true)
-      {
-        case true when e.DeltaY > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
-        case true when e.DeltaY < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
-      }
-
-      Update(message);
+      Reactor?.OnWheel(message);
+      OnWheel(message);
     }
 
     /// <summary>
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseMove(MouseEventArgs e)
+    protected virtual void OnMouseMoveAction(MouseEventArgs e)
     {
-      if (Engine?.GetInstance() is null)
+      var message = new ViewMessage
       {
-        return;
-      }
+        X = e.OffsetX,
+        Y = e.OffsetY,
+        IsSnap = e.Buttons == 1
+      };
 
-      var position = GetDelta(e);
-
-      Cursor ??= position;
-
-      if (e.Buttons == 1)
-      {
-        var isZoom = e.ShiftKey;
-        var deltaX = Cursor.X - position.X;
-        var deltaY = Cursor.Y - position.Y;
-        var message = new DomainMessage
-        {
-          Name = Name
-        };
-
-        switch (true)
-        {
-          case true when deltaX > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
-          case true when deltaX < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
-        }
-
-        Update(message);
-      }
-
-      Cursor = position;
+      Reactor?.OnMouseMove(message);
+      OnMouseMove(message);
     }
 
     /// <summary>
@@ -246,80 +184,41 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="e"></param>
     /// <param name="direction"></param>
-    public virtual void OnScaleMove(MouseEventArgs e, int direction = 0)
+    protected virtual void OnScaleMoveAction(MouseEventArgs e, int direction = 0)
     {
-      if (Engine?.GetInstance() is null)
+      var message = new ViewMessage
       {
-        return;
-      }
+        X = e.OffsetX,
+        Y = e.OffsetY,
+        IsSnap = e.Buttons == 1
+      };
 
-      var position = GetDelta(e);
-
-      Move ??= position;
-
-      if (e.Buttons == 1)
-      {
-        var isZoom = e.ShiftKey;
-        var deltaX = Move.X - position.X;
-        var deltaY = Move.Y - position.Y;
-        var message = new DomainMessage
-        {
-          Name = Name
-        };
-
-        switch (direction > 0)
-        {
-          case true when deltaX > 0: message.IndexDomain = Composer.ZoomIndexScale(Engine, -1); break;
-          case true when deltaX < 0: message.IndexDomain = Composer.ZoomIndexScale(Engine, 1); break;
-        }
-
-        switch (direction < 0)
-        {
-          case true when deltaY > 0: message.ValueDomain = Composer.ZoomValueScale(Engine, -1); break;
-          case true when deltaY < 0: message.ValueDomain = Composer.ZoomValueScale(Engine, 1); break;
-        }
-
-        Update(message);
-      }
-
-      Move = position;
+      Reactor?.OnScaleMove(message, direction);
     }
 
     /// <summary>
     /// Double clck event in the view area
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseDown(MouseEventArgs e)
+    protected virtual void OnMouseDownAction(MouseEventArgs e)
     {
-      if (Engine?.GetInstance() is null)
+      var message = new ViewMessage
       {
-        return;
-      }
+        IsControl = e.CtrlKey
+      };
 
-      if (e.CtrlKey)
-      {
-        var message = new DomainMessage
-        {
-          Name = Name,
-          ValueUpdate = true
-        };
-
-        Update(message);
-      }
+      Reactor?.OnMouseDown(message);
+      OnMouseDown(message);
     }
 
     /// <summary>
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseLeave(MouseEventArgs e)
+    protected virtual void OnMouseLeaveAction(MouseEventArgs e)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
-      Cursor = null;
+      Reactor?.OnMouseLeave(null);
+      OnMouseLeave(null);
     }
   }
 }

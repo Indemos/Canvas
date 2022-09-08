@@ -1,6 +1,8 @@
 using Canvas.Core.EngineSpace;
+using Canvas.Core.EnumSpace;
 using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,27 +10,12 @@ using System.Threading.Tasks;
 
 namespace Canvas.Core.ComposerSpace
 {
-  public interface IComposer : IMessenger
+  public interface IComposer
   {
     /// <summary>
     /// Name
     /// </summary>
     string Name { get; set; }
-
-    /// <summary>
-    /// Shape size
-    /// </summary>
-    double Size { get; set; }
-
-    /// <summary>
-    /// Index label space
-    /// </summary>
-    double IndexSpace { get; set; }
-
-    /// <summary>
-    /// Value label space
-    /// </summary>
-    double ValueSpace { get; set; }
 
     /// <summary>
     /// Index ticks
@@ -61,14 +48,34 @@ namespace Canvas.Core.ComposerSpace
     double MaxValue { get; }
 
     /// <summary>
-    /// Items
+    /// Item definition
     /// </summary>
-    IList<IItemModel> Items { get; set; }
+    IComponentModel Item { get; set; }
+
+    /// <summary>
+    /// Shape definition
+    /// </summary>
+    IComponentModel Line { get; set; }
+
+    /// <summary>
+    /// Board definition
+    /// </summary>
+    IComponentModel Board { get; set; }
+
+    /// <summary>
+    /// Caption definition
+    /// </summary>
+    IComponentModel Caption { get; set; }
 
     /// <summary>
     /// Views
     /// </summary>
-    IDictionary<string, IMessenger> Views { get; set; }
+    IList<IView> Views { get; set; }
+
+    /// <summary>
+    /// Items
+    /// </summary>
+    IList<IItemModel> Items { get; set; }
 
     /// <summary>
     /// Format indices
@@ -81,9 +88,15 @@ namespace Canvas.Core.ComposerSpace
     Func<double, string> ShowValue { get; set; }
 
     /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="message"></param>
+    Task Update(DomainMessage message = null);
+
+    /// <summary>
     /// Update items
     /// </summary>
-    void UpdateItems(IEngine engine);
+    Task UpdateItems(IEngine engine);
 
     /// <summary>
     /// Convert values to canvas coordinates
@@ -133,13 +146,13 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    IList<int> GetIndexDomain();
+    IList<int> GetDomainX();
 
     /// <summary>
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    IList<double> GetValueDomain();
+    IList<double> GetDomainY();
 
     /// <summary>
     /// Enumerate
@@ -161,21 +174,6 @@ namespace Canvas.Core.ComposerSpace
     public virtual string Name { get; set; }
 
     /// <summary>
-    /// Shape size
-    /// </summary>
-    public virtual double Size { get; set; }
-
-    /// <summary>
-    /// Index label space
-    /// </summary>
-    public virtual double IndexSpace { get; set; }
-
-    /// <summary>
-    /// Value label space
-    /// </summary>
-    public virtual double ValueSpace { get; set; }
-
-    /// <summary>
     /// Index ticks
     /// </summary>
     public virtual int IndexCount { get; set; }
@@ -186,14 +184,34 @@ namespace Canvas.Core.ComposerSpace
     public virtual int ValueCount { get; set; }
 
     /// <summary>
-    /// Items
+    /// Item definition
     /// </summary>
-    public virtual IList<IItemModel> Items { get; set; }
+    public virtual IComponentModel Item { get; set; }
+
+    /// <summary>
+    /// Shape definition
+    /// </summary>
+    public virtual IComponentModel Line { get; set; }
+
+    /// <summary>
+    /// Board definition
+    /// </summary>
+    public virtual IComponentModel Board { get; set; }
+
+    /// <summary>
+    /// Caption definition
+    /// </summary>
+    public virtual IComponentModel Caption { get; set; }
 
     /// <summary>
     /// Views
     /// </summary>
-    public virtual IDictionary<string, IMessenger> Views { get; set; }
+    public virtual IList<IView> Views { get; set; }
+
+    /// <summary>
+    /// Items
+    /// </summary>
+    public virtual IList<IItemModel> Items { get; set; }
 
     /// <summary>
     /// Min index
@@ -230,17 +248,41 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     public Composer()
     {
-      Size = 0.5;
-
-      ValueSpace = 5;
-      IndexSpace = 5;
-
       ValueCount = 4;
       IndexCount = 10;
 
       Domain = new Domain();
+
+      Item = new ComponentModel
+      {
+        Size = 0.5,
+        Color = new SKColor(50, 50, 50)
+      };
+
+      Line = new ComponentModel
+      {
+        Size = 1,
+        Color = new SKColor(200, 200, 200)
+      };
+
+      Board = new ComponentModel
+      {
+        Size = 1,
+        Composition = CompositionEnum.Dashes,
+        Background = new SKColor(200, 200, 200),
+        Color = new SKColor(50, 50, 50)
+      };
+
+      Caption = new ComponentModel
+      {
+        Size = 10,
+        Position = PositionEnum.Center,
+        Background = new SKColor(200, 200, 200),
+        Color = new SKColor(50, 50, 50)
+      };
+
+      Views = new List<IView>();
       Items = new List<IItemModel>();
-      Views = new Dictionary<string, IMessenger>();
     }
 
     /// <summary>
@@ -249,24 +291,24 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="name"></param>
     public virtual Task Update(DomainMessage message = null)
     {
-      Domain.AutoIndexDomain = GetIndexDomain();
-      Domain.AutoValueDomain = GetValueDomain();
+      Domain.AutoDomainX = GetDomainX();
+      Domain.AutoDomainY = GetDomainY();
 
       if (message?.IndexDomain is not null || message?.IndexUpdate is true)
       {
-        Domain.IndexDomain = message.IndexDomain;
+        Domain.DomainX = message.IndexDomain;
       }
 
       if (message?.ValueDomain is not null || message?.ValueUpdate is true)
       {
-        Domain.ValueDomain = message.ValueDomain;
+        Domain.DomainY = message.ValueDomain;
       }
 
       foreach (var view in Views)
       {
-        if (Equals(message?.Name, view.Key) is false)
+        if (Equals(message?.Id, view.Id) is false)
         {
-          view.Value.Update();
+          view.Update();
         }
       }
 
@@ -277,7 +319,7 @@ namespace Canvas.Core.ComposerSpace
     /// Update items
     /// </summary>
     /// <param name="engine"></param>
-    public virtual void UpdateItems(IEngine engine)
+    public virtual Task UpdateItems(IEngine engine)
     {
       foreach (var i in GetEnumerator())
       {
@@ -293,6 +335,8 @@ namespace Canvas.Core.ComposerSpace
         item.Composer = this;
         item.CreateShape(i, null, Items);
       }
+
+      return Task.FromResult(0);
     }
 
     /// <summary>
@@ -373,7 +417,7 @@ namespace Canvas.Core.ComposerSpace
         return domain;
       }
 
-      domain ??= Domain.AutoValueDomain.ToList();
+      domain ??= Domain.AutoDomainY.ToList();
 
       var increment = (maxY - minY) / 10;
       var isInRange = maxY - minY > increment * 2;
@@ -410,7 +454,7 @@ namespace Canvas.Core.ComposerSpace
         return domain;
       }
 
-      domain ??= Domain.AutoIndexDomain.ToList();
+      domain ??= Domain.AutoDomainX.ToList();
 
       var increment = 100 / IndexCount / 2 * delta;
       var isInRange = maxX - minX > increment * 2;
@@ -440,7 +484,7 @@ namespace Canvas.Core.ComposerSpace
         return domain;
       }
 
-      domain ??= Domain.AutoIndexDomain.ToList();
+      domain ??= Domain.AutoDomainX.ToList();
 
       var increment = IndexCount / 2 * delta;
 
@@ -464,7 +508,7 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    public virtual IList<int> GetIndexDomain()
+    public virtual IList<int> GetDomainX()
     {
       return new[] { 0, Math.Max(Items.Count, IndexCount) };
     }
@@ -473,7 +517,7 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    public virtual IList<double> GetValueDomain()
+    public virtual IList<double> GetDomainY()
     {
       var average = 0.0;
       var min = double.MaxValue;

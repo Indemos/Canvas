@@ -1,11 +1,10 @@
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
-using SkiaSharp;
 
 namespace Canvas.Core.DecoratorSpace
 {
-  public class LabelsDecorator : BaseDecorator, IDecorator
+  public class CaptionDecorator : BaseDecorator, IDecorator
   {
     /// <summary>
     /// Location on the chart
@@ -13,31 +12,17 @@ namespace Canvas.Core.DecoratorSpace
     public PositionEnum Position { get; set; }
 
     /// <summary>
-    /// Constructor
-    /// </summary>
-    public LabelsDecorator()
-    {
-      CreateIndex = CreateIndexAction;
-      CreateValue = CreateValueAction;
-    }
-
-    /// <summary>
     /// Create index
     /// </summary>
     /// <param name="engine"></param>
-    protected virtual void CreateIndexAction(IEngine engine)
+    public virtual void CreateIndex(IEngine engine)
     {
-      var space = Composer.IndexSpace;
+      var shape = Composer.Caption;
+      var space = shape.Size;
       var count = Composer.IndexCount;
       var step = engine.X / count;
       var range = (Composer.MaxIndex - Composer.MinIndex) / count;
       var point = new ItemModel();
-      var shape = new ComponentModel
-      {
-        Size = 10,
-        Location = PositionEnum.Center,
-        Color = new SKColor(50, 50, 50)
-      };
 
       for (var i = 1; i < count; i++)
       {
@@ -51,9 +36,9 @@ namespace Canvas.Core.DecoratorSpace
         }
 
         point.X = index;
-        shape.Location = PositionEnum.Center;
+        shape.Position = PositionEnum.Center;
 
-        engine.CreateLabel(point, shape, content);
+        engine.CreateCaption(point, shape, content);
       }
     }
 
@@ -61,19 +46,14 @@ namespace Canvas.Core.DecoratorSpace
     /// Create value
     /// </summary>
     /// <param name="engine"></param>
-    protected virtual void CreateValueAction(IEngine engine)
+    public virtual void CreateValue(IEngine engine)
     {
-      var space = Composer.ValueSpace;
+      var shape = Composer.Caption;
+      var space = shape.Size;
       var count = Composer.ValueCount;
       var step = engine.Y / count;
       var range = (Composer.MaxValue - Composer.MinValue) / count;
       var point = new ItemModel();
-      var shape = new ComponentModel
-      {
-        Size = 10,
-        Location = PositionEnum.Center,
-        Color = new SKColor(50, 50, 50)
-      };
 
       for (var i = 1; i < count; i++)
       {
@@ -82,13 +62,13 @@ namespace Canvas.Core.DecoratorSpace
 
         switch (Position)
         {
-          case PositionEnum.L: point.X = engine.X - space; shape.Location = PositionEnum.R; break;
-          case PositionEnum.R: point.X = space; shape.Location = PositionEnum.L; break;
+          case PositionEnum.L: point.X = engine.X - space; shape.Position = PositionEnum.R; break;
+          case PositionEnum.R: point.X = space; shape.Position = PositionEnum.L; break;
         }
 
         point.Y = value;
 
-        engine.CreateLabel(point, shape, content);
+        engine.CreateCaption(point, shape, content);
       }
     }
   }

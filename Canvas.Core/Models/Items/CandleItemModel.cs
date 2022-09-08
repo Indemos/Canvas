@@ -80,7 +80,7 @@ namespace Canvas.Core.ModelSpace
       var H = High ?? 0;
       var O = Open ?? 0;
       var C = Close ?? 0;
-      var size = Composer.Size / 2.0;
+      var size = Composer.Item.Size.Value / 2.0;
       var downSide = Math.Min(O, C);
       var upSide = Math.Max(O, C);
 

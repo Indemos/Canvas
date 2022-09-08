@@ -20,7 +20,7 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var size = Composer.Size / 2.0;
+      var size = Composer.Item.Size.Value / 2.0;
 
       var coordinates = new IItemModel[]
       {

@@ -64,7 +64,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabel(IItemModel coordinate, IComponentModel shape, string content);
+    void CreateCaption(IItemModel coordinate, IComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -154,7 +154,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public abstract void CreateLabel(IItemModel coordinate, IComponentModel shape, string content);
+    public abstract void CreateCaption(IItemModel coordinate, IComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path

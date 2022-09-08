@@ -14,12 +14,22 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Position and alignment
     /// </summary>
-    PositionEnum? Location { get; set; }
+    PositionEnum? Position { get; set; }
 
     /// <summary>
     /// Format and density 
     /// </summary>
     CompositionEnum? Composition { get; set; }
+
+    /// <summary>
+    /// Color
+    /// </summary>
+    SKColor? Color { get; set; }
+
+    /// <summary>
+    /// Background
+    /// </summary>
+    SKColor? Background { get; set; }
 
     /// <summary>
     /// Points
@@ -43,12 +53,22 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Position and alignment
     /// </summary>
-    public virtual PositionEnum? Location { get; set; }
+    public virtual PositionEnum? Position { get; set; }
 
     /// <summary>
     /// Format and density 
     /// </summary>
     public virtual CompositionEnum? Composition { get; set; }
+
+    /// <summary>
+    /// Color
+    /// </summary>
+    public virtual SKColor? Color { get; set; }
+
+    /// <summary>
+    /// Background
+    /// </summary>
+    public virtual SKColor? Background { get; set; }
 
     /// <summary>
     /// Points

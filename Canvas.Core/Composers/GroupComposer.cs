@@ -3,6 +3,7 @@ using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Canvas.Core.ComposerSpace
 {
@@ -11,7 +12,7 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Update items
     /// </summary>
-    public override void UpdateItems(IEngine engine)
+    public override Task UpdateItems(IEngine engine)
     {
       foreach (var i in GetEnumerator())
       {
@@ -29,13 +30,15 @@ namespace Canvas.Core.ComposerSpace
           series.Value.CreateShape(i, series.Key, Items);
         }
       }
+
+      return Task.FromResult(0);
     }
 
     /// <summary>
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    public override IList<double> GetValueDomain()
+    public override IList<double> GetDomainY()
     {
       var average = 0.0;
       var min = double.MaxValue;

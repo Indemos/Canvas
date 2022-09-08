@@ -15,8 +15,5 @@
   padding: 0;
   overflow: hidden;
   font: 10px arial, helvetica, sans-serif;
+  pointer-events: none;
 }
-
-  .canvas-view iframe, .canvas-view img, .canvas-view canvas {
-    pointer-events: none;
-  }

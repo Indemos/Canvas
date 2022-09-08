@@ -25,19 +25,14 @@ namespace Canvas.Core.ModelSpace
     double? Z { get; set; }
 
     /// <summary>
-    /// Color
+    /// Reference to panel
     /// </summary>
-    SKColor? Color { get; set; }
+    IEngine Engine { get; set; }
 
     /// <summary>
     /// Reference to composer
     /// </summary>
     IComposer Composer { get; set; }
-
-    /// <summary>
-    /// Reference to panel
-    /// </summary>
-    IEngine Engine { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -101,19 +96,14 @@ namespace Canvas.Core.ModelSpace
     public virtual double? Z { get; set; }
 
     /// <summary>
-    /// Color
+    /// Reference to panel
     /// </summary>
-    public SKColor? Color { get; set; }
+    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Reference to composer
     /// </summary>
     public virtual IComposer Composer { get; set; }
-
-    /// <summary>
-    /// Reference to panel
-    /// </summary>
-    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point

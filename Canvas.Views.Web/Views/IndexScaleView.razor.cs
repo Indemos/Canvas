@@ -4,19 +4,16 @@ namespace Canvas.Views.Web.Views
 {
   public partial class IndexScaleView : BaseView
   {
-    protected LabelsDecorator Decorator { get; set; }
+    protected virtual CaptionDecorator Decorator { get; set; }
 
-    public override void CreateView()
+    protected override void UpdateView()
     {
-      Decorator = new LabelsDecorator
+      Decorator ??= new CaptionDecorator
       {
-        Position = View,
+        Position = Position,
         Composer = Composer
       };
-    }
 
-    public override void UpdateView()
-    {
       Decorator.CreateIndex(Engine);
     }
   }
