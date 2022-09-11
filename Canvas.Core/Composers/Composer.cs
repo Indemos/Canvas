@@ -88,6 +88,11 @@ namespace Canvas.Core.ComposerSpace
     Func<double, string> ShowValue { get; set; }
 
     /// <summary>
+    /// Format board
+    /// </summary>
+    Func<string, IList<double>, string> ShowBoard { get; set; }
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="message"></param>
@@ -244,6 +249,11 @@ namespace Canvas.Core.ComposerSpace
     public virtual Func<double, string> ShowValue { get; set; } = input => $"{input:0.00}";
 
     /// <summary>
+    /// Format board
+    /// </summary>
+    public virtual Func<string, IList<double>, string> ShowBoard { get; set; } = (name, values) => $"{ name }: { string.Join(", ", values.Select(o => $"{o:0.00}")) }";
+
+    /// <summary>
     /// Constructor
     /// </summary>
     public Composer()
@@ -262,23 +272,24 @@ namespace Canvas.Core.ComposerSpace
       Line = new ComponentModel
       {
         Size = 1,
-        Color = new SKColor(200, 200, 200)
+        Color = new SKColor(50, 50, 50),
+        Composition = CompositionEnum.Dashes
       };
 
       Board = new ComponentModel
       {
-        Size = 1,
-        Composition = CompositionEnum.Dashes,
-        Background = new SKColor(200, 200, 200),
-        Color = new SKColor(50, 50, 50)
+        Size = 10,
+        Position = PositionEnum.L,
+        Color = new SKColor(50, 50, 50),
+        Background = new SKColor(230, 230, 230)
       };
 
       Caption = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.Center,
-        Background = new SKColor(200, 200, 200),
-        Color = new SKColor(50, 50, 50)
+        Color = new SKColor(50, 50, 50),
+        Background = new SKColor(200, 200, 200)
       };
 
       Views = new List<IView>();
@@ -306,7 +317,7 @@ namespace Canvas.Core.ComposerSpace
 
       foreach (var view in Views)
       {
-        if (Equals(message?.Id, view.Id) is false)
+        if (Equals(message?.Code, view.Name) is false)
         {
           view.Update();
         }

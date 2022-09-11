@@ -2,7 +2,7 @@ using Canvas.Core.DecoratorSpace;
 
 namespace Canvas.Views.Web.Views
 {
-  public partial class IndexScaleView : BaseView
+  public partial class IndexScaleView
   {
     protected virtual CaptionDecorator Decorator { get; set; }
 

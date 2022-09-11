@@ -11,7 +11,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="engine"></param>
     public virtual void CreateIndex(IEngine engine)
     {
-      var shape = Composer.Line;
+      var shape = Composer.Line.Clone() as IComponentModel;
       var count = Composer.ValueCount;
       var step = engine.Y / count;
       var points = new IItemModel[2]

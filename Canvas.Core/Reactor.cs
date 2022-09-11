@@ -28,7 +28,7 @@ namespace Canvas.Core
       var isZoom = e.IsShape;
       var message = new DomainMessage
       {
-        Id = View.Id
+        Code = View.Name
       };
 
       switch (true)
@@ -59,7 +59,7 @@ namespace Canvas.Core
         var deltaY = ScreenPosition.Y - e.Y;
         var message = new DomainMessage
         {
-          Id = View.Id
+          Code = View.Name
         };
 
         switch (true)
@@ -79,7 +79,7 @@ namespace Canvas.Core
     /// </summary>
     /// <param name="e"></param>
     /// <param name="direction"></param>
-    public virtual void OnScaleMove(ViewMessage e, int direction = 0)
+    public virtual void OnScale(ViewMessage e, int direction = 0)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -94,7 +94,7 @@ namespace Canvas.Core
         var deltaY = Position.Y - e.Y;
         var message = new DomainMessage
         {
-          Id = View.Id
+          Code = View.Name
         };
 
         switch (direction > 0)
@@ -130,7 +130,7 @@ namespace Canvas.Core
       {
         var message = new DomainMessage
         {
-          Id = View.Id,
+          Code = View.Name,
           ValueUpdate = true
         };
 

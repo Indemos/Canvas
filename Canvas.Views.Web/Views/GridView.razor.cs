@@ -2,7 +2,7 @@ using Canvas.Core.DecoratorSpace;
 
 namespace Canvas.Views.Web.Views
 {
-  public partial class GridView : BaseView
+  public partial class GridView
   {
     protected virtual GridDecorator Decorator { get; set; }
 

@@ -1,3 +1,4 @@
+using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.MessageSpace;
 using System;
@@ -10,7 +11,7 @@ namespace Canvas.Core
     /// <summary>
     /// Id
     /// </summary>
-    int Id { get; }
+    int Name { get; }
 
     /// <summary>
     /// Engine
@@ -28,6 +29,12 @@ namespace Canvas.Core
     /// </summary>
     /// <param name="e"></param>
     Action<ViewMessage> OnWheel { get; set; }
+
+    /// <summary>
+    /// Scale change 
+    /// </summary>
+    /// <param name="e"></param>
+    Action<ViewMessage, int> OnScale { get; set; }
 
     /// <summary>
     /// Mouse move event
@@ -52,5 +59,13 @@ namespace Canvas.Core
     /// </summary>
     /// <param name="message"></param>
     Task Update(DomainMessage message = null);
+
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    Task<IView> Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new();
   }
 }

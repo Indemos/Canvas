@@ -149,7 +149,7 @@ namespace Canvas.Core.ModelSpace
     {
       return new Dictionary<string, IList<double>>
       {
-        [Composer.Name] = GetSeriesValues(coordinates, values)
+        [Composer?.Name ?? nameof(Composer.Name)] = GetSeriesValues(coordinates, values)
       };
     }
 

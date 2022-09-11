@@ -20,7 +20,7 @@ namespace Canvas.Client.Pages
     protected double _pointValue = 0;
     protected DateTime _pointTime = DateTime.Now;
     protected List<IItemModel> _points = new();
-    protected Dictionary<string, ScreenView> _views = new()
+    protected Dictionary<string, CanvasView> _views = new()
     {
       ["Candles"] = null,
       ["Bars"] = null,

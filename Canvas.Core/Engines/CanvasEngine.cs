@@ -36,17 +36,17 @@ namespace Canvas.Core.EngineSpace
     /// <summary>
     /// Create
     /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
+    /// <param name="index"></param>
+    /// <param name="value"></param>
     /// <returns></returns>
-    public override IEngine Create(double x, double y)
+    public override IEngine Create(double index, double value)
     {
       Dispose();
 
-      X = x;
-      Y = y;
+      X = index;
+      Y = value;
 
-      Map = new SKBitmap((int)x, (int)y);
+      Map = new SKBitmap((int)index, (int)value);
       Canvas = new SKCanvas(Map);
 
       return this;
@@ -63,7 +63,7 @@ namespace Canvas.Core.EngineSpace
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Stroke,
-        FilterQuality = SKFilterQuality.High,
+        FilterQuality = SKFilterQuality.Low,
         StrokeWidth = (float)shape.Size,
         IsAntialias = false,
         IsStroke = false,
@@ -97,7 +97,7 @@ namespace Canvas.Core.EngineSpace
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Fill,
-        FilterQuality = SKFilterQuality.High,
+        FilterQuality = SKFilterQuality.Low,
         IsAntialias = false,
         IsStroke = false,
         IsDither = false
@@ -123,7 +123,7 @@ namespace Canvas.Core.EngineSpace
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Fill,
-        FilterQuality = SKFilterQuality.High,
+        FilterQuality = SKFilterQuality.Low,
         IsAntialias = false,
         IsStroke = false,
         IsDither = false
@@ -152,7 +152,7 @@ namespace Canvas.Core.EngineSpace
       {
         Color = shape.Color.Value,
         Style = SKPaintStyle.Fill,
-        FilterQuality = SKFilterQuality.High,
+        FilterQuality = SKFilterQuality.Low,
         IsAntialias = false,
         IsStroke = false,
         IsDither = false
@@ -183,7 +183,7 @@ namespace Canvas.Core.EngineSpace
       {
         Color = shape.Color.Value,
         TextAlign = SKTextAlign.Center,
-        FilterQuality = SKFilterQuality.High,
+        FilterQuality = SKFilterQuality.Low,
         TextSize = (float)shape.Size,
         IsAntialias = true,
         IsStroke = false,
@@ -221,7 +221,7 @@ namespace Canvas.Core.EngineSpace
       {
         Color = shape.Color.Value,
         TextAlign = SKTextAlign.Center,
-        FilterQuality = SKFilterQuality.High,
+        FilterQuality = SKFilterQuality.Low,
         TextSize = (float)shape.Size,
         IsAntialias = false,
         IsStroke = false,

@@ -3,6 +3,7 @@ using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
 using Canvas.Core.MessageSpace;
+using Canvas.Core.SchedulerSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -21,16 +22,16 @@ namespace Canvas.Views.Web.Views
 
     protected virtual int? Code { get; set; }
     protected virtual string Route { get; set; }
-    protected virtual Task Updater { get; set; }
-    protected virtual IComposer Composer { get; set; }
     protected virtual Reactor Reactor { get; set; }
     protected virtual ScriptService Service { get; set; }
+    protected virtual IComposer Composer { get; set; }
     protected virtual ElementReference CanvasContainer { get; set; }
+    protected virtual ICoreScheduler Scheduler { get; set; } = new CoreScheduler();
 
     /// <summary>
     /// Id
     /// </summary>
-    public virtual int Id => Code ??= GetHashCode();
+    public virtual int Name => Code ??= GetHashCode();
 
     /// <summary>
     /// Engine
@@ -45,6 +46,7 @@ namespace Canvas.Views.Web.Views
     public virtual Action<ViewMessage> OnMouseMove { get; set; } = e => { };
     public virtual Action<ViewMessage> OnMouseDown { get; set; } = e => { };
     public virtual Action<ViewMessage> OnMouseLeave { get; set; } = e => { };
+    public virtual Action<ViewMessage, int> OnScale { get; set; } = (e, direction) => { };
 
     /// <summary>
     /// Render
@@ -53,36 +55,35 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual Task Update(DomainMessage message = null)
     {
-      if (Updater?.IsCompleted is false)
+      if (Engine?.GetInstance() is null)
       {
-        return Updater;
+        return Task.FromResult(0);
       }
 
-      return Updater = InvokeAsync(() =>
+      return Scheduler.Send(() =>
       {
-        if (Engine?.GetInstance() is null)
-        {
-          return;
-        }
-
-        Engine.Clear();
-
         if (message is not null)
         {
           Composer.Update(message);
         }
 
+        Engine.Clear();
+
         UpdateView();
 
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
-        StateHasChanged();
-      });
+        InvokeAsync(StateHasChanged);
+
+        return 0;
+
+      }).Task;
     }
 
     /// <summary>
-    /// Create canvas
+    /// Create
     /// </summary>
+    /// <typeparam name="T"></typeparam>
     /// <param name="action"></param>
     /// <returns></returns>
     public virtual async Task<IView> Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new()
@@ -94,7 +95,7 @@ namespace Canvas.Views.Web.Views
         var engine = new T();
         var message = await CreateViewMessage();
 
-        Engine = engine.Create(message.X, message.Y);
+        Engine = await Scheduler.Send(() => engine.Create(message.X, message.Y)).Task;
         Composer = action(Engine);
 
         await Update();
@@ -106,6 +107,11 @@ namespace Canvas.Views.Web.Views
           View = this
         };
 
+        OnScale += Reactor.OnScale;
+        OnWheel += Reactor.OnWheel;
+        OnMouseMove += Reactor.OnMouseMove;
+        OnMouseDown += Reactor.OnMouseDown;
+        OnMouseLeave += Reactor.OnMouseLeave;
         OnLoad(message);
       }
 
@@ -116,11 +122,6 @@ namespace Canvas.Views.Web.Views
 
       return this;
     }
-
-    /// <summary>
-    /// Update to override
-    /// </summary>
-    protected virtual void UpdateView() { }
 
     /// <summary>
     /// Get information about event
@@ -138,10 +139,24 @@ namespace Canvas.Views.Web.Views
     }
 
     /// <summary>
+    /// Update to override
+    /// </summary>
+    protected virtual void UpdateView() { }
+
+    /// <summary>
     /// Dispose
     /// </summary>
     protected virtual void Dispose()
     {
+      if (Reactor is not null)
+      {
+        OnScale -= Reactor.OnScale;
+        OnWheel -= Reactor.OnWheel;
+        OnMouseMove -= Reactor.OnMouseMove;
+        OnMouseDown -= Reactor.OnMouseDown;
+        OnMouseLeave -= Reactor.OnMouseLeave;
+      }
+
       Engine?.Dispose();
     }
 
@@ -149,76 +164,50 @@ namespace Canvas.Views.Web.Views
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnWheelAction(WheelEventArgs e)
+    protected virtual void OnWheelAction(WheelEventArgs e) => OnWheel(new ViewMessage
     {
-      var message = new ViewMessage
-      {
-        X = e.DeltaX,
-        Y = e.DeltaY,
-        IsShape = e.ShiftKey
-      };
-
-      Reactor?.OnWheel(message);
-      OnWheel(message);
-    }
+      X = e.DeltaX,
+      Y = e.DeltaY,
+      IsShape = e.ShiftKey
+    });
 
     /// <summary>
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseMoveAction(MouseEventArgs e)
+    protected virtual void OnMouseMoveAction(MouseEventArgs e) => OnMouseMove(new ViewMessage
     {
-      var message = new ViewMessage
-      {
-        X = e.OffsetX,
-        Y = e.OffsetY,
-        IsSnap = e.Buttons == 1
-      };
-
-      Reactor?.OnMouseMove(message);
-      OnMouseMove(message);
-    }
+      X = e.OffsetX,
+      Y = e.OffsetY,
+      IsSnap = e.Buttons == 1
+    });
 
     /// <summary>
     /// Resize event
     /// </summary>
     /// <param name="e"></param>
     /// <param name="direction"></param>
-    protected virtual void OnScaleMoveAction(MouseEventArgs e, int direction = 0)
+    protected virtual void OnScaleAction(MouseEventArgs e, int direction = 0) => OnScale(new ViewMessage
     {
-      var message = new ViewMessage
-      {
-        X = e.OffsetX,
-        Y = e.OffsetY,
-        IsSnap = e.Buttons == 1
-      };
+      X = e.OffsetX,
+      Y = e.OffsetY,
+      IsSnap = e.Buttons == 1
 
-      Reactor?.OnScaleMove(message, direction);
-    }
+    }, direction);
 
     /// <summary>
     /// Double clck event in the view area
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseDownAction(MouseEventArgs e)
+    protected virtual void OnMouseDownAction(MouseEventArgs e) => OnMouseDown(new ViewMessage
     {
-      var message = new ViewMessage
-      {
-        IsControl = e.CtrlKey
-      };
-
-      Reactor?.OnMouseDown(message);
-      OnMouseDown(message);
-    }
+      IsControl = e.CtrlKey
+    });
 
     /// <summary>
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseLeaveAction(MouseEventArgs e)
-    {
-      Reactor?.OnMouseLeave(null);
-      OnMouseLeave(null);
-    }
+    protected virtual void OnMouseLeaveAction(MouseEventArgs e) => OnMouseLeave(null);
   }
 }

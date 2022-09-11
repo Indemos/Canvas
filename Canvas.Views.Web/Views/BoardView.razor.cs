@@ -6,7 +6,7 @@ using System;
 
 namespace Canvas.Views.Web.Views
 {
-  public partial class BoardView : BaseView
+  public partial class BoardView
   {
     public virtual IView T { get; set; }
     public virtual IView B { get; set; }
@@ -16,13 +16,10 @@ namespace Canvas.Views.Web.Views
 
     protected virtual BoardDecorator Decorator { get; set; }
 
+    public void OnScreenLeave(ViewMessage e) => UpdateDecorator();
+
     public void OnScreenMove(ViewMessage e)
     {
-      if (Screen?.Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       Decorator ??= new BoardDecorator
       {
         T = T?.Engine,
@@ -33,26 +30,31 @@ namespace Canvas.Views.Web.Views
         Composer = Composer
       };
 
-      Engine.Clear();
-      Decorator.Create(Engine, e);
-
-      Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-
-      StateHasChanged();
+      UpdateDecorator(() => Decorator.Create(Engine, e));
     }
 
-    public void OnScreenLeave(ViewMessage e)
+    protected virtual void UpdateDecorator(Action action = null)
     {
       if (Screen?.Engine?.GetInstance() is null)
       {
         return;
       }
 
-      Engine.Clear();
+      Scheduler.Send(() =>
+      {
+        Engine.Clear();
 
-      Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
+        if (action is not null)
+        {
+          action();
+        }
 
-      StateHasChanged();
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
+
+        InvokeAsync(StateHasChanged);
+
+        return 0;
+      });
     }
   }
 }

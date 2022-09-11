@@ -1,0 +1,19 @@
+@inherits BaseView
+
+@using Canvas.Core.EnumSpace
+
+<div class="combo-container">
+  <div class="combo-content board">
+    <BoardView @ref="Board"></BoardView>
+  </div>
+  <div class="combo-content map">
+    <div class="combo-container C">
+      <div class="combo-content grid"><GridView @ref="Grid"></GridView></div>
+      <div class="combo-content screen"><ScreenView @ref="Screen"></ScreenView></div>
+    </div>
+    <div class="T"><IndexScaleView Position="PositionEnum.T" @ref="T"></IndexScaleView></div>
+    <div class="B"><IndexScaleView Position="PositionEnum.B" @ref="B"></IndexScaleView></div>
+    <div class="L"><ValueScaleView Position="PositionEnum.L" @ref="L"></ValueScaleView></div>
+    <div class="R"><ValueScaleView Position="PositionEnum.R" @ref="R"></ValueScaleView></div>
+  </div>
+</div>

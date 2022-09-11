@@ -1,62 +1,15 @@
 @page "/"
 @page "/single"
 
-@using Canvas.Core
 @using Canvas.Core.ComposerSpace
-@using Canvas.Core.EnumSpace
-@using Canvas.Core.ModelSpace
 @using Canvas.Core.EngineSpace
+@using Canvas.Core.ModelSpace
 
-<div class="combo-container">
-  <div class="combo-content board">
-    <BoardView @ref="Board"></BoardView>
-  </div>
-  <div class="combo-content map">
-    <div class="combo-container C">
-      <div class="combo-content grid"><GridView @ref="Grid"></GridView></div>
-      <div class="combo-content screen"><ScreenView @ref="Screen"></ScreenView></div>
-    </div>
-    <div class="T"><IndexScaleView Position="PositionEnum.T" @ref="T"></IndexScaleView></div>
-    <div class="B"><IndexScaleView Position="PositionEnum.B" @ref="B"></IndexScaleView></div>
-    <div class="L"><ValueScaleView Position="PositionEnum.L" @ref="L"></ValueScaleView></div>
-    <div class="R"><ValueScaleView Position="PositionEnum.R" @ref="R"></ValueScaleView></div>
-  </div>
-</div>
-
-<style type="text/css">
-
-  .map {
-      display: grid;
-      grid-template-rows: 2rem 1fr 2rem;
-      grid-template-columns: 4rem 1fr 4rem;
-      grid-template-areas:
-          ". T ."
-          "L C R"
-          ". B .";
-  }
-
-  .T { grid-area: T; }
-  .B { grid-area: B; }
-  .L { grid-area: L; }
-  .R { grid-area: R; }
-  .C { grid-area: C; }
-  .combo-container { position: relative; display: flex; flex-grow: 1; }
-  .combo-content { position: absolute; width: 100%; height: 100%; }
-  .board { z-index: 15; pointer-events: none; }
-  .screen { z-index: 10; }
-  .grid { z-index: 5; }
-
-</style>
+<CanvasView @ref="View"></CanvasView>
 
 @code
 {
-  public GridView Grid { get; set; }
-  public BoardView Board { get; set; }
-  public ScreenView Screen { get; set; }
-  public IndexScaleView T { get; set; }
-  public IndexScaleView B { get; set; }
-  public ValueScaleView L { get; set; }
-  public ValueScaleView R { get; set; }
+  public CanvasView View { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
@@ -64,25 +17,15 @@
     {
       var generator = new Random();
       var points = Enumerable.Range(1, 1000).Select(i => new BarItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel).ToList();
-      var composer = new Composer { Name = "Demo", Items = points };
+      var composer = new Composer
+      {
+        Name = "Demo",
+        Items = points
+      };
 
-      composer.Views.Add(await T.Create<CanvasEngine>(engine => composer));
-      composer.Views.Add(await B.Create<CanvasEngine>(engine => composer));
-      composer.Views.Add(await L.Create<CanvasEngine>(engine => composer));
-      composer.Views.Add(await R.Create<CanvasEngine>(engine => composer));
-      composer.Views.Add(await Grid.Create<CanvasEngine>(engine => composer));
-      composer.Views.Add(await Board.Create<CanvasEngine>(engine => composer));
-      composer.Views.Add(await Screen.Create<CanvasEngine>(engine => composer));
+      composer.Views.Add(await View.Create<CanvasEngine>(engine => composer));
 
       await composer.Update();
-
-      Board.T = T;
-      Board.B = B;
-      Board.L = L;
-      Board.R = R;
-      Board.Screen = Screen;
-      Screen.OnMouseMove = Board.OnScreenMove;
-      Screen.OnMouseLeave = Board.OnScreenLeave;
     }
 
     await base.OnAfterRenderAsync(setup);
