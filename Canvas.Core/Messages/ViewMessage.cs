@@ -1,13 +1,13 @@
 namespace Canvas.Core.MessageSpace
 {
-  public class ViewMessage
+  public struct ViewMessage
   {
-    public virtual bool IsSnap { get; set; }
-    public virtual bool IsShape { get; set; }
-    public virtual bool IsControl { get; set; }
-    public virtual double X { get; set; }
-    public virtual double Y { get; set; }
-    public virtual string ValueX { get; set; }
-    public virtual string ValueY { get; set; }
+    public bool IsSnap { get; set; }
+    public bool IsShape { get; set; }
+    public bool IsControl { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
+    public string ValueX { get; set; }
+    public string ValueY { get; set; }
   }
 }

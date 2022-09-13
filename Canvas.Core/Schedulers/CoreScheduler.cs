@@ -47,7 +47,7 @@ namespace Canvas.Core.SchedulerSpace
     {
       var completion = new TaskCompletionSource<T>();
 
-      Instance.Schedule(() => completion.SetResult(action.Invoke()));
+      Instance.Schedule(() => completion.TrySetResult(action.Invoke()));
 
       return completion;
     }

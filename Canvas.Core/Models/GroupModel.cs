@@ -42,7 +42,7 @@ namespace Canvas.Core.ModelSpace
         return base.GetSeries(coordinates, values);
       }
 
-      group.Groups.TryGetValue(Composer.Name, out IGroupModel series);
+      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IGroupModel series);
 
       if (series?.Groups is null)
       {

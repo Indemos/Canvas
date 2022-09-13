@@ -38,7 +38,7 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    public override IList<double> GetDomainY()
+    public override IList<double> GetValueDomain()
     {
       var average = 0.0;
       var min = double.MaxValue;

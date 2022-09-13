@@ -191,6 +191,11 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="message"></param>
     public virtual void CreateBoard(IEngine engine, ViewMessage message, IDictionary<string, IList<double>> series)
     {
+      if (series is null)
+      {
+        return;
+      }
+
       var shape = Composer.Board.Clone() as IComponentModel;
       var boardSize = series.Max(o => Composer.ShowBoard(o.Key, o.Value).Length) * shape.Size;
       var itemSize = shape.Size * 1.5;

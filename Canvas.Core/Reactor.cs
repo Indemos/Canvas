@@ -11,21 +11,21 @@ namespace Canvas.Core
     public virtual IEngine Engine { get; set; }
     public virtual IComposer Composer { get; set; }
 
-    protected virtual ViewMessage Position { get; set; }
-    protected virtual ViewMessage ScreenPosition { get; set; }
+    protected virtual ViewMessage? Position { get; set; }
+    protected virtual ViewMessage? ScreenPosition { get; set; }
 
     /// <summary>
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnWheel(ViewMessage e)
+    public virtual void OnWheel(ViewMessage? e)
     {
       if (Engine?.GetInstance() is null)
       {
         return;
       }
 
-      var isZoom = e.IsShape;
+      var isZoom = e.Value.IsShape;
       var message = new DomainMessage
       {
         Code = View.Name
@@ -33,8 +33,8 @@ namespace Canvas.Core
 
       switch (true)
       {
-        case true when e.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
-        case true when e.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
+        case true when e?.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
+        case true when e?.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
       }
 
       View.Update(message);
@@ -44,7 +44,7 @@ namespace Canvas.Core
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseMove(ViewMessage e)
+    public virtual void OnMouseMove(ViewMessage? e)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -53,10 +53,10 @@ namespace Canvas.Core
 
       ScreenPosition ??= e;
 
-      if (e.IsSnap)
+      if (e.Value.IsSnap)
       {
-        var deltaX = ScreenPosition.X - e.X;
-        var deltaY = ScreenPosition.Y - e.Y;
+        var deltaX = ScreenPosition?.X - e?.X;
+        var deltaY = ScreenPosition?.Y - e?.Y;
         var message = new DomainMessage
         {
           Code = View.Name
@@ -79,7 +79,7 @@ namespace Canvas.Core
     /// </summary>
     /// <param name="e"></param>
     /// <param name="direction"></param>
-    public virtual void OnScale(ViewMessage e, int direction = 0)
+    public virtual void OnScale(ViewMessage? e, int direction = 0)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -88,10 +88,10 @@ namespace Canvas.Core
 
       Position ??= e;
 
-      if (e.IsSnap)
+      if (e.Value.IsSnap)
       {
-        var deltaX = Position.X - e.X;
-        var deltaY = Position.Y - e.Y;
+        var deltaX = Position?.X - e?.X;
+        var deltaY = Position?.Y - e?.Y;
         var message = new DomainMessage
         {
           Code = View.Name
@@ -119,14 +119,14 @@ namespace Canvas.Core
     /// Click event in the view area
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseDown(ViewMessage e)
+    public virtual void OnMouseDown(ViewMessage? e)
     {
       if (Engine?.GetInstance() is null)
       {
         return;
       }
 
-      if (e.IsControl)
+      if (e.Value.IsControl)
       {
         var message = new DomainMessage
         {
@@ -142,7 +142,7 @@ namespace Canvas.Core
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseLeave(ViewMessage e)
+    public virtual void OnMouseLeave(ViewMessage? e)
     {
       if (Engine?.GetInstance() is null)
       {

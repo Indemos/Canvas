@@ -2,12 +2,12 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.MessageSpace
 {
-  public class DomainMessage
+  public struct DomainMessage
   {
-    public virtual int Code { get; set; }
-    public virtual bool IndexUpdate { get; set; }
-    public virtual bool ValueUpdate { get; set; }
-    public virtual IList<int> IndexDomain { get; set; }
-    public virtual IList<double> ValueDomain { get; set; }
+    public int Code { get; set; }
+    public bool IndexUpdate { get; set; }
+    public bool ValueUpdate { get; set; }
+    public IList<int> IndexDomain { get; set; }
+    public IList<double> ValueDomain { get; set; }
   }
 }

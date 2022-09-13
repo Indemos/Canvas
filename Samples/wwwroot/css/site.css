@@ -5,16 +5,14 @@ html, body {
   overflow: auto;
   display: flex;
   flex: 1;
+  margin: 0;
+  padding: 0;
 }
 
 .mud-layout, .mud-main-content, .mud-container, .views {
-  flex: 1;
-  height: auto;
+  flex-grow: 1;
+  height: 100%;
   display: flex;
   overflow: auto;
   flex-direction: column;
-}
-
-.views {
-  width: 100%;
 }

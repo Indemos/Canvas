@@ -41,19 +41,19 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Events
     /// </summary>
-    public virtual Action<ViewMessage> OnLoad { get; set; } = e => { };
-    public virtual Action<ViewMessage> OnWheel { get; set; } = e => { };
-    public virtual Action<ViewMessage> OnMouseMove { get; set; } = e => { };
-    public virtual Action<ViewMessage> OnMouseDown { get; set; } = e => { };
-    public virtual Action<ViewMessage> OnMouseLeave { get; set; } = e => { };
-    public virtual Action<ViewMessage, int> OnScale { get; set; } = (e, direction) => { };
+    public virtual Action<ViewMessage?> OnLoad { get; set; } = e => { };
+    public virtual Action<ViewMessage?> OnWheel { get; set; } = e => { };
+    public virtual Action<ViewMessage?> OnMouseMove { get; set; } = e => { };
+    public virtual Action<ViewMessage?> OnMouseDown { get; set; } = e => { };
+    public virtual Action<ViewMessage?> OnMouseLeave { get; set; } = e => { };
+    public virtual Action<ViewMessage?, int> OnScale { get; set; } = (e, direction) => { };
 
     /// <summary>
     /// Render
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public virtual Task Update(DomainMessage message = null)
+    public virtual Task Update(DomainMessage? message = null)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -62,9 +62,14 @@ namespace Canvas.Views.Web.Views
 
       return Scheduler.Send(() =>
       {
+        if (Engine?.GetInstance() is null)
+        {
+          return 0;
+        }
+
         if (message is not null)
         {
-          Composer.Update(message);
+          Composer.Update(message.Value);
         }
 
         Engine.Clear();
@@ -208,6 +213,6 @@ namespace Canvas.Views.Web.Views
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseLeaveAction(MouseEventArgs e) => OnMouseLeave(null);
+    protected virtual void OnMouseLeaveAction(MouseEventArgs e) => OnMouseLeave(default);
   }
 }

@@ -3,6 +3,8 @@ using Canvas.Core.DecoratorSpace;
 using Canvas.Core.MessageSpace;
 using SkiaSharp;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
 {
@@ -15,11 +17,17 @@ namespace Canvas.Views.Web.Views
     public virtual IView Screen { get; set; }
 
     protected virtual BoardDecorator Decorator { get; set; }
+    protected virtual TaskCompletionSource<int> Completion { get; set; }
 
-    public void OnScreenLeave(ViewMessage e) => UpdateDecorator();
+    public void OnScreenLeave(ViewMessage? e) => UpdateDecorator();
 
-    public void OnScreenMove(ViewMessage e)
+    public void OnScreenMove(ViewMessage? e)
     {
+      if (Completion?.Task?.IsCompleted is false)
+      {
+        return;
+      }
+
       Decorator ??= new BoardDecorator
       {
         T = T?.Engine,
@@ -30,18 +38,23 @@ namespace Canvas.Views.Web.Views
         Composer = Composer
       };
 
-      UpdateDecorator(() => Decorator.Create(Engine, e));
+      UpdateDecorator(() => Decorator.Create(Engine, e.Value));
     }
 
     protected virtual void UpdateDecorator(Action action = null)
     {
-      if (Screen?.Engine?.GetInstance() is null)
+      if (Engine?.GetInstance() is null)
       {
         return;
       }
 
-      Scheduler.Send(() =>
+      Completion = Scheduler.Send(() =>
       {
+        if (Engine?.GetInstance() is null)
+        {
+          return 0;
+        }
+
         Engine.Clear();
 
         if (action is not null)

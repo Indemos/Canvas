@@ -96,7 +96,7 @@ namespace Canvas.Core.ComposerSpace
     /// Update
     /// </summary>
     /// <param name="message"></param>
-    Task Update(DomainMessage message = null);
+    Task Update(DomainMessage? message = null);
 
     /// <summary>
     /// Update items
@@ -151,13 +151,13 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    IList<int> GetDomainX();
+    IList<int> GetIndexDomain();
 
     /// <summary>
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    IList<double> GetDomainY();
+    IList<double> GetValueDomain();
 
     /// <summary>
     /// Enumerate
@@ -300,19 +300,19 @@ namespace Canvas.Core.ComposerSpace
     /// Update
     /// </summary>
     /// <param name="name"></param>
-    public virtual Task Update(DomainMessage message = null)
+    public virtual Task Update(DomainMessage? message = null)
     {
-      Domain.AutoDomainX = GetDomainX();
-      Domain.AutoDomainY = GetDomainY();
+      Domain.AutoIndexDomain = GetIndexDomain();
+      Domain.AutoValueDomain = GetValueDomain();
 
       if (message?.IndexDomain is not null || message?.IndexUpdate is true)
       {
-        Domain.DomainX = message.IndexDomain;
+        Domain.IndexDomain = message?.IndexDomain;
       }
 
       if (message?.ValueDomain is not null || message?.ValueUpdate is true)
       {
-        Domain.DomainY = message.ValueDomain;
+        Domain.ValueDomain = message?.ValueDomain;
       }
 
       foreach (var view in Views)
@@ -428,7 +428,7 @@ namespace Canvas.Core.ComposerSpace
         return domain;
       }
 
-      domain ??= Domain.AutoDomainY.ToList();
+      domain ??= Domain.AutoValueDomain.ToList();
 
       var increment = (maxY - minY) / 10;
       var isInRange = maxY - minY > increment * 2;
@@ -465,7 +465,7 @@ namespace Canvas.Core.ComposerSpace
         return domain;
       }
 
-      domain ??= Domain.AutoDomainX.ToList();
+      domain ??= Domain.AutoIndexDomain.ToList();
 
       var increment = 100 / IndexCount / 2 * delta;
       var isInRange = maxX - minX > increment * 2;
@@ -495,7 +495,7 @@ namespace Canvas.Core.ComposerSpace
         return domain;
       }
 
-      domain ??= Domain.AutoDomainX.ToList();
+      domain ??= Domain.AutoIndexDomain.ToList();
 
       var increment = IndexCount / 2 * delta;
 
@@ -519,7 +519,7 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    public virtual IList<int> GetDomainX()
+    public virtual IList<int> GetIndexDomain()
     {
       return new[] { 0, Math.Max(Items.Count, IndexCount) };
     }
@@ -528,7 +528,7 @@ namespace Canvas.Core.ComposerSpace
     /// Create Min and Max domain 
     /// </summary>
     /// <returns></returns>
-    public virtual IList<double> GetDomainY()
+    public virtual IList<double> GetValueDomain()
     {
       var average = 0.0;
       var min = double.MaxValue;
