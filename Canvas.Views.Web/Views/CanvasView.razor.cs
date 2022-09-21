@@ -26,12 +26,7 @@ namespace Canvas.Views.Web.Views
     {
       if (Composer is not null)
       {
-        Composer.OnDomain -= T.Update;
-        Composer.OnDomain -= B.Update;
-        Composer.OnDomain -= L.Update;
-        Composer.OnDomain -= R.Update;
-        Composer.OnDomain -= Grid.Update;
-        Composer.OnDomain -= Screen.Update;
+        Composer.OnDomain = (message, source) => { };
       }
 
       Screen.OnMouseMove -= Board.OnScreenMove;
