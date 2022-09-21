@@ -50,11 +50,6 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual void Update(DomainMessage message, string source = null)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       ScheduleService.Send(() =>
       {
         if (Engine?.GetInstance() is not null)

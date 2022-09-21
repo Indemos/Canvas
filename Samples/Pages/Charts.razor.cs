@@ -1,7 +1,6 @@
 using Canvas.Core;
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
-using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
 using SkiaSharp;
 using System;
@@ -65,8 +64,10 @@ namespace Canvas.Client.Pages
         {
           lock (this)
           {
-            _interval.Enabled = _points.Count < 150;
-            Counter();
+            if (_interval is not null)
+            {
+              Counter(_interval.Enabled = _points.Count < 150);
+            }
           }
         };
       }
@@ -84,7 +85,7 @@ namespace Canvas.Client.Pages
     /// <summary>
     /// On timer event
     /// </summary>
-    protected void Counter()
+    protected void Counter(bool active)
     {
       var candle = CreatePoint();
       var point = candle.Close;

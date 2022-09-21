@@ -43,11 +43,6 @@ namespace Canvas.Views.Web.Views
 
     protected virtual void UpdateDecorator(Action action = null)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       Completion = ScheduleService.Send(() =>
       {
         if (Engine?.GetInstance() is null)
