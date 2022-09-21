@@ -1,9 +1,9 @@
 using Canvas.Core.EngineSpace;
+using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Canvas.Core.ComposerSpace
 {
@@ -12,9 +12,12 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Update items
     /// </summary>
-    public override Task UpdateItems(IEngine engine)
+    /// <param name="engine"></param>
+    /// <param name="domain"></param>
+    /// <returns></returns>
+    public override void UpdateItems(IEngine engine, DomainMessage domain)
     {
-      foreach (var i in GetEnumerator())
+      foreach (var i in GetEnumerator(domain))
       {
         var group = Items.ElementAtOrDefault(i) as IGroupModel;
 
@@ -30,22 +33,21 @@ namespace Canvas.Core.ComposerSpace
           series.Value.CreateShape(i, series.Key, Items);
         }
       }
-
-      return Task.FromResult(0);
     }
 
     /// <summary>
-    /// Create Min and Max domain 
+    /// Get min and max values
     /// </summary>
+    /// <param name="domain"></param>
     /// <returns></returns>
-    public override IList<double> GetValueDomain()
+    protected override IList<double> GetValueDomain(DomainMessage domain)
     {
       var average = 0.0;
       var min = double.MaxValue;
       var max = double.MinValue;
-      var domain = new[] { 0.0, 0.0 };
+      var response = new[] { 0.0, 0.0 };
 
-      foreach (var i in GetEnumerator())
+      foreach (var i in GetEnumerator(domain))
       {
         var group = Items.ElementAtOrDefault(i) as IGroupModel;
 
@@ -58,7 +60,7 @@ namespace Canvas.Core.ComposerSpace
         {
           shape.Value.Composer = this;
 
-          var itemDomain = shape.Value.CreateDomain(i, shape.Key, Items);
+          var itemDomain = shape.Value.GetDomain(i, shape.Key, Items);
 
           if (itemDomain is not null)
           {
@@ -76,26 +78,26 @@ namespace Canvas.Core.ComposerSpace
 
       if (min == max)
       {
-        domain[0] = Math.Min(0, min);
-        domain[1] = Math.Max(0, max);
+        response[0] = Math.Min(0, min);
+        response[1] = Math.Max(0, max);
 
-        return domain;
+        return response;
       }
 
       if (min < 0 && max > 0)
       {
         var extreme = Math.Max(Math.Abs(min), Math.Abs(max));
 
-        domain[0] = -extreme;
-        domain[1] = extreme;
+        response[0] = -extreme;
+        response[1] = extreme;
 
-        return domain;
+        return response;
       }
 
-      domain[0] = min;
-      domain[1] = max;
+      response[0] = min;
+      response[1] = max;
 
-      return domain;
+      return response;
     }
   }
 }

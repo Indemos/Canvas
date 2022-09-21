@@ -48,7 +48,7 @@ namespace Canvas.Views.Web.Views
         return;
       }
 
-      Completion = Scheduler.Send(() =>
+      Completion = ScheduleService.Send(() =>
       {
         if (Engine?.GetInstance() is null)
         {

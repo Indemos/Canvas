@@ -32,7 +32,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override double[] CreateDomain(int index, string name, IList<IItemModel> items)
+    public override double[] GetDomain(int index, string name, IList<IItemModel> items)
     {
       if (Low is null || High is null)
       {

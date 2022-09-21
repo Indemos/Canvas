@@ -3,18 +3,9 @@ using System.Reactive.Concurrency;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Canvas.Core.SchedulerSpace
+namespace Canvas.Core.ServiceSpace
 {
-  public interface ICoreScheduler : IScheduler
-  {
-    /// <summary>
-    /// Action processor
-    /// </summary>
-    /// <param name="action"></param>
-    TaskCompletionSource<T> Send<T>(Func<T> action);
-  }
-
-  public class CoreScheduler : ICoreScheduler
+  public class SchedulerService : IDisposable
   {
     /// <summary>
     /// Scheduler date
@@ -29,13 +20,13 @@ namespace Canvas.Core.SchedulerSpace
     /// <summary>
     /// Constructor
     /// </summary>
-    public CoreScheduler()
+    public SchedulerService()
     {
       Instance = new EventLoopScheduler(o => new Thread(o)
       {
         IsBackground = true,
         Priority = ThreadPriority.Highest,
-        Name = nameof(CoreScheduler)
+        Name = nameof(SchedulerService)
       });
     }
 
@@ -47,7 +38,7 @@ namespace Canvas.Core.SchedulerSpace
     {
       var completion = new TaskCompletionSource<T>();
 
-      Instance.Schedule(() => completion.TrySetResult(action.Invoke()));
+      Instance.Schedule(() => completion.TrySetResult(action()));
 
       return completion;
     }
@@ -80,5 +71,13 @@ namespace Canvas.Core.SchedulerSpace
     /// <param name="action"></param>
     /// <returns></returns>
     public virtual IDisposable Schedule<TState>(TState state, DateTimeOffset dueTime, Func<IScheduler, TState, IDisposable> action) => Instance.Schedule(state, dueTime, action);
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+      Instance?.Dispose();
+    }
   }
 }

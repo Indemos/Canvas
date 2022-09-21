@@ -1,9 +1,8 @@
 using Canvas.Core;
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
+using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
-using Canvas.Views.Web;
-using Canvas.Views.Web.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -13,14 +12,10 @@ using System.Timers;
 
 namespace Canvas.Client.Pages
 {
-  public partial class Charts : IAsyncDisposable
+  public partial class Charts : IDisposable, IAsyncDisposable
   {
-    protected Timer _interval = new(1);
-    protected Random _generator = new();
-    protected double _pointValue = 0;
-    protected DateTime _pointTime = DateTime.Now;
     protected List<IItemModel> _points = new();
-    protected Dictionary<string, CanvasView> _views = new()
+    protected Dictionary<string, IView> _views = new()
     {
       ["Candles"] = null,
       ["Bars"] = null,
@@ -48,20 +43,19 @@ namespace Canvas.Client.Pages
 
           sources.Add(source);
 
-          await view.Value.Create<CanvasEngine>(message =>
+          await view.Value.Create<CanvasEngine>(engine =>
           {
             source.TrySetResult();
             return composer;
           });
 
-          //view.Value.OnMessage = message => _views.ForEach(o =>
-          //{
-          //  if (Equals(o.Value.Composer.Name, message.Name) is false)
-          //  {
-          //    o.Value.Composer.IndexDomain = message.IndexDomain;
-          //    o.Value.Update();
-          //  }
-          //});
+          composer.OnDomain += (message, source) => _views.ForEach(o =>
+          {
+            if (source is not null && Equals(composer.Name, o.Value.Composer.Name) is false)
+            {
+              o.Value.Composer.Update(message);
+            }
+          });
         }
 
         await Task.WhenAll(sources.Select(o => o.Task));
@@ -79,6 +73,13 @@ namespace Canvas.Client.Pages
 
       await base.OnAfterRenderAsync(setup);
     }
+
+    #region Generator
+
+    protected double _pointValue = 0;
+    protected DateTime _pointTime = DateTime.Now;
+    protected Timer _interval = new(1);
+    protected Random _generator = new();
 
     /// <summary>
     /// On timer event
@@ -121,12 +122,18 @@ namespace Canvas.Client.Pages
       currentDelta.Y = currentCandle.Close > currentCandle.Open ? candle.Close : -candle.Close;
       currentDelta.Color = currentCandle.Color;
 
-      _views.ForEach(panel =>
+      _views.ForEach(view =>
       {
-        //var composer = panel.Value.Composer;
-        //composer.Items = _points;
-        //composer.UpdateIndexDomain(new[] { composer.Items.Count - 100, composer.Items.Count });
-        //panel.Value.Update();
+        var domain = view.Value.Composer.Domain;
+
+        domain.IndexDomain = new[]
+        {
+          _points.Count - 100,
+          _points.Count
+        };
+
+        view.Value.Composer.Items = _points;
+        view.Value.Composer.Update(domain);
       });
     }
 
@@ -162,11 +169,23 @@ namespace Canvas.Client.Pages
     /// Dispose
     /// </summary>
     /// <returns></returns>
-    public ValueTask DisposeAsync()
+    public void Dispose()
     {
       _interval.Dispose();
+      _interval = null;
+    }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    /// <returns></returns>
+    public ValueTask DisposeAsync()
+    {
+      Dispose();
 
       return new ValueTask(Task.CompletedTask);
     }
   }
+
+  #endregion
 }

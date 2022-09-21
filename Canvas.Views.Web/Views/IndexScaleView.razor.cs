@@ -6,7 +6,7 @@ namespace Canvas.Views.Web.Views
   {
     protected virtual CaptionDecorator Decorator { get; set; }
 
-    protected override void UpdateView()
+    protected override void Render()
     {
       Decorator ??= new CaptionDecorator
       {

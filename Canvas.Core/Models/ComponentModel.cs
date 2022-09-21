@@ -22,16 +22,6 @@ namespace Canvas.Core.ModelSpace
     CompositionEnum? Composition { get; set; }
 
     /// <summary>
-    /// Color
-    /// </summary>
-    SKColor? Color { get; set; }
-
-    /// <summary>
-    /// Background
-    /// </summary>
-    SKColor? Background { get; set; }
-
-    /// <summary>
     /// Points
     /// </summary>
     IList<IItemModel> Items { get; set; }
@@ -59,16 +49,6 @@ namespace Canvas.Core.ModelSpace
     /// Format and density 
     /// </summary>
     public virtual CompositionEnum? Composition { get; set; }
-
-    /// <summary>
-    /// Color
-    /// </summary>
-    public virtual SKColor? Color { get; set; }
-
-    /// <summary>
-    /// Background
-    /// </summary>
-    public virtual SKColor? Background { get; set; }
 
     /// <summary>
     /// Points

@@ -22,13 +22,13 @@ namespace Canvas.Core.DecoratorSpace
       var space = shape.Size;
       var count = Composer.IndexCount;
       var step = engine.X / count;
-      var range = (Composer.MaxIndex - Composer.MinIndex) / count;
+      var range = (Composer.Domain.MaxIndex - Composer.Domain.MinIndex) / count;
       var point = new ItemModel();
 
       for (var i = 1; i < count; i++)
       {
         var index = step * i;
-        var content = Composer.ShowIndex(Composer.MinIndex + i * range);
+        var content = Composer.ShowIndex(Composer.Domain.MinIndex + i * range);
 
         switch (Position)
         {
@@ -53,13 +53,13 @@ namespace Canvas.Core.DecoratorSpace
       var space = shape.Size;
       var count = Composer.ValueCount;
       var step = engine.Y / count;
-      var range = (Composer.MaxValue - Composer.MinValue) / count;
+      var range = (Composer.Domain.MaxValue - Composer.Domain.MinValue) / count;
       var point = new ItemModel();
 
       for (var i = 1; i < count; i++)
       {
         var value = step * i + shape.Size / 2;
-        var content = Composer.ShowValue(Composer.MinValue + (count - i) * range);
+        var content = Composer.ShowValue(Composer.Domain.MinValue + (count - i) * range);
 
         switch (Position)
         {

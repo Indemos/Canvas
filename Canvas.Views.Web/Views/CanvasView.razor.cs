@@ -24,16 +24,35 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public override async Task<IView> Create<EngineType>(Func<IEngine, IComposer> action)
     {
+      if (Composer is not null)
+      {
+        Composer.OnDomain -= T.Update;
+        Composer.OnDomain -= B.Update;
+        Composer.OnDomain -= L.Update;
+        Composer.OnDomain -= R.Update;
+        Composer.OnDomain -= Grid.Update;
+        Composer.OnDomain -= Screen.Update;
+      }
+
+      Screen.OnMouseMove -= Board.OnScreenMove;
+      Screen.OnMouseLeave -= Board.OnScreenLeave;
+
       Composer = action(Screen.Engine);
 
+      await T.Create<EngineType>(engine => Composer);
+      await B.Create<EngineType>(engine => Composer);
+      await L.Create<EngineType>(engine => Composer);
+      await R.Create<EngineType>(engine => Composer);
+      await Grid.Create<EngineType>(engine => Composer);
       await Board.Create<EngineType>(engine => Composer);
+      await Screen.Create<EngineType>(engine => Composer);
 
-      Composer.Views.Add(await T.Create<EngineType>(engine => Composer));
-      Composer.Views.Add(await B.Create<EngineType>(engine => Composer));
-      Composer.Views.Add(await L.Create<EngineType>(engine => Composer));
-      Composer.Views.Add(await R.Create<EngineType>(engine => Composer));
-      Composer.Views.Add(await Grid.Create<EngineType>(engine => Composer));
-      Composer.Views.Add(await Screen.Create<EngineType>(engine => Composer));
+      Composer.OnDomain += T.Update;
+      Composer.OnDomain += B.Update;
+      Composer.OnDomain += L.Update;
+      Composer.OnDomain += R.Update;
+      Composer.OnDomain += Grid.Update;
+      Composer.OnDomain += Screen.Update;
 
       Board.T = T;
       Board.B = B;

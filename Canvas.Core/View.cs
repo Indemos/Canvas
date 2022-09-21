@@ -6,47 +6,23 @@ using System.Threading.Tasks;
 
 namespace Canvas.Core
 {
-  public interface IView
+  public interface IView : IDisposable
   {
-    /// <summary>
-    /// Id
-    /// </summary>
-    int Name { get; }
-
     /// <summary>
     /// Engine
     /// </summary>
     IEngine Engine { get; }
 
     /// <summary>
-    /// Load event
+    /// Composer
     /// </summary>
-    /// <param name="e"></param>
-    Action<ViewMessage?> OnLoad { get; set; }
-
-    /// <summary>
-    /// Mouse wheel and trackpad event
-    /// </summary>
-    /// <param name="e"></param>
-    Action<ViewMessage?> OnWheel { get; set; }
-
-    /// <summary>
-    /// Scale change 
-    /// </summary>
-    /// <param name="e"></param>
-    Action<ViewMessage?, int> OnScale { get; set; }
+    IComposer Composer { get; }
 
     /// <summary>
     /// Mouse move event
     /// </summary>
     /// <param name="e"></param>
     Action<ViewMessage?> OnMouseMove { get; set; }
-
-    /// <summary>
-    /// Click event in the view area
-    /// </summary>
-    /// <param name="e"></param>
-    Action<ViewMessage?> OnMouseDown { get; set; }
 
     /// <summary>
     /// Mouse leave event
@@ -58,7 +34,9 @@ namespace Canvas.Core
     /// Update
     /// </summary>
     /// <param name="message"></param>
-    Task Update(DomainMessage? message = null);
+    /// <param name="source"></param>
+    /// <returns></returns>
+    void Update(DomainMessage message, string source = null);
 
     /// <summary>
     /// Create

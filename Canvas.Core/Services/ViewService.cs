@@ -1,18 +1,18 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.MessageSpace;
-using Canvas.Core.ModelSpace;
+using System;
 
-namespace Canvas.Core
+namespace Canvas.Core.ServiceSpace
 {
-  public class Reactor
+  public class ViewService : IDisposable
   {
     public virtual IView View { get; set; }
-    public virtual IEngine Engine { get; set; }
-    public virtual IComposer Composer { get; set; }
 
     protected virtual ViewMessage? Position { get; set; }
     protected virtual ViewMessage? ScreenPosition { get; set; }
+    protected virtual IComposer Composer => View?.Composer;
+    protected virtual IEngine Engine => View?.Engine;
 
     /// <summary>
     /// Mouse wheel event
@@ -26,18 +26,15 @@ namespace Canvas.Core
       }
 
       var isZoom = e.Value.IsShape;
-      var message = new DomainMessage
-      {
-        Code = View.Name
-      };
+      var message = Composer.Domain;
 
       switch (true)
       {
-        case true when e?.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, -1) : Composer.PanIndexScale(Engine, 1); break;
-        case true when e?.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndexScale(Engine, 1) : Composer.PanIndexScale(Engine, -1); break;
+        case true when e?.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
+        case true when e?.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
       }
 
-      View.Update(message);
+      Composer.Update(message, Composer.Name);
     }
 
     /// <summary>
@@ -57,18 +54,15 @@ namespace Canvas.Core
       {
         var deltaX = ScreenPosition?.X - e?.X;
         var deltaY = ScreenPosition?.Y - e?.Y;
-        var message = new DomainMessage
-        {
-          Code = View.Name
-        };
+        var message = Composer.Domain;
 
         switch (true)
         {
-          case true when deltaX > 0: message.IndexDomain = Composer.PanIndexScale(Engine, 1); break;
-          case true when deltaX < 0: message.IndexDomain = Composer.PanIndexScale(Engine, -1); break;
+          case true when deltaX > 0: message.IndexDomain = Composer.PanIndex(Engine, 1); break;
+          case true when deltaX < 0: message.IndexDomain = Composer.PanIndex(Engine, -1); break;
         }
 
-        View.Update(message);
+        Composer.Update(message, Composer.Name);
       }
 
       ScreenPosition = e;
@@ -78,8 +72,8 @@ namespace Canvas.Core
     /// Resize event
     /// </summary>
     /// <param name="e"></param>
-    /// <param name="direction"></param>
-    public virtual void OnScale(ViewMessage? e, int direction = 0)
+    /// <param name="orientation"></param>
+    public virtual void OnScale(ViewMessage? e, int orientation = 0)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -92,24 +86,22 @@ namespace Canvas.Core
       {
         var deltaX = Position?.X - e?.X;
         var deltaY = Position?.Y - e?.Y;
-        var message = new DomainMessage
-        {
-          Code = View.Name
-        };
+        var message = Composer.Domain;
+        var source = Composer.Name;
 
-        switch (direction > 0)
+        switch (orientation > 0)
         {
-          case true when deltaX > 0: message.IndexDomain = Composer.ZoomIndexScale(Engine, -1); break;
-          case true when deltaX < 0: message.IndexDomain = Composer.ZoomIndexScale(Engine, 1); break;
+          case true when deltaX > 0: message.IndexDomain = Composer.ZoomIndex(Engine, -1); break;
+          case true when deltaX < 0: message.IndexDomain = Composer.ZoomIndex(Engine, 1); break;
         }
 
-        switch (direction < 0)
+        switch (orientation < 0)
         {
-          case true when deltaY > 0: message.ValueDomain = Composer.ZoomValueScale(Engine, -1); break;
-          case true when deltaY < 0: message.ValueDomain = Composer.ZoomValueScale(Engine, 1); break;
+          case true when deltaY > 0: message.ValueDomain = Composer.ZoomValue(Engine, -1); source = null; break;
+          case true when deltaY < 0: message.ValueDomain = Composer.ZoomValue(Engine, 1); source = null; break;
         }
 
-        View.Update(message);
+        Composer.Update(message, source);
       }
 
       Position = e;
@@ -128,13 +120,11 @@ namespace Canvas.Core
 
       if (e.Value.IsControl)
       {
-        var message = new DomainMessage
-        {
-          Code = View.Name,
-          ValueUpdate = true
-        };
+        var message = Composer.Domain;
 
-        View.Update(message);
+        message.ValueDomain = null;
+
+        Composer.Update(message);
       }
     }
 
@@ -150,6 +140,13 @@ namespace Canvas.Core
       }
 
       ScreenPosition = null;
+    }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
     }
   }
 }

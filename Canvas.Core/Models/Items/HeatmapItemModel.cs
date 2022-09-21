@@ -12,7 +12,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override double[] CreateDomain(int index, string name, IList<IItemModel> items)
+    public override double[] GetDomain(int index, string name, IList<IItemModel> items)
     {
       if (Items is null)
       {
@@ -36,17 +36,17 @@ namespace Canvas.Core.ModelSpace
       }
 
       var item = values;
-      //var min = Composer.MinValue;
-      //var points = Composer.Items.ElementAt((int)values.X) as HeatmapItemModel;
+      var min = Composer.Domain.MinValue;
+      var points = Composer.Items.ElementAt((int)values.X) as HeatmapItemModel;
 
-      //foreach (var point in points.Items)
-      //{
-      //  if (values.Y - point.Y <= values.Y - min && point.Y <= values.Y)
-      //  {
-      //    min = point.Y.Value;
-      //    item = point;
-      //  }
-      //}
+      foreach (var point in points.Items)
+      {
+        if (values.Y - point.Y <= values.Y - min && point.Y <= values.Y)
+        {
+          min = point.Y.Value;
+          item = point;
+        }
+      }
 
       return new double[] { item?.Z ?? 0 };
     }
@@ -67,18 +67,18 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      //var step = (Composer.MaxValue - Composer.MinValue + 1) / pointsCount;
+      var step = (Composer.Domain.MaxValue - Composer.Domain.MinValue + 1) / pointsCount;
 
-      //foreach (var point in Items)
-      //{
-      //  var open = Composer.GetPixels(Engine, index, point.Y.Value);
-      //  var close = Composer.GetPixels(Engine, index + 1, point.Y.Value + step);
-      //  var points = new IItemModel[] { open, close };
+      foreach (var point in Items)
+      {
+        var open = Composer.GetPixels(Engine, index, point.Y.Value);
+        var close = Composer.GetPixels(Engine, index + 1, point.Y.Value + step);
+        var points = new IItemModel[] { open, close };
 
-      //  Color = Composer?.ColorService?.GetColor(point.Z.Value) ?? Color;
+        Color = point.Color ?? Color;
 
-      //  Engine.CreateBox(points, this);
-      //}
+        Engine.CreateBox(points, this);
+      }
     }
   }
 }

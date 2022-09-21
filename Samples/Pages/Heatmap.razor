@@ -1,13 +1,14 @@
-@page "/heatmap"
+@page "/map"
 
 @using Canvas.Core
+@using Canvas.Core.ComposerSpace
 @using Canvas.Core.EngineSpace
 @using Canvas.Core.ModelSpace
 @using Canvas.Core.ServiceSpace
 @using ScriptContainer
 
 <div class="demo">
-  <ScreenView @ref="ViewControl"></ScreenView>
+  <CanvasView @ref="ViewControl"></CanvasView>
 </div>
 
 <style type="text/css">
@@ -20,7 +21,7 @@
 
 @code
 {
-  public ScreenView ViewControl { get; set; }
+  public CanvasView ViewControl { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
@@ -29,23 +30,26 @@
       var min = 0;
       var max = 100;
       var generator = new Random();
-
+      var colorService = new ColorService { Min = min, Max = max };
       var points = Enumerable.Range(min, max).Select(i => new HeatmapItemModel
       {
         Items = Enumerable
           .Range(min, max)
-          .Select(o => new ItemModel { X = i, Y = o, Z = o } as IItemModel)
-          //.OrderBy(o => generator.Next())
+          .Select(o => new ItemModel { X = i, Y = o, Z = o, Color = colorService?.GetColor(o) } as IItemModel)
+          .OrderBy(o => generator.Next())
           .ToList()
 
       } as IItemModel).ToList();
 
-      //await ViewControl.Create<CanvasEngine>(dimensions => ViewControl.Composer = new Composer
-      //{
-      //  Name = "Demo",
-      //  Items = points,
-      //  ColorService = new ColorService { Min = min, Max = max }
-      //});
+      var composer = new Composer
+      {
+        Name = "Demo",
+        Items = points
+      };
+
+      await ViewControl.Create<CanvasEngine>(engine => composer);
+
+      composer.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

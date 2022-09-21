@@ -1,5 +1,6 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,16 @@ namespace Canvas.Core.ModelSpace
     double? Z { get; set; }
 
     /// <summary>
+    /// Color
+    /// </summary>
+    SKColor? Color { get; set; }
+
+    /// <summary>
+    /// Background
+    /// </summary>
+    SKColor? Background { get; set; }
+
+    /// <summary>
     /// Reference to panel
     /// </summary>
     IEngine Engine { get; set; }
@@ -40,7 +51,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    double[] CreateDomain(int index, string name, IList<IItemModel> items);
+    double[] GetDomain(int index, string name, IList<IItemModel> items);
 
     /// <summary>
     /// Create the shape
@@ -95,6 +106,16 @@ namespace Canvas.Core.ModelSpace
     public virtual double? Z { get; set; }
 
     /// <summary>
+    /// Color
+    /// </summary>
+    public virtual SKColor? Color { get; set; }
+
+    /// <summary>
+    /// Background
+    /// </summary>
+    public virtual SKColor? Background { get; set; }
+
+    /// <summary>
     /// Reference to panel
     /// </summary>
     public virtual IEngine Engine { get; set; }
@@ -111,7 +132,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual double[] CreateDomain(int index, string name, IList<IItemModel> items)
+    public virtual double[] GetDomain(int index, string name, IList<IItemModel> items)
     {
       var currentModel = GetItem(index, name, items);
 
@@ -148,7 +169,7 @@ namespace Canvas.Core.ModelSpace
     {
       return new Dictionary<string, IList<double>>
       {
-        [Composer?.Name ?? nameof(Composer.Name)] = GetSeriesValues(coordinates, values)
+        [nameof(Composer.Domain)] = GetSeriesValues(coordinates, values)
       };
     }
 

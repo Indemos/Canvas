@@ -23,9 +23,9 @@
         Items = points
       };
 
-      composer.Views.Add(await View.Create<CanvasEngine>(engine => composer));
+      await View.Create<CanvasEngine>(engine => composer);
 
-      await composer.Update();
+      composer.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

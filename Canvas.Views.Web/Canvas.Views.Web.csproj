@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ScriptContainer" Version="1.1.2-prerelease" />
+    <PackageReference Include="ScriptContainer" Version="1.1.4-prerelease" />
   </ItemGroup>
   
   <ItemGroup>

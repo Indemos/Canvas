@@ -77,10 +77,10 @@ namespace Canvas.Core.EngineSpace
       }
 
       Canvas.DrawLine(
-        (float)coordinates[0].X,
-        (float)coordinates[0].Y,
-        (float)coordinates[1].X,
-        (float)coordinates[1].Y,
+        (float)Math.Floor(coordinates[0].X.Value),
+        (float)Math.Floor(coordinates[0].Y.Value),
+        (float)Math.Floor(coordinates[1].X.Value),
+        (float)Math.Floor(coordinates[1].Y.Value),
         pen);
 
       pen.Dispose();

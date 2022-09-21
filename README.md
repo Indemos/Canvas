@@ -92,20 +92,22 @@ The simplest format used by the library is a list of models with a single `Point
     if (setup)
     {
       var generator = new Random();
-
-      var points = Enumerable.Range(1, 100).Select(i => new BarItemModel
-      {
-        X = i,
-        Y = generator.Next(-5000, 5000)
-
-      } as IPointModel).ToList();
-
-      await ViewControl.Create(dimensions => ViewControl.Composer = new Composer
+      var points = Enumerable.Range(1, 1000).Select(i => new BarItemModel 
+      { 
+        X = i, 
+        Y = generator.Next(-5000, 5000) 
+      
+      } as IItemModel).ToList();
+      
+      var composer = new Composer
       {
         Name = "Demo",
-        Items = points,
-        Engine = new CanvasEngine(dimensions.X, dimensions.Y)
-      });
+        Items = points
+      };
+
+      await View.Create<CanvasEngine>(engine => composer);
+
+      composer.Update();
     }
 
     await base.OnAfterRenderAsync(setup);
@@ -153,4 +155,7 @@ At this moment, `Canvas` supports only horizontal orientation, so the axis X is 
 
 # Roadmap 
 
-The current version is already the fastest .NET charting library, but it can be even faster if instead of rerendering HTML elements Blazor will simply show or hide them using CSS. 
+Each chart of type `CanvasView` consists of many composable pieces for the grid, scales, main screen. 
+To improve performance, each piece uses its own thread. 
+Additional testing is needed to verify correct disposal in each thread. 
+Also, to increase performance even more, downsampling could be implemented, e.g. when number of points is greater that width of the screen in pixels, because all points wouldn't fit on the screen anyway. 
