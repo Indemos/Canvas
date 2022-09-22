@@ -1,14 +1,12 @@
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
-using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
+using Canvas.Core.ShapeSpace;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Threading.Tasks;
 
 namespace Canvas.Core.ComposerSpace
 {
@@ -32,37 +30,37 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Domain
     /// </summary>
-    DomainMessage Domain { get; }
-
-    /// <summary>
-    /// Item definition
-    /// </summary>
-    IComponentModel Item { get; set; }
+    DomainModel Domain { get; }
 
     /// <summary>
     /// Shape definition
     /// </summary>
-    IComponentModel Line { get; set; }
+    ComponentModel Line { get; set; }
+
+    /// <summary>
+    /// Item definition
+    /// </summary>
+    ComponentModel Shape { get; set; }
 
     /// <summary>
     /// Board definition
     /// </summary>
-    IComponentModel Board { get; set; }
+    ComponentModel Board { get; set; }
 
     /// <summary>
     /// Caption definition
     /// </summary>
-    IComponentModel Caption { get; set; }
+    ComponentModel Caption { get; set; }
 
     /// <summary>
     /// Items
     /// </summary>
-    IList<IItemModel> Items { get; set; }
+    IList<IShape> Items { get; set; }
 
     /// <summary>
     /// Observable domain
     /// </summary>
-    Action<DomainMessage, string> OnDomain { get; set; }
+    Action<DomainModel, string> OnDomain { get; set; }
 
     /// <summary>
     /// Format indices
@@ -84,7 +82,7 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     /// <param name="message"></param>
     /// <param name="source"></param>
-    void Update(DomainMessage? message = null, string source = null);
+    void Update(DomainModel? message = null, string source = null);
 
     /// <summary>
     /// Update items
@@ -92,14 +90,14 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="engine"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    void UpdateItems(IEngine engine, DomainMessage message);
+    void UpdateItems(IEngine engine, DomainModel message);
 
     /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    IItemModel GetPixels(IEngine engine, IItemModel item);
+    DataModel GetPixels(IEngine engine, DataModel item);
 
     /// <summary>
     /// Transform coordinates
@@ -108,14 +106,14 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    IItemModel GetPixels(IEngine engine, double index, double value);
+    DataModel GetPixels(IEngine engine, double index, double value);
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    IItemModel GetValues(IEngine engine, IItemModel item);
+    DataModel GetValues(IEngine engine, DataModel item);
 
     /// <summary>
     /// Value scale
@@ -159,37 +157,37 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Domain
     /// </summary>
-    public virtual DomainMessage Domain { get; set; }
-
-    /// <summary>
-    /// Item definition
-    /// </summary>
-    public virtual IComponentModel Item { get; set; }
+    public virtual DomainModel Domain { get; set; }
 
     /// <summary>
     /// Shape definition
     /// </summary>
-    public virtual IComponentModel Line { get; set; }
+    public virtual ComponentModel Line { get; set; }
+
+    /// <summary>
+    /// Item definition
+    /// </summary>
+    public virtual ComponentModel Shape { get; set; }
 
     /// <summary>
     /// Board definition
     /// </summary>
-    public virtual IComponentModel Board { get; set; }
+    public virtual ComponentModel Board { get; set; }
 
     /// <summary>
     /// Caption definition
     /// </summary>
-    public virtual IComponentModel Caption { get; set; }
+    public virtual ComponentModel Caption { get; set; }
 
     /// <summary>
     /// Items
     /// </summary>
-    public virtual IList<IItemModel> Items { get; set; }
+    public virtual IList<IShape> Items { get; set; }
 
     /// <summary>
     /// View subscription
     /// </summary>
-    public virtual Action<DomainMessage, string> OnDomain { get; set; } = (message, source) => { };
+    public virtual Action<DomainModel, string> OnDomain { get; set; } = (message, source) => { };
 
     /// <summary>
     /// Format indices
@@ -213,9 +211,9 @@ namespace Canvas.Core.ComposerSpace
     {
       ValueCount = 4;
       IndexCount = 10;
-      Domain = new DomainMessage();
+      Domain = new DomainModel();
 
-      Item = new ComponentModel
+      Shape = new ComponentModel
       {
         Size = 0.5,
         Color = new SKColor(50, 50, 50)
@@ -244,7 +242,7 @@ namespace Canvas.Core.ComposerSpace
         Background = new SKColor(200, 200, 200)
       };
 
-      Items = new List<IItemModel>();
+      Items = new List<IShape>();
     }
 
     /// <summary>
@@ -253,12 +251,12 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual void Update(DomainMessage? message = null, string source = null)
+    public virtual void Update(DomainModel? message = null, string source = null)
     {
       var domain = message ?? Domain;
 
-      domain.AutoIndexDomain = GetIndexDomain();
-      domain.AutoValueDomain = GetValueDomain(domain);
+      domain.AutoIndexDomain = ComposeIndexDomain();
+      domain.AutoValueDomain = ComposeValueDomain(domain);
 
       OnDomain(Domain = domain, source);
     }
@@ -269,14 +267,13 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public virtual void UpdateItems(IEngine engine, DomainMessage domain)
+    public virtual void UpdateItems(IEngine engine, DomainModel domain)
     {
       foreach (var i in GetEnumerator(domain))
       {
         var item = Items.ElementAtOrDefault(i);
-        var itemDomain = item?.GetDomain(i, null, Items);
 
-        if (itemDomain is null)
+        if (item is null)
         {
           continue;
         }
@@ -292,7 +289,7 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    public virtual IItemModel GetPixels(IEngine engine, IItemModel item)
+    public virtual DataModel GetPixels(IEngine engine, DataModel item)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
@@ -319,9 +316,9 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public virtual IItemModel GetPixels(IEngine engine, double index, double value)
+    public virtual DataModel GetPixels(IEngine engine, double index, double value)
     {
-      return GetPixels(engine, new ItemModel { X = index, Y = value });
+      return GetPixels(engine, new DataModel { X = index, Y = value });
     }
 
     /// <summary>
@@ -329,7 +326,7 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    public virtual IItemModel GetValues(IEngine engine, IItemModel item)
+    public virtual DataModel GetValues(IEngine engine, DataModel item)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
@@ -450,7 +447,7 @@ namespace Canvas.Core.ComposerSpace
     /// Get min and max indices
     /// </summary>
     /// <returns></returns>
-    protected virtual IList<int> GetIndexDomain()
+    protected virtual IList<int> ComposeIndexDomain()
     {
       return new[] { 0, Math.Max(Items.Count, IndexCount) };
     }
@@ -460,7 +457,7 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    protected virtual IList<double> GetValueDomain(DomainMessage domain)
+    protected virtual IList<double> ComposeValueDomain(DomainModel domain)
     {
       var average = 0.0;
       var min = double.MaxValue;
@@ -517,7 +514,7 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    protected virtual IEnumerable<int> GetEnumerator(DomainMessage domain)
+    protected virtual IEnumerable<int> GetEnumerator(DomainModel domain)
     {
       var min = domain.MinIndex;
       var max = domain.MaxIndex;

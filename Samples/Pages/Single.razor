@@ -4,6 +4,7 @@
 @using Canvas.Core.ComposerSpace
 @using Canvas.Core.EngineSpace
 @using Canvas.Core.ModelSpace
+@using Canvas.Core.ShapeSpace
 
 <CanvasView @ref="View"></CanvasView>
 
@@ -16,7 +17,17 @@
     if (setup)
     {
       var generator = new Random();
-      var points = Enumerable.Range(1, 1000).Select(i => new BarItemModel { X = i, Y = generator.Next(-5000, 5000) } as IItemModel).ToList();
+      var points = Enumerable
+        .Range(1, 1000)
+        .Select(i => new BarShape
+        {
+          Data = new DataModel
+          {
+            X = i,
+            Y = generator.Next(-5000, 5000)
+          }
+        } as IShape).ToList();
+
       var composer = new Composer
       {
         Name = "Demo",

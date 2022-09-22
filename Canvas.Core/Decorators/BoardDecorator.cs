@@ -1,7 +1,7 @@
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
-using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
+using Canvas.Core.ShapeSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,15 +26,9 @@ namespace Canvas.Core.DecoratorSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="message"></param>
-    public virtual void Create(IEngine engine, ViewMessage message)
+    public virtual void Create(IEngine engine, DataModel message)
     {
-      var coordinates = new ItemModel
-      {
-        X = message.X,
-        Y = message.Y
-      };
-
-      var values = Composer.GetValues(Screen, coordinates);
+      var values = Composer.GetValues(Screen, message);
       var element = Composer.Items.ElementAtOrDefault((int)values.X);
 
       message.ValueX = Composer.ShowIndex(values.X.Value);
@@ -42,7 +36,7 @@ namespace Canvas.Core.DecoratorSpace
 
       if (element is not null)
       {
-        CreateBoard(engine, message, element.GetSeries(coordinates, values));
+        CreateBoard(engine, message, element.GetSeries(message, values));
       }
 
       CreateLines(engine, message);
@@ -55,13 +49,13 @@ namespace Canvas.Core.DecoratorSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="message"></param>
-    public virtual void CreateLines(IEngine engine, ViewMessage message)
+    public virtual void CreateLines(IEngine engine, DataModel message)
     {
-      var shape = Composer.Line.Clone() as IComponentModel;
-      var points = new IItemModel[2]
+      var shape = Composer.Line;
+      var points = new DataModel[2]
       {
-        new ItemModel(),
-        new ItemModel()
+        new DataModel(),
+        new DataModel()
       };
 
       points[0].X = DL;
@@ -84,15 +78,15 @@ namespace Canvas.Core.DecoratorSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="message"></param>
-    public virtual void CreateMarkers(IEngine engine, ViewMessage message)
+    public virtual void CreateMarkers(IEngine engine, DataModel message)
     {
-      var shape = Composer.Caption.Clone() as IComponentModel;
+      var shape = Composer.Caption;
       var DX = message.ValueX.Length * shape.Size / 2;
       var DY = shape.Size / 1.5;
-      var points = new IItemModel[2]
+      var points = new DataModel[2]
       {
-        new ItemModel(),
-        new ItemModel()
+        new DataModel(),
+        new DataModel()
       };
 
       points[0].Y = Math.Floor((DT + message.Y - DY).Value);
@@ -139,11 +133,11 @@ namespace Canvas.Core.DecoratorSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="message"></param>
-    public virtual void CreateCaptions(IEngine engine, ViewMessage message)
+    public virtual void CreateCaptions(IEngine engine, DataModel message)
     {
-      var shape = Composer.Caption.Clone() as IComponentModel;
+      var shape = Composer.Caption;
       var DY = shape.Size / 2;
-      var point = new ItemModel();
+      var point = new DataModel();
 
       shape.Color = Composer.Caption.Background;
 
@@ -189,20 +183,20 @@ namespace Canvas.Core.DecoratorSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="message"></param>
-    public virtual void CreateBoard(IEngine engine, ViewMessage message, IDictionary<string, IList<double>> series)
+    public virtual void CreateBoard(IEngine engine, DataModel message, IDictionary<string, IList<double>> series)
     {
       if (series is null)
       {
         return;
       }
 
-      var shape = Composer.Board.Clone() as IComponentModel;
+      var shape = Composer.Board;
       var boardSize = series.Max(o => Composer.ShowBoard(o.Key, o.Value).Length) * shape.Size;
       var itemSize = shape.Size * 1.5;
-      var points = new IItemModel[2]
+      var points = new DataModel[2]
       {
-        new ItemModel(),
-        new ItemModel()
+        new DataModel(),
+        new DataModel()
       };
 
       // Border

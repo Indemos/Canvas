@@ -2,6 +2,7 @@ using Canvas.Core;
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
+using Canvas.Core.ShapeSpace;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Canvas.Client.Pages
 {
   public partial class Charts : IDisposable, IAsyncDisposable
   {
-    protected List<IItemModel> _points = new();
+    protected List<IShape> _points = new();
     protected Dictionary<string, IView> _views = new()
     {
       ["Candles"] = null,
@@ -97,31 +98,35 @@ namespace Canvas.Client.Pages
       {
         _pointValue = candle.Close.Value;
         _pointTime = DateTime.UtcNow;
-        _points.Add(new GroupModel
+        _points.Add(new GroupShape
         {
-          X = _pointTime.Ticks,
-          Groups = new Dictionary<string, IGroupModel>
+          Data = new DataModel { X = _pointTime.Ticks },
+          Groups = new Dictionary<string, IGroupShape>
           {
-            ["Bars"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarItemModel { Y = point } } },
-            ["Areas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new AreaItemModel { Y = point } } },
-            ["Deltas"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new BarItemModel { Y = pointDelta } } },
-            ["Lines"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = new LineItemModel { Y = point }, ["V2"] = new LineItemModel { Y = pointMirror } } },
-            ["Candles"] = new GroupModel { Groups = new Dictionary<string, IGroupModel> { ["V1"] = candle, ["V2"] = new ArrowItemModel { Y = arrow, Direction = 1 } } }
+            ["Bars"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new BarShape { Data = new DataModel { Y = point } } } },
+            ["Areas"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new AreaShape { Data = new DataModel { Y = point } } } },
+            ["Deltas"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new BarShape { Data = new DataModel { Y = pointDelta } } } },
+            ["Lines"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new LineShape { Data = new DataModel { Y = point } }, ["V2"] = new LineShape { Data = new DataModel { Y = pointMirror } } } },
+            ["Candles"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = candle, ["V2"] = new ArrowShape { Data = new DataModel { Y = arrow }, Direction = 1 } } }
           }
         });
       }
 
-      var grp = _points.Last() as IGroupModel;
+      var grp = _points.Last() as IGroupShape;
       var currentDelta = grp.Groups["Deltas"].Groups["V1"];
-      var currentCandle = grp.Groups["Candles"].Groups["V1"] as CandleItemModel;
+      var currentCandle = grp.Groups["Candles"].Groups["V1"] as CandleShape;
 
       currentCandle.Low = candle.Low;
       currentCandle.High = candle.High;
       currentCandle.Close = candle.Close;
-      currentCandle.Color = currentCandle.Close > currentCandle.Open ? SKColors.LimeGreen : SKColors.OrangeRed;
+      currentCandle.Component = new ComponentModel
+      {
+        Size = 1,
+        Color = currentCandle.Close > currentCandle.Open ? SKColors.LimeGreen : SKColors.OrangeRed
+      };
 
-      currentDelta.Y = currentCandle.Close > currentCandle.Open ? candle.Close : -candle.Close;
-      currentDelta.Color = currentCandle.Color;
+      //currentDelta.Data.Y = currentCandle.Close > currentCandle.Open ? candle.Close : -candle.Close;
+      //currentDelta.Color = currentCandle.Color;
 
       _views.ForEach(view =>
       {
@@ -141,12 +146,12 @@ namespace Canvas.Client.Pages
     /// <summary>
     /// Generate candle
     /// </summary>
-    protected CandleItemModel CreatePoint()
+    protected CandleShape CreatePoint()
     {
       var open = (double)_generator.Next(1000, 5000);
       var close = (double)_generator.Next(1000, 5000);
       var shadow = (double)_generator.Next(500, 1000);
-      var candle = new CandleItemModel
+      var candle = new CandleShape
       {
         Low = Math.Min(open, close) - shadow,
         High = Math.Max(open, close) + shadow,

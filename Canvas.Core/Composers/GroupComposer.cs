@@ -1,6 +1,6 @@
 using Canvas.Core.EngineSpace;
-using Canvas.Core.MessageSpace;
 using Canvas.Core.ModelSpace;
+using Canvas.Core.ShapeSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,13 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public override void UpdateItems(IEngine engine, DomainMessage domain)
+    public override void UpdateItems(IEngine engine, DomainModel domain)
     {
       foreach (var i in GetEnumerator(domain))
       {
-        var group = Items.ElementAtOrDefault(i) as IGroupModel;
+        var group = Items.ElementAtOrDefault(i) as IGroupShape;
 
-        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupModel seriesGroup) is false)
+        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupShape seriesGroup) is false)
         {
           continue;
         }
@@ -40,7 +40,7 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    protected override IList<double> GetValueDomain(DomainMessage domain)
+    protected override IList<double> ComposeValueDomain(DomainModel domain)
     {
       var average = 0.0;
       var min = double.MaxValue;
@@ -49,9 +49,9 @@ namespace Canvas.Core.ComposerSpace
 
       foreach (var i in GetEnumerator(domain))
       {
-        var group = Items.ElementAtOrDefault(i) as IGroupModel;
+        var group = Items.ElementAtOrDefault(i) as IGroupShape;
 
-        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupModel series) is false)
+        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupShape series) is false)
         {
           continue;
         }

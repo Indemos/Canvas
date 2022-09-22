@@ -1,38 +1,23 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
-using SkiaSharp;
+using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.ShapeSpace
 {
-  public interface IItemModel : ICloneable
+  public interface IShape : ICloneable
   {
     /// <summary>
-    /// X
+    /// Data
     /// </summary>
-    double? X { get; set; }
+    DataModel? Data { get; set; }
 
     /// <summary>
-    /// Y
+    /// Shape
     /// </summary>
-    double? Y { get; set; }
-
-    /// <summary>
-    /// Z
-    /// </summary>
-    double? Z { get; set; }
-
-    /// <summary>
-    /// Color
-    /// </summary>
-    SKColor? Color { get; set; }
-
-    /// <summary>
-    /// Background
-    /// </summary>
-    SKColor? Background { get; set; }
+    ComponentModel? Component { get; set; }
 
     /// <summary>
     /// Reference to panel
@@ -51,7 +36,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    double[] GetDomain(int index, string name, IList<IItemModel> items);
+    double[] GetDomain(int index, string name, IList<IShape> items);
 
     /// <summary>
     /// Create the shape
@@ -60,7 +45,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    void CreateShape(int index, string name, IList<IItemModel> items);
+    void CreateShape(int index, string name, IList<IShape> items);
 
     /// <summary>
     /// Get series
@@ -68,7 +53,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="coordinates"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    IDictionary<string, IList<double>> GetSeries(IItemModel coordinates, IItemModel values);
+    IDictionary<string, IList<double>> GetSeries(DataModel coordinates, DataModel values);
 
     /// <summary>
     /// Get series values
@@ -76,7 +61,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="coordinates"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    IList<double> GetSeriesValues(IItemModel coordinates, IItemModel values);
+    IList<double> GetSeriesValues(DataModel coordinates, DataModel values);
 
     /// <summary>
     /// Get specific group by position and name
@@ -85,35 +70,20 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    IItemModel GetItem(int index, string name, IList<IItemModel> items);
+    IShape GetItem(int index, string name, IList<IShape> items);
   }
 
-  public class ItemModel : IItemModel
+  public class Shape : IShape
   {
     /// <summary>
-    /// X
+    /// Data
     /// </summary>
-    public virtual double? X { get; set; }
+    public virtual DataModel? Data { get; set; }
 
     /// <summary>
-    /// Y
+    /// Shape
     /// </summary>
-    public virtual double? Y { get; set; }
-
-    /// <summary>
-    /// Z
-    /// </summary>
-    public virtual double? Z { get; set; }
-
-    /// <summary>
-    /// Color
-    /// </summary>
-    public virtual SKColor? Color { get; set; }
-
-    /// <summary>
-    /// Background
-    /// </summary>
-    public virtual SKColor? Background { get; set; }
+    public virtual ComponentModel? Component { get; set; }
 
     /// <summary>
     /// Reference to panel
@@ -132,19 +102,19 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual double[] GetDomain(int index, string name, IList<IItemModel> items)
+    public virtual double[] GetDomain(int index, string name, IList<IShape> items)
     {
       var currentModel = GetItem(index, name, items);
 
-      if (currentModel?.Y is null)
+      if (currentModel?.Data?.Y is null)
       {
         return null;
       }
 
       return new double[]
       {
-        currentModel.Y.Value,
-        currentModel.Y.Value,
+        currentModel.Data.Value.Y.Value,
+        currentModel.Data.Value.Y.Value,
       };
     }
 
@@ -155,7 +125,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual void CreateShape(int index, string name, IList<IItemModel> items)
+    public virtual void CreateShape(int index, string name, IList<IShape> items)
     {
     }
 
@@ -165,7 +135,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="coordinates"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public virtual IDictionary<string, IList<double>> GetSeries(IItemModel coordinates, IItemModel values)
+    public virtual IDictionary<string, IList<double>> GetSeries(DataModel coordinates, DataModel values)
     {
       return new Dictionary<string, IList<double>>
       {
@@ -179,9 +149,9 @@ namespace Canvas.Core.ModelSpace
     /// <param name="coordinates"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public virtual IList<double> GetSeriesValues(IItemModel coordinates, IItemModel values)
+    public virtual IList<double> GetSeriesValues(DataModel coordinates, DataModel values)
     {
-      return new double[] { Y ?? 0 };
+      return new double[] { Data?.Y ?? 0 };
     }
 
     /// <summary>
@@ -191,7 +161,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual IItemModel GetItem(int index, string name, IList<IItemModel> items)
+    public virtual IShape GetItem(int index, string name, IList<IShape> items)
     {
       return items.ElementAtOrDefault(index);
     }

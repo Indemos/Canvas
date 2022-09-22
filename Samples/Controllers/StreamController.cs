@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
+using Canvas.Core.ShapeSpace;
 
 namespace Canvas.Client.Controllers
 {
@@ -28,15 +29,15 @@ namespace Canvas.Client.Controllers
         var pos = _generator.Next(50, 150);
         var canvas = new CanvasEngine().Create(600, 600);
 
-        canvas.CreateBox(new List<IItemModel>
+        canvas.CreateBox(new List<DataModel>
         {
-          new ItemModel { X = 0, Y = 0 },
-          new ItemModel { X = 600, Y = 600 }
+          new DataModel { X = 0, Y = 0 },
+          new DataModel { X = 600, Y = 600 }
         },
         new ComponentModel { Color = SKColors.Yellow });
 
         canvas.CreateCircle(
-          new ItemModel { X = pos, Y = pos },
+          new DataModel { X = pos, Y = pos },
           new ComponentModel { Size = 20, Color = SKColors.Black });
 
         var data = (canvas as CanvasEngine).Map.Encode(SKEncodedImageFormat.Webp, 100).ToArray();

@@ -1,29 +1,30 @@
+using Canvas.Core.ModelSpace;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.ShapeSpace
 {
-  public interface IGroupModel : IComponentModel
+  public interface IGroupShape : IShape
   {
     /// <summary>
     /// Shape groups
     /// </summary>
-    IDictionary<string, IGroupModel> Groups { get; set; }
+    IDictionary<string, IGroupShape> Groups { get; set; }
   }
 
-  public class GroupModel : ComponentModel, IGroupModel
+  public class GroupShape : Shape, IGroupShape
   {
     /// <summary>
     /// Shape groups
     /// </summary>
-    public virtual IDictionary<string, IGroupModel> Groups { get; set; }
+    public virtual IDictionary<string, IGroupShape> Groups { get; set; }
 
     /// <summary>
     /// Constructor
     /// </summary>
-    public GroupModel()
+    public GroupShape()
     {
-      Groups = new Dictionary<string, IGroupModel>(); 
+      Groups = new Dictionary<string, IGroupShape>(); 
     }
 
     /// <summary>
@@ -32,7 +33,7 @@ namespace Canvas.Core.ModelSpace
     /// <param name="coordinates"></param>
     /// <param name="values"></param>
     /// <returns></returns>
-    public override IDictionary<string, IList<double>> GetSeries(IItemModel coordinates, IItemModel values)
+    public override IDictionary<string, IList<double>> GetSeries(DataModel coordinates, DataModel values)
     {
       var group = this;
       var groups = new Dictionary<string, IList<double>>();
@@ -42,7 +43,7 @@ namespace Canvas.Core.ModelSpace
         return base.GetSeries(coordinates, values);
       }
 
-      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IGroupModel series);
+      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IGroupShape series);
 
       if (series?.Groups is null)
       {
@@ -57,32 +58,32 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Get specific group by position and name
     /// </summary>
-    /// <param name="position"></param>
+    /// <param name="index"></param>
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override IItemModel GetItem(int position, string name, IList<IItemModel> items)
+    public override IShape GetItem(int index, string name, IList<IShape> items)
     {
       if (name is null)
       {
-        return base.GetItem(position, null, items);
+        return base.GetItem(index, null, items);
       }
 
-      var group = items.ElementAtOrDefault(position) as IGroupModel;
+      var group = items.ElementAtOrDefault(index) as IGroupShape;
 
       if (group?.Groups is null)
       {
         return null;
       }
 
-      group.Groups.TryGetValue(Composer.Name, out IGroupModel series);
+      group.Groups.TryGetValue(Composer.Name, out IGroupShape series);
 
       if (series?.Groups is null)
       {
         return null;
       }
 
-      series.Groups.TryGetValue(name, out IGroupModel shape);
+      series.Groups.TryGetValue(name, out IGroupShape shape);
 
       return shape;
     }
@@ -93,9 +94,9 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override object Clone()
     {
-      var clone = MemberwiseClone() as IGroupModel;
+      var clone = MemberwiseClone() as IGroupShape;
 
-      clone.Groups = Groups.ToDictionary(o => o.Key, o => o.Value.Clone() as IGroupModel);
+      clone.Groups = Groups.ToDictionary(o => o.Key, o => o.Value.Clone() as IGroupShape);
 
       return clone;
     }

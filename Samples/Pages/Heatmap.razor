@@ -4,6 +4,7 @@
 @using Canvas.Core.ComposerSpace
 @using Canvas.Core.EngineSpace
 @using Canvas.Core.ModelSpace
+@using Canvas.Core.ShapeSpace
 @using Canvas.Core.ServiceSpace
 @using ScriptContainer
 
@@ -31,15 +32,27 @@
       var max = 100;
       var generator = new Random();
       var colorService = new ColorService { Min = min, Max = max };
-      var points = Enumerable.Range(min, max).Select(i => new HeatmapItemModel
+      var points = Enumerable.Range(min, max).Select(i => new ColorMapShape
       {
-        Items = Enumerable
+        Points = Enumerable
           .Range(min, max)
-          .Select(o => new ItemModel { X = i, Y = o, Z = o, Color = colorService?.GetColor(o) } as IItemModel)
+          .Select(o => new ColorMapShape
+          {
+            Data = new DataModel
+            {
+              X = i,
+              Y = o,
+              Z = o
+            },
+            Component = new ComponentModel
+            {
+              Color = colorService.GetColor(o)
+            }
+          } as IShape)
           .OrderBy(o => generator.Next())
           .ToList()
 
-      } as IItemModel).ToList();
+      } as IShape).ToList();
 
       var composer = new Composer
       {

@@ -1,8 +1,9 @@
+using Canvas.Core.ModelSpace;
 using System.Collections.Generic;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.ShapeSpace
 {
-  public class BarItemModel : GroupModel, IGroupModel
+  public class BarShape : GroupShape, IGroupShape
   {
     /// <summary>
     /// Render the shape
@@ -11,24 +12,24 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int index, string name, IList<IItemModel> items)
+    public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var currentModel = Y;
+      var currentModel = Data?.Y;
 
       if (currentModel is null)
       {
         return;
       }
 
-      var size = Composer.Item.Size.Value / 2.0;
+      var size = Composer.Shape.Size.Value / 2.0;
 
-      var coordinates = new IItemModel[]
+      var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index - size, 0.0),
         Composer.GetPixels(Engine, index + size, currentModel.Value)
       };
 
-      Engine.CreateBox(coordinates, this);
+      Engine.CreateBox(coordinates, Component ?? Composer.Shape);
     }
   }
 }

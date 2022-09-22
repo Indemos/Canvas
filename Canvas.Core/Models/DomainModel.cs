@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.MessageSpace
+namespace Canvas.Core.ModelSpace
 {
-  public struct DomainMessage
+  public struct DomainModel
   {
     /// <summary>
     /// Index axis

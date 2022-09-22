@@ -2,7 +2,7 @@ using Canvas.Core;
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
-using Canvas.Core.MessageSpace;
+using Canvas.Core.ModelSpace;
 using Canvas.Core.ServiceSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -39,8 +39,8 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Events
     /// </summary>
-    public virtual Action<ViewMessage?> OnMouseMove { get; set; } = o => { };
-    public virtual Action<ViewMessage?> OnMouseLeave { get; set; } = o => { };
+    public virtual Action<ViewModel> OnMouseMove { get; set; } = o => { };
+    public virtual Action<ViewModel> OnMouseLeave { get; set; } = o => { };
 
     /// <summary>
     /// Update
@@ -48,7 +48,7 @@ namespace Canvas.Views.Web.Views
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual void Update(DomainMessage message, string source = null)
+    public virtual void Update(DomainModel message, string source = null)
     {
       ScheduleService.Send(() =>
       {
@@ -87,7 +87,7 @@ namespace Canvas.Views.Web.Views
         var engine = new T();
         var message = await CreateViewMessage();
 
-        Engine = await ScheduleService.Send(() => engine.Create(message.X, message.Y)).Task;
+        Engine = await ScheduleService.Send(() => engine.Create(message.Data?.X ?? 1, message.Data?.Y ?? 1)).Task;
         Composer = action(Engine);
       }
 
@@ -111,14 +111,17 @@ namespace Canvas.Views.Web.Views
     /// Get information about event
     /// </summary>
     /// <returns></returns>
-    protected virtual async Task<ViewMessage> CreateViewMessage()
+    protected virtual async Task<ViewModel> CreateViewMessage()
     {
       var bounds = await ScriptService.GetElementBounds(Container);
 
-      return new ViewMessage
+      return new ViewModel
       {
-        X = bounds.X,
-        Y = bounds.Y
+        Data = new DataModel
+        {
+          X = bounds.X,
+          Y = bounds.Y
+        }
       };
     }
 
@@ -131,11 +134,14 @@ namespace Canvas.Views.Web.Views
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnWheelAction(WheelEventArgs e) => ViewService?.OnWheel(new ViewMessage
+    protected virtual void OnWheelAction(WheelEventArgs e) => ViewService?.OnWheel(new ViewModel
     {
-      X = e.DeltaX,
-      Y = e.DeltaY,
-      IsShape = e.ShiftKey
+      IsShape = e.ShiftKey,
+      Data = new DataModel
+      {
+        X = e.DeltaX,
+        Y = e.DeltaY
+      }
     });
 
     /// <summary>
@@ -144,11 +150,14 @@ namespace Canvas.Views.Web.Views
     /// <param name="e"></param>
     protected virtual void OnMouseMoveAction(MouseEventArgs e)
     {
-      var message = new ViewMessage
+      var message = new ViewModel
       {
-        X = e.OffsetX,
-        Y = e.OffsetY,
-        IsSnap = e.Buttons == 1
+        IsMove = e.Buttons == 1,
+        Data = new DataModel
+        {
+          X = e.OffsetX,
+          Y = e.OffsetY
+        }
       };
 
       ViewService?.OnMouseMove(message);
@@ -161,8 +170,8 @@ namespace Canvas.Views.Web.Views
     /// <param name="e"></param>
     protected virtual void OnMouseLeaveAction(MouseEventArgs e)
     {
-      ViewService?.OnMouseLeave(null);
-      OnMouseLeave(null);
+      ViewService?.OnMouseLeave(default);
+      OnMouseLeave(default);
     }
 
     /// <summary>
@@ -170,19 +179,21 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="e"></param>
     /// <param name="orientation"></param>
-    protected virtual void OnScaleAction(MouseEventArgs e, int orientation = 0) => ViewService?.OnScale(new ViewMessage
+    protected virtual void OnScaleAction(MouseEventArgs e, int orientation = 0) => ViewService?.OnScale(new ViewModel
     {
-      X = e.OffsetX,
-      Y = e.OffsetY,
-      IsSnap = e.Buttons == 1
-
+      IsMove = e.Buttons == 1,
+      Data = new DataModel
+      {
+        X = e.OffsetX,
+        Y = e.OffsetY
+      }
     }, orientation);
 
     /// <summary>
     /// Double clck event in the view area
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseDownAction(MouseEventArgs e) => ViewService?.OnMouseDown(new ViewMessage
+    protected virtual void OnMouseDownAction(MouseEventArgs e) => ViewService?.OnMouseDown(new ViewModel
     {
       IsControl = e.CtrlKey
     });

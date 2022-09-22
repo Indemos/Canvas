@@ -1,8 +1,9 @@
+using Canvas.Core.ModelSpace;
 using System.Collections.Generic;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.ShapeSpace
 {
-  public class AreaItemModel : GroupModel, IGroupModel
+  public class AreaShape : GroupShape, IGroupShape
   {
     /// <summary>
     /// Render the shape
@@ -11,17 +12,17 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int index, string name, IList<IItemModel> items)
+    public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var currentModel = Y;
-      var previousModel = GetItem(index - 1, name, items)?.Y;
+      var currentModel = Data?.Y;
+      var previousModel = GetItem(index - 1, name, items)?.Data?.Y;
 
       if (currentModel is null)
       {
         return;
       }
 
-      var coordinates = new IItemModel[]
+      var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index, (previousModel ?? currentModel).Value),
         Composer.GetPixels(Engine, index + 1, currentModel.Value),
@@ -30,7 +31,7 @@ namespace Canvas.Core.ModelSpace
         Composer.GetPixels(Engine, index, (previousModel ?? currentModel).Value)
       };
 
-      Engine.CreateShape(coordinates, this);
+      Engine.CreateShape(coordinates, Component ?? Composer.Shape);
     }
   }
 }

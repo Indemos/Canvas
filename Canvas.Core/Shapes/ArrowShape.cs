@@ -1,8 +1,9 @@
+using Canvas.Core.ModelSpace;
 using System.Collections.Generic;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.ShapeSpace
 {
-  public class ArrowItemModel : GroupModel, IGroupModel
+  public class ArrowShape : GroupShape, IGroupShape
   {
     /// <summary>
     /// Direction
@@ -16,18 +17,18 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override void CreateShape(int index, string name, IList<IItemModel> items)
+    public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var currentModel = Y;
+      var currentModel = Data?.Y;
 
       if (currentModel is null)
       {
         return;
       }
 
-      var size = Composer.Item.Size.Value / 2.0;
+      var size = Composer.Shape.Size.Value / 2.0;
 
-      var coordinates = new IItemModel[]
+      var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index, currentModel.Value),
         Composer.GetPixels(Engine, index + size, currentModel.Value),
@@ -36,7 +37,7 @@ namespace Canvas.Core.ModelSpace
 
       coordinates[0].Y -= (coordinates[1].X - coordinates[2].X) * Direction / 2;
 
-      Engine.CreateShape(coordinates, this);
+      Engine.CreateShape(coordinates, Component ?? Composer.Shape);
     }
   }
 }

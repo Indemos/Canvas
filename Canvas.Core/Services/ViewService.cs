@@ -1,6 +1,6 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
-using Canvas.Core.MessageSpace;
+using Canvas.Core.ModelSpace;
 using System;
 
 namespace Canvas.Core.ServiceSpace
@@ -9,8 +9,8 @@ namespace Canvas.Core.ServiceSpace
   {
     public virtual IView View { get; set; }
 
-    protected virtual ViewMessage? Position { get; set; }
-    protected virtual ViewMessage? ScreenPosition { get; set; }
+    protected virtual ViewModel? Position { get; set; }
+    protected virtual ViewModel? ScreenPosition { get; set; }
     protected virtual IComposer Composer => View?.Composer;
     protected virtual IEngine Engine => View?.Engine;
 
@@ -18,20 +18,20 @@ namespace Canvas.Core.ServiceSpace
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnWheel(ViewMessage? e)
+    public virtual void OnWheel(ViewModel e)
     {
       if (Engine?.GetInstance() is null)
       {
         return;
       }
 
-      var isZoom = e.Value.IsShape;
+      var isZoom = e.IsShape;
       var message = Composer.Domain;
 
       switch (true)
       {
-        case true when e?.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
-        case true when e?.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
+        case true when e.Data?.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
+        case true when e.Data?.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
       }
 
       Composer.Update(message, Composer.Name);
@@ -41,7 +41,7 @@ namespace Canvas.Core.ServiceSpace
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseMove(ViewMessage? e)
+    public virtual void OnMouseMove(ViewModel e)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -50,10 +50,10 @@ namespace Canvas.Core.ServiceSpace
 
       ScreenPosition ??= e;
 
-      if (e.Value.IsSnap)
+      if (e.IsMove)
       {
-        var deltaX = ScreenPosition?.X - e?.X;
-        var deltaY = ScreenPosition?.Y - e?.Y;
+        var deltaX = ScreenPosition?.Data?.X - e.Data?.X;
+        var deltaY = ScreenPosition?.Data?.Y - e.Data?.Y;
         var message = Composer.Domain;
 
         switch (true)
@@ -73,7 +73,7 @@ namespace Canvas.Core.ServiceSpace
     /// </summary>
     /// <param name="e"></param>
     /// <param name="orientation"></param>
-    public virtual void OnScale(ViewMessage? e, int orientation = 0)
+    public virtual void OnScale(ViewModel e, int orientation = 0)
     {
       if (Engine?.GetInstance() is null)
       {
@@ -82,10 +82,10 @@ namespace Canvas.Core.ServiceSpace
 
       Position ??= e;
 
-      if (e.Value.IsSnap)
+      if (e.IsMove)
       {
-        var deltaX = Position?.X - e?.X;
-        var deltaY = Position?.Y - e?.Y;
+        var deltaX = Position?.Data?.X - e.Data?.X;
+        var deltaY = Position?.Data?.Y - e.Data?.Y;
         var message = Composer.Domain;
         var source = Composer.Name;
 
@@ -111,14 +111,14 @@ namespace Canvas.Core.ServiceSpace
     /// Click event in the view area
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseDown(ViewMessage? e)
+    public virtual void OnMouseDown(ViewModel e)
     {
       if (Engine?.GetInstance() is null)
       {
         return;
       }
 
-      if (e.Value.IsControl)
+      if (e.IsControl)
       {
         var message = Composer.Domain;
 
@@ -132,7 +132,7 @@ namespace Canvas.Core.ServiceSpace
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    public virtual void OnMouseLeave(ViewMessage? e)
+    public virtual void OnMouseLeave(ViewModel e)
     {
       if (Engine?.GetInstance() is null)
       {

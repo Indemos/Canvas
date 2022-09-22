@@ -1,9 +1,8 @@
 using Canvas.Core;
 using Canvas.Core.DecoratorSpace;
-using Canvas.Core.MessageSpace;
+using Canvas.Core.ModelSpace;
 using SkiaSharp;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
@@ -19,9 +18,9 @@ namespace Canvas.Views.Web.Views
     protected virtual BoardDecorator Decorator { get; set; }
     protected virtual TaskCompletionSource<int> Completion { get; set; }
 
-    public void OnScreenLeave(ViewMessage? e) => UpdateDecorator();
+    public void OnScreenLeave(ViewModel e) => UpdateDecorator();
 
-    public void OnScreenMove(ViewMessage? e)
+    public void OnScreenMove(ViewModel e)
     {
       if (Completion?.Task?.IsCompleted is false)
       {
@@ -38,7 +37,7 @@ namespace Canvas.Views.Web.Views
         Composer = Composer
       };
 
-      UpdateDecorator(() => Decorator.Create(Engine, e.Value));
+      UpdateDecorator(() => Decorator.Create(Engine, e.Data.Value));
     }
 
     protected virtual void UpdateDecorator(Action action = null)

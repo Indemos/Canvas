@@ -1,4 +1,5 @@
 using Canvas.Core.ModelSpace;
+using Canvas.Core.ShapeSpace;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -35,28 +36,28 @@ namespace Canvas.Core.EngineSpace
     /// Create circle
     /// </summary>
     /// <param name="coordinate"></param>
-    void CreateCircle(IItemModel coordinate, IComponentModel shape);
+    void CreateCircle(DataModel coordinate, ComponentModel shape);
 
     /// <summary>
     /// Create box
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateBox(IList<IItemModel> coordinates, IComponentModel shape);
+    void CreateBox(IList<DataModel> coordinates, ComponentModel shape);
 
     /// <summary>
     /// Create line
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateLine(IList<IItemModel> coordinates, IComponentModel shape);
+    void CreateLine(IList<DataModel> coordinates, ComponentModel shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateShape(IList<IItemModel> coordinates, IComponentModel shape);
+    void CreateShape(IList<DataModel> coordinates, ComponentModel shape);
 
     /// <summary>
     /// Create label
@@ -64,7 +65,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateCaption(IItemModel coordinate, IComponentModel shape, string content);
+    void CreateCaption(DataModel coordinate, ComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -72,14 +73,14 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content);
+    void CreateLabelShape(IList<DataModel> coordinates, ComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    IItemModel GetContentMeasure(string content, double size);
+    DataModel GetContentMeasure(string content, double size);
 
     /// <summary>
     /// Encode as image
@@ -125,28 +126,28 @@ namespace Canvas.Core.EngineSpace
     /// Create circle
     /// </summary>
     /// <param name="coordinate"></param>
-    public abstract void CreateCircle(IItemModel coordinate, IComponentModel shape);
+    public abstract void CreateCircle(DataModel coordinate, ComponentModel shape);
 
     /// <summary>
     /// Create box
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public abstract void CreateBox(IList<IItemModel> coordinates, IComponentModel shape);
+    public abstract void CreateBox(IList<DataModel> coordinates, ComponentModel shape);
 
     /// <summary>
     /// Create line
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public abstract void CreateLine(IList<IItemModel> coordinates, IComponentModel shape);
+    public abstract void CreateLine(IList<DataModel> coordinates, ComponentModel shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public abstract void CreateShape(IList<IItemModel> coordinates, IComponentModel shape);
+    public abstract void CreateShape(IList<DataModel> coordinates, ComponentModel shape);
 
     /// <summary>
     /// Create label
@@ -154,7 +155,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public abstract void CreateCaption(IItemModel coordinate, IComponentModel shape, string content);
+    public abstract void CreateCaption(DataModel coordinate, ComponentModel shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -162,14 +163,14 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public abstract void CreateLabelShape(IList<IItemModel> coordinates, IComponentModel shape, string content);
+    public abstract void CreateLabelShape(IList<DataModel> coordinates, ComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    public abstract IItemModel GetContentMeasure(string content, double size);
+    public abstract DataModel GetContentMeasure(string content, double size);
 
     /// <summary>
     /// Encode as image
