@@ -303,7 +303,7 @@ namespace Canvas.Core.ComposerSpace
 
       // Percentage to pixels, Y is inverted
 
-      item.X = engine.X * index.Value;
+      item.X = engine.X * index;
       item.Y = engine.Y - engine.Y * value;
 
       return item;

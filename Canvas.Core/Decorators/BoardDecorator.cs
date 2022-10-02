@@ -31,8 +31,8 @@ namespace Canvas.Core.DecoratorSpace
       var values = Composer.GetValues(Screen, message);
       var element = Composer.Items.ElementAtOrDefault((int)values.X);
 
-      message.ValueX = Composer.ShowIndex(values.X.Value);
-      message.ValueY = Composer.ShowValue(values.Y.Value);
+      message.ValueX = Composer.ShowIndex(values.X);
+      message.ValueY = Composer.ShowValue(values.Y);
 
       if (element is not null)
       {
@@ -89,8 +89,8 @@ namespace Canvas.Core.DecoratorSpace
         new DataModel()
       };
 
-      points[0].Y = Math.Floor((DT + message.Y - DY).Value);
-      points[1].Y = Math.Floor((DT + message.Y + DY).Value);
+      points[0].Y = Math.Floor(DT + message.Y - DY);
+      points[1].Y = Math.Floor(DT + message.Y + DY);
 
       if (L is not null)
       {
@@ -113,16 +113,16 @@ namespace Canvas.Core.DecoratorSpace
 
       if (T is not null)
       {
-        points[0].Y = Math.Floor((DT - shape.Size - shape.Size / 2 - DY).Value);
-        points[1].Y = Math.Floor((DT - shape.Size - shape.Size / 2 + DY).Value);
+        points[0].Y = Math.Floor(DT - shape.Size - shape.Size / 2 - DY);
+        points[1].Y = Math.Floor(DT - shape.Size - shape.Size / 2 + DY);
 
         engine.CreateBox(points, shape);
       }
 
       if (B is not null)
       {
-        points[0].Y = Math.Floor((engine.Y - DB + shape.Size + shape.Size / 2 - DY).Value);
-        points[1].Y = Math.Floor((engine.Y - DB + shape.Size + shape.Size / 2 + DY).Value);
+        points[0].Y = Math.Floor(engine.Y - DB + shape.Size + shape.Size / 2 - DY);
+        points[1].Y = Math.Floor(engine.Y - DB + shape.Size + shape.Size / 2 + DY);
 
         engine.CreateBox(points, shape);
       }
@@ -171,7 +171,7 @@ namespace Canvas.Core.DecoratorSpace
       if (B is not null)
       {
         point.X = DL + message.X;
-        point.Y = Math.Floor((engine.Y - DB + shape.Size + shape.Size).Value);
+        point.Y = Math.Floor(engine.Y - DB + shape.Size + shape.Size);
         shape.Position = PositionEnum.Center;
 
         engine.CreateCaption(point, shape, message.ValueX);

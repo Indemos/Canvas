@@ -30,8 +30,8 @@ namespace Canvas.Core.ServiceSpace
 
       switch (true)
       {
-        case true when e.Data?.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
-        case true when e.Data?.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
+        case true when e.Data.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
+        case true when e.Data.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
       }
 
       Composer.Update(message, Composer.Name);
@@ -52,8 +52,8 @@ namespace Canvas.Core.ServiceSpace
 
       if (e.IsMove)
       {
-        var deltaX = ScreenPosition?.Data?.X - e.Data?.X;
-        var deltaY = ScreenPosition?.Data?.Y - e.Data?.Y;
+        var deltaX = ScreenPosition?.Data.X - e.Data.X;
+        var deltaY = ScreenPosition?.Data.Y - e.Data.Y;
         var message = Composer.Domain;
 
         switch (true)
@@ -84,8 +84,8 @@ namespace Canvas.Core.ServiceSpace
 
       if (e.IsMove)
       {
-        var deltaX = Position?.Data?.X - e.Data?.X;
-        var deltaY = Position?.Data?.Y - e.Data?.Y;
+        var deltaX = Position?.Data.X - e.Data.X;
+        var deltaY = Position?.Data.Y - e.Data.Y;
         var message = Composer.Domain;
         var source = Composer.Name;
 

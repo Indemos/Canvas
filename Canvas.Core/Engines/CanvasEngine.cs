@@ -61,7 +61,7 @@ namespace Canvas.Core.EngineSpace
     {
       var pen = new SKPaint
       {
-        Color = shape.Color.Value,
+        Color = shape.Color,
         Style = SKPaintStyle.Stroke,
         FilterQuality = SKFilterQuality.Low,
         StrokeWidth = (float)shape.Size,
@@ -77,10 +77,10 @@ namespace Canvas.Core.EngineSpace
       }
 
       Canvas.DrawLine(
-        (float)Math.Floor(coordinates[0].X.Value),
-        (float)Math.Floor(coordinates[0].Y.Value),
-        (float)Math.Floor(coordinates[1].X.Value),
-        (float)Math.Floor(coordinates[1].Y.Value),
+        (float)Math.Floor(coordinates[0].X),
+        (float)Math.Floor(coordinates[0].Y),
+        (float)Math.Floor(coordinates[1].X),
+        (float)Math.Floor(coordinates[1].Y),
         pen);
 
       pen.Dispose();
@@ -95,7 +95,7 @@ namespace Canvas.Core.EngineSpace
     {
       var pen = new SKPaint
       {
-        Color = shape.Color.Value,
+        Color = shape.Color,
         Style = SKPaintStyle.Fill,
         FilterQuality = SKFilterQuality.Low,
         IsAntialias = false,
@@ -121,7 +121,7 @@ namespace Canvas.Core.EngineSpace
     {
       var pen = new SKPaint
       {
-        Color = shape.Color.Value,
+        Color = shape.Color,
         Style = SKPaintStyle.Fill,
         FilterQuality = SKFilterQuality.Low,
         IsAntialias = false,
@@ -150,7 +150,7 @@ namespace Canvas.Core.EngineSpace
       var curve = new SKPath();
       var pen = new SKPaint
       {
-        Color = shape.Color.Value,
+        Color = shape.Color,
         Style = SKPaintStyle.Fill,
         FilterQuality = SKFilterQuality.Low,
         IsAntialias = false,
@@ -158,11 +158,11 @@ namespace Canvas.Core.EngineSpace
         IsDither = false
       };
 
-      curve.MoveTo((float)origin.X.Value, (float)origin.Y);
+      curve.MoveTo((float)origin.X, (float)origin.Y);
 
       for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)coordinates[i].X.Value, (float)coordinates[i].Y);
+        curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
       }
 
       Canvas.DrawPath(curve, pen);
@@ -181,7 +181,7 @@ namespace Canvas.Core.EngineSpace
     {
       var pen = new SKPaint
       {
-        Color = shape.Color.Value,
+        Color = shape.Color,
         TextAlign = SKTextAlign.Center,
         FilterQuality = SKFilterQuality.Low,
         TextSize = (float)shape.Size,
@@ -219,7 +219,7 @@ namespace Canvas.Core.EngineSpace
       var curve = new SKPath();
       var pen = new SKPaint
       {
-        Color = shape.Color.Value,
+        Color = shape.Color,
         TextAlign = SKTextAlign.Center,
         FilterQuality = SKFilterQuality.Low,
         TextSize = (float)shape.Size,
@@ -228,14 +228,14 @@ namespace Canvas.Core.EngineSpace
         IsDither = false
       };
 
-      curve.MoveTo((float)origin.X.Value, (float)origin.Y);
+      curve.MoveTo((float)origin.X, (float)origin.Y);
 
       for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)coordinates[i].X.Value, (float)coordinates[i].Y);
+        curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
       }
 
-      pen.Color = shape.Color.Value;
+      pen.Color = shape.Color;
       pen.TextSize = (float)shape.Size;
 
       Canvas.DrawTextOnPath(content, curve, 0, pen.TextSize / 2, pen);

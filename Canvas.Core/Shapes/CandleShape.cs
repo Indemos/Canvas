@@ -81,7 +81,7 @@ namespace Canvas.Core.ShapeSpace
       var H = High ?? 0;
       var O = Open ?? 0;
       var C = Close ?? 0;
-      var size = Composer.Shape.Size.Value / 2.0;
+      var size = Composer.Shape.Size / 2.0;
       var downSide = Math.Min(O, C);
       var upSide = Math.Max(O, C);
 

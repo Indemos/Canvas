@@ -37,7 +37,7 @@ namespace Canvas.Views.Web.Views
         Composer = Composer
       };
 
-      UpdateDecorator(() => Decorator.Create(Engine, e.Data.Value));
+      UpdateDecorator(() => Decorator.Create(Engine, e.Data));
     }
 
     protected virtual void UpdateDecorator(Action action = null)

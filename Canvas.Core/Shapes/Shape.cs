@@ -113,8 +113,8 @@ namespace Canvas.Core.ShapeSpace
 
       return new double[]
       {
-        currentModel.Data.Value.Y.Value,
-        currentModel.Data.Value.Y.Value,
+        currentModel.Data.Value.Y,
+        currentModel.Data.Value.Y,
       };
     }
 

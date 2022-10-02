@@ -87,7 +87,7 @@ namespace Canvas.Views.Web.Views
         var engine = new T();
         var message = await CreateViewMessage();
 
-        Engine = await ScheduleService.Send(() => engine.Create(message.Data?.X ?? 1, message.Data?.Y ?? 1)).Task;
+        Engine = await ScheduleService.Send(() => engine.Create(message.Data.X, message.Data.Y)).Task;
         Composer = action(Engine);
       }
 

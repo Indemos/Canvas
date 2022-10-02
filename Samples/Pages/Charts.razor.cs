@@ -89,10 +89,10 @@ namespace Canvas.Client.Pages
     protected void Counter(bool active)
     {
       var candle = CreatePoint();
-      var point = candle.Close;
+      var point = candle.Close.Value;
       var pointDelta = _generator.Next(2000, 5000);
       var pointMirror = _generator.Next(2000, 5000);
-      var arrow = candle.Close;
+      var arrow = candle.Close.Value;
 
       if (IsNextFrame())
       {

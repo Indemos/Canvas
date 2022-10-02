@@ -51,12 +51,12 @@ namespace Canvas.Core.ModelSpace
 
         if (values.Y - data.Y <= values.Y - min && data.Y <= values.Y)
         {
-          min = data.Y.Value;
+          min = data.Y;
           item = data;
         }
       }
 
-      return new double[] { item.Z ?? 0 };
+      return new double[] { item.Z };
     }
 
     /// <summary>
@@ -80,8 +80,8 @@ namespace Canvas.Core.ModelSpace
       foreach (var point in Points)
       {
         var data = point.Data.Value;
-        var open = Composer.GetPixels(Engine, index, data.Y.Value);
-        var close = Composer.GetPixels(Engine, index + 1, data.Y.Value + step);
+        var open = Composer.GetPixels(Engine, index, data.Y);
+        var close = Composer.GetPixels(Engine, index + 1, data.Y + step);
         var points = new DataModel[] { open, close };
 
         Engine.CreateBox(points, point.Component ?? Composer.Shape);

@@ -34,7 +34,7 @@ namespace Canvas.Core.DecoratorSpace
         switch (Position)
         {
           case PositionEnum.T: point.Y = engine.Y - space; break;
-          case PositionEnum.B: point.Y = Math.Floor(shape.Size.Value + space.Value); break;
+          case PositionEnum.B: point.Y = Math.Floor(shape.Size + space); break;
         }
 
         point.X = index;
