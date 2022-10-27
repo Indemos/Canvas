@@ -1,3 +1,4 @@
+using Canvas.Core.EnumSpace;
 using Canvas.Core.ShapeSpace;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Canvas.Core.ModelSpace
         return null;
       }
 
-      return new double[] { Points.Min(o => o.Data?.Y ?? 0), Points.Max(o => o.Data?.Y ?? 0) };
+      return new double[] { Points.Min(o => o.Y ?? 0), Points.Max(o => o.Y ?? 0) };
     }
 
     /// <summary>
@@ -41,22 +42,24 @@ namespace Canvas.Core.ModelSpace
         return new double[] { 0 };
       }
 
-      var item = values;
-      var min = Composer.Domain.MinValue;
+      var minItem = values;
+      var minIndex = Composer.Domain.MinValue;
       var points = Composer.Items.ElementAt((int)values.X) as ColorMapShape;
 
       foreach (var point in points.Points)
       {
-        var data = point.Data.Value;
-
-        if (values.Y - data.Y <= values.Y - min && data.Y <= values.Y)
+        if (values.Y - point.Y <= values.Y - minIndex && point.Y <= values.Y)
         {
-          min = data.Y;
-          item = data;
+          minIndex = point.Y.Value;
+          minItem = new DataModel
+          {
+            X = point.X.Value,
+            Y = point.Y.Value
+          };
         }
       }
 
-      return new double[] { item.Z };
+      return new double[] { minItem.Z };
     }
 
     /// <summary>
@@ -75,16 +78,16 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
+      var component = Composer.Options[ComponentEnum.ShapeSection];
       var step = (Composer.Domain.MaxValue - Composer.Domain.MinValue + 1) / pointsCount;
 
       foreach (var point in Points)
       {
-        var data = point.Data.Value;
-        var open = Composer.GetPixels(Engine, index, data.Y);
-        var close = Composer.GetPixels(Engine, index + 1, data.Y + step);
+        var open = Composer.GetPixels(Engine, index, point.Y.Value);
+        var close = Composer.GetPixels(Engine, index + 1, point.Y.Value + step);
         var points = new DataModel[] { open, close };
 
-        Engine.CreateBox(points, point.Component ?? Composer.Shape);
+        Engine.CreateBox(points, point.Component ?? component);
       }
     }
   }

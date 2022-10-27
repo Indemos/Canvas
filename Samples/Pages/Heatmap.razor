@@ -38,12 +38,9 @@
           .Range(min, max)
           .Select(o => new ColorMapShape
           {
-            Data = new DataModel
-            {
-              X = i,
-              Y = o,
-              Z = o
-            },
+            X = i,
+            Y = o,
+            Z = o,
             Component = new ComponentModel
             {
               Color = colorService.GetColor(o)

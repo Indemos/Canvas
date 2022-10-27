@@ -10,12 +10,22 @@ namespace Canvas.Core.ShapeSpace
   public interface IShape : ICloneable
   {
     /// <summary>
-    /// Data
+    /// X
     /// </summary>
-    DataModel? Data { get; set; }
+    double? X { get; set; }
 
     /// <summary>
-    /// Shape
+    /// Y
+    /// </summary>
+    double? Y { get; set; }
+
+    /// <summary>
+    /// Z
+    /// </summary>
+    double? Z { get; set; }
+
+    /// <summary>
+    /// Z
     /// </summary>
     ComponentModel? Component { get; set; }
 
@@ -76,9 +86,19 @@ namespace Canvas.Core.ShapeSpace
   public class Shape : IShape
   {
     /// <summary>
-    /// Data
+    /// X
     /// </summary>
-    public virtual DataModel? Data { get; set; }
+    public double? X { get; set; }
+
+    /// <summary>
+    /// Y
+    /// </summary>
+    public double? Y { get; set; }
+
+    /// <summary>
+    /// Z
+    /// </summary>
+    public double? Z { get; set; }
 
     /// <summary>
     /// Shape
@@ -104,17 +124,17 @@ namespace Canvas.Core.ShapeSpace
     /// <returns></returns>
     public virtual double[] GetDomain(int index, string name, IList<IShape> items)
     {
-      var currentModel = GetItem(index, name, items);
+      var current = GetItem(index, name, items);
 
-      if (currentModel?.Data?.Y is null)
+      if (current?.Y is null)
       {
         return null;
       }
 
       return new double[]
       {
-        currentModel.Data.Value.Y,
-        currentModel.Data.Value.Y,
+        current.Y.Value,
+        current.Y.Value
       };
     }
 
@@ -139,7 +159,7 @@ namespace Canvas.Core.ShapeSpace
     {
       return new Dictionary<string, IList<double>>
       {
-        [nameof(Composer.Domain)] = GetSeriesValues(coordinates, values)
+        [Composer.Name] = GetSeriesValues(coordinates, values)
       };
     }
 
@@ -151,7 +171,7 @@ namespace Canvas.Core.ShapeSpace
     /// <returns></returns>
     public virtual IList<double> GetSeriesValues(DataModel coordinates, DataModel values)
     {
-      return new double[] { Data?.Y ?? 0 };
+      return new double[] { Y ?? 0 };
     }
 
     /// <summary>
@@ -170,6 +190,6 @@ namespace Canvas.Core.ShapeSpace
     /// Clone
     /// </summary>
     /// <returns></returns>
-    public virtual object Clone() => MemberwiseClone();
+    public virtual object Clone() => CloneExtensions.CloneFactory.GetClone(this);
   }
 }

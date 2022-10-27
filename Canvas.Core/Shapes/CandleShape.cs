@@ -1,3 +1,4 @@
+using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
@@ -7,24 +8,24 @@ namespace Canvas.Core.ShapeSpace
   public class CandleShape : GroupShape, IGroupShape
   {
     /// <summary>
-    /// Open
+    /// Low
     /// </summary>
-    public double? Low { get; set; }
+    public double? L { get; set; }
+
+    /// <summary>
+    /// High
+    /// </summary>
+    public double? H { get; set; }
 
     /// <summary>
     /// Open
     /// </summary>
-    public double? High { get; set; }
+    public double? O { get; set; }
 
     /// <summary>
-    /// Open
+    /// Close
     /// </summary>
-    public double? Open { get; set; }
-
-    /// <summary>
-    /// Open
-    /// </summary>
-    public double? Close { get; set; }
+    public double? C { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -35,15 +36,15 @@ namespace Canvas.Core.ShapeSpace
     /// <returns></returns>
     public override double[] GetDomain(int index, string name, IList<IShape> items)
     {
-      if (Low is null || High is null)
+      if (L is null || H is null)
       {
         return null;
       }
 
       return new double[]
       {
-        Low.Value,
-        High.Value
+        L.Value,
+        H.Value
       };
     }
 
@@ -55,12 +56,13 @@ namespace Canvas.Core.ShapeSpace
     /// <returns></returns>
     public override IList<double> GetSeriesValues(DataModel coordinates, DataModel values)
     {
-      var L = Low ?? 0;
-      var H = High ?? 0;
-      var O = Open ?? 0;
-      var C = Close ?? 0;
-
-      return new double[] { O, H, L, C };
+      return new double[]
+      {
+        O ?? 0,
+        H ?? 0,
+        L ?? 0,
+        C ?? 0
+      };
     }
 
     /// <summary>
@@ -72,18 +74,17 @@ namespace Canvas.Core.ShapeSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      if (Low is null || High is null || Open is null || Close is null)
+      if (L is null || H is null || O is null || C is null)
       {
         return;
       }
 
-      var L = Low ?? 0;
-      var H = High ?? 0;
-      var O = Open ?? 0;
-      var C = Close ?? 0;
-      var size = Composer.Shape.Size / 2.0;
-      var downSide = Math.Min(O, C);
-      var upSide = Math.Max(O, C);
+      var open = O ?? 0;
+      var close = C ?? 0;
+      var component = Composer.Options[ComponentEnum.Shape];
+      var size = component.Size / 2.0;
+      var downSide = Math.Min(open, close);
+      var upSide = Math.Max(open, close);
 
       var coordinates = new DataModel[]
       {
@@ -93,12 +94,12 @@ namespace Canvas.Core.ShapeSpace
 
       var rangeCoordinates = new DataModel[]
       {
-        Composer.GetPixels(Engine, index, L),
-        Composer.GetPixels(Engine, index, H),
+        Composer.GetPixels(Engine, index, L ?? 0),
+        Composer.GetPixels(Engine, index, H ?? 0),
       };
 
-      Engine.CreateBox(coordinates, Component ?? Composer.Shape);
-      Engine.CreateLine(rangeCoordinates, Component ?? Composer.Shape);
+      Engine.CreateBox(coordinates, Component ?? component);
+      Engine.CreateLine(rangeCoordinates, Component ?? component);
     }
   }
 }

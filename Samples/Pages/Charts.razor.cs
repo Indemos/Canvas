@@ -89,25 +89,25 @@ namespace Canvas.Client.Pages
     protected void Counter(bool active)
     {
       var candle = CreatePoint();
-      var point = candle.Close.Value;
+      var point = candle.C.Value;
       var pointDelta = _generator.Next(2000, 5000);
       var pointMirror = _generator.Next(2000, 5000);
-      var arrow = candle.Close.Value;
+      var arrow = candle.C.Value;
 
       if (IsNextFrame())
       {
-        _pointValue = candle.Close.Value;
+        _pointValue = candle.C.Value;
         _pointTime = DateTime.UtcNow;
         _points.Add(new GroupShape
         {
-          Data = new DataModel { X = _pointTime.Ticks },
+          X = _pointTime.Ticks,
           Groups = new Dictionary<string, IGroupShape>
           {
-            ["Bars"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new BarShape { Data = new DataModel { Y = point } } } },
-            ["Areas"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new AreaShape { Data = new DataModel { Y = point } } } },
-            ["Deltas"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new BarShape { Data = new DataModel { Y = pointDelta } } } },
-            ["Lines"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new LineShape { Data = new DataModel { Y = point } }, ["V2"] = new LineShape { Data = new DataModel { Y = pointMirror } } } },
-            ["Candles"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = candle, ["V2"] = new ArrowShape { Data = new DataModel { Y = arrow }, Direction = 1 } } }
+            ["Bars"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new BarShape { Y = point } } },
+            ["Areas"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new AreaShape { Y = point } } },
+            ["Deltas"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new BarShape { Y = pointDelta } } },
+            ["Lines"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = new LineShape { Y = point }, ["V2"] = new LineShape { Y = pointMirror } } },
+            ["Candles"] = new GroupShape { Groups = new Dictionary<string, IGroupShape> { ["V1"] = candle, ["V2"] = new ArrowShape { Y = arrow, Direction = 1 } } }
           }
         });
       }
@@ -116,13 +116,13 @@ namespace Canvas.Client.Pages
       var currentDelta = grp.Groups["Deltas"].Groups["V1"];
       var currentCandle = grp.Groups["Candles"].Groups["V1"] as CandleShape;
 
-      currentCandle.Low = candle.Low;
-      currentCandle.High = candle.High;
-      currentCandle.Close = candle.Close;
+      currentCandle.L = candle.L;
+      currentCandle.H = candle.H;
+      currentCandle.C = candle.C;
       currentCandle.Component = new ComponentModel
       {
         Size = 1,
-        Color = currentCandle.Close > currentCandle.Open ? SKColors.LimeGreen : SKColors.OrangeRed
+        Color = currentCandle.C > currentCandle.O ? SKColors.LimeGreen : SKColors.OrangeRed
       };
 
       //currentDelta.Data.Y = currentCandle.Close > currentCandle.Open ? candle.Close : -candle.Close;
@@ -153,10 +153,10 @@ namespace Canvas.Client.Pages
       var shadow = (double)_generator.Next(500, 1000);
       var candle = new CandleShape
       {
-        Low = Math.Min(open, close) - shadow,
-        High = Math.Max(open, close) + shadow,
-        Open = _pointValue,
-        Close = close
+        L = Math.Min(open, close) - shadow,
+        H = Math.Max(open, close) + shadow,
+        O = _pointValue,
+        C = close
       };
 
       return candle;

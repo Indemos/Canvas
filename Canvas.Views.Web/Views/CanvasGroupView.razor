@@ -1,0 +1,13 @@
+@inherits BaseView
+
+<div class="combo-views">
+
+  @if (Item?.Groups is not null)
+  {
+    @foreach (var group in Item.Groups)
+    {
+      <CanvasView @ref="@Views[group.Key]"></CanvasView>
+    }
+  }
+
+</div>

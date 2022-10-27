@@ -33,29 +33,14 @@ namespace Canvas.Core.ComposerSpace
     DomainModel Domain { get; }
 
     /// <summary>
-    /// Shape definition
-    /// </summary>
-    ComponentModel Line { get; set; }
-
-    /// <summary>
-    /// Item definition
-    /// </summary>
-    ComponentModel Shape { get; set; }
-
-    /// <summary>
-    /// Board definition
-    /// </summary>
-    ComponentModel Board { get; set; }
-
-    /// <summary>
-    /// Caption definition
-    /// </summary>
-    ComponentModel Caption { get; set; }
-
-    /// <summary>
     /// Items
     /// </summary>
     IList<IShape> Items { get; set; }
+
+    /// <summary>
+    /// Options
+    /// </summary>
+    IDictionary<ComponentEnum, ComponentModel> Options { get; set; }
 
     /// <summary>
     /// Observable domain
@@ -160,29 +145,14 @@ namespace Canvas.Core.ComposerSpace
     public virtual DomainModel Domain { get; set; }
 
     /// <summary>
-    /// Shape definition
-    /// </summary>
-    public virtual ComponentModel Line { get; set; }
-
-    /// <summary>
-    /// Item definition
-    /// </summary>
-    public virtual ComponentModel Shape { get; set; }
-
-    /// <summary>
-    /// Board definition
-    /// </summary>
-    public virtual ComponentModel Board { get; set; }
-
-    /// <summary>
-    /// Caption definition
-    /// </summary>
-    public virtual ComponentModel Caption { get; set; }
-
-    /// <summary>
     /// Items
     /// </summary>
     public virtual IList<IShape> Items { get; set; }
+
+    /// <summary>
+    /// Options
+    /// </summary>
+    public virtual IDictionary<ComponentEnum, ComponentModel> Options { get; set; }
 
     /// <summary>
     /// View subscription
@@ -212,21 +182,30 @@ namespace Canvas.Core.ComposerSpace
       ValueCount = 4;
       IndexCount = 10;
       Domain = new DomainModel();
+      Options = new Dictionary<ComponentEnum, ComponentModel>();
+      Items = new List<IShape>();
 
-      Shape = new ComponentModel
+      Options[ComponentEnum.Shape] = new ComponentModel
       {
         Size = 0.5,
         Color = new SKColor(50, 50, 50)
       };
 
-      Line = new ComponentModel
+      Options[ComponentEnum.ShapeSection] = new ComponentModel
+      {
+        Size = 1,
+        Color = new SKColor(50, 50, 50)
+      };
+
+      Options[ComponentEnum.Grid] =
+      Options[ComponentEnum.BoardLine] = new ComponentModel
       {
         Size = 1,
         Color = new SKColor(50, 50, 50),
         Composition = CompositionEnum.Dashes
       };
 
-      Board = new ComponentModel
+      Options[ComponentEnum.Board] = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.L,
@@ -234,15 +213,15 @@ namespace Canvas.Core.ComposerSpace
         Background = new SKColor(230, 230, 230)
       };
 
-      Caption = new ComponentModel
+      Options[ComponentEnum.Caption] =
+      Options[ComponentEnum.BoardMarker] =
+      Options[ComponentEnum.BoardCaption] = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.Center,
         Color = new SKColor(50, 50, 50),
         Background = new SKColor(200, 200, 200)
       };
-
-      Items = new List<IShape>();
     }
 
     /// <summary>

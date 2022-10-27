@@ -21,11 +21,8 @@
         .Range(1, 1000)
         .Select(i => new BarShape
         {
-          Data = new DataModel
-          {
-            X = i,
-            Y = generator.Next(-5000, 5000)
-          }
+          X = i,
+          Y = generator.Next(-5000, 5000)
         } as IShape).ToList();
 
       var composer = new Composer

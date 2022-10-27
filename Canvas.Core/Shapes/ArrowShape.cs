@@ -1,3 +1,4 @@
+using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using System.Collections.Generic;
 
@@ -19,25 +20,25 @@ namespace Canvas.Core.ShapeSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var currentModel = Data?.Y;
+      var current = Y;
 
-      if (currentModel is null)
+      if (current is null)
       {
         return;
       }
 
-      var size = Composer.Shape.Size / 2.0;
-
+      var component = Composer.Options[ComponentEnum.Shape];
+      var size = component.Size / 2.0;
       var coordinates = new DataModel[]
       {
-        Composer.GetPixels(Engine, index, currentModel.Value),
-        Composer.GetPixels(Engine, index + size, currentModel.Value),
-        Composer.GetPixels(Engine, index - size, currentModel.Value)
+        Composer.GetPixels(Engine, index, current.Value),
+        Composer.GetPixels(Engine, index + size, current.Value),
+        Composer.GetPixels(Engine, index - size, current.Value)
       };
 
       coordinates[0].Y -= (coordinates[1].X - coordinates[2].X) * Direction / 2;
 
-      Engine.CreateShape(coordinates, Component ?? Composer.Shape);
+      Engine.CreateShape(coordinates, Component ?? component);
     }
   }
 }
