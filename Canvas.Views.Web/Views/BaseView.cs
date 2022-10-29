@@ -55,11 +55,8 @@ namespace Canvas.Views.Web.Views
         if (Engine?.GetInstance() is not null)
         {
           Engine.Clear();
-
           Render();
-
           Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-
           InvokeAsync(StateHasChanged);
         }
 
@@ -73,7 +70,7 @@ namespace Canvas.Views.Web.Views
     /// <typeparam name="T"></typeparam>
     /// <param name="action"></param>
     /// <returns></returns>
-    public virtual async Task<IView> Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new()
+    public virtual async Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
     {
       async Task setup()
       {
@@ -88,7 +85,9 @@ namespace Canvas.Views.Web.Views
         var message = await CreateViewMessage();
 
         Engine = await ScheduleService.Send(() => engine.Create(message.Data.X, message.Data.Y)).Task;
-        Composer = action(Engine);
+        Composer = action();
+
+        Update(Composer.Domain);
       }
 
       await setup();

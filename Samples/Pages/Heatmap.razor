@@ -57,7 +57,7 @@
         Items = points
       };
 
-      await ViewControl.Create<CanvasEngine>(engine => composer);
+      await ViewControl.Create<CanvasEngine>(() => composer);
 
       composer.Update();
     }

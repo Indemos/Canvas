@@ -2,23 +2,22 @@ using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.DecoratorSpace
 {
   public class BoardDecorator : BaseDecorator, IDecorator
   {
-    public IEngine T { get; set; }
-    public IEngine B { get; set; }
-    public IEngine L { get; set; }
-    public IEngine R { get; set; }
-    public IEngine Screen { get; set; }
+    public virtual IEngine T { get; set; }
+    public virtual IEngine B { get; set; }
+    public virtual IEngine L { get; set; }
+    public virtual IEngine R { get; set; }
+    public virtual IEngine Screen { get; set; }
 
-    public double DT => T?.Y ?? 0;
-    public double DB => B?.Y ?? 0;
-    public double DL => L?.X ?? 0;
-    public double DR => R?.X ?? 0;
+    public virtual double DT => T?.Y ?? 0;
+    public virtual double DB => B?.Y ?? 0;
+    public virtual double DL => L?.X ?? 0;
+    public virtual double DR => R?.X ?? 0;
 
     /// <summary>
     /// Create
@@ -28,16 +27,11 @@ namespace Canvas.Core.DecoratorSpace
     public virtual void Create(IEngine engine, DataModel message)
     {
       var values = Composer.GetValues(Screen, message);
-      var element = Composer.Items.ElementAtOrDefault((int)values.X);
-
-      if (element is not null)
-      {
-        CreateBoard(engine, message, element.GetSeries(message, values));
-      }
 
       CreateLines(engine, message);
       CreateMarkers(engine, message, values);
       CreateCaptions(engine, message, values);
+      CreateBoard(engine, message, values);
     }
 
     /// <summary>
@@ -47,7 +41,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="message"></param>
     public virtual void CreateLines(IEngine engine, DataModel message)
     {
-      var shape = Composer.Options[ComponentEnum.BoardLine];
+      var shape = Composer.Components[ComponentEnum.BoardLine];
       var points = new DataModel[2]
       {
         new DataModel(),
@@ -77,7 +71,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="values"></param>
     public virtual void CreateMarkers(IEngine engine, DataModel message, DataModel values)
     {
-      var shape = Composer.Options[ComponentEnum.BoardMarker];
+      var shape = Composer.Components[ComponentEnum.BoardMarker];
       var index = Composer.ShowIndex(values.X);
       var DX = index.Length * shape.Size / 2;
       var DY = shape.Size / 1.5;
@@ -134,7 +128,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="values"></param>
     public virtual void CreateCaptions(IEngine engine, DataModel message, DataModel values)
     {
-      var shape = Composer.Options[ComponentEnum.BoardCaption];
+      var shape = Composer.Components[ComponentEnum.BoardCaption];
       var point = new DataModel();
       var index = Composer.ShowIndex(values.X);
       var value = Composer.ShowValue(values.Y);
@@ -184,22 +178,29 @@ namespace Canvas.Core.DecoratorSpace
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="message"></param>
-    public virtual void CreateBoard(IEngine engine, DataModel message, IDictionary<string, IList<double>> series)
+    public virtual void CreateBoard(IEngine engine, DataModel message, DataModel values)
     {
+      var shape = Composer.Components[ComponentEnum.Board];
+      var shapeCaption = Composer.Components[ComponentEnum.Board];
+      var element = Composer.Items.ElementAtOrDefault((int)values.X);
+
+      if (element is null)
+      {
+        return;
+      }
+
+      element.Composer = Composer;
+
+      var series = element.GetSeries(message, values);
+
       if (series is null)
       {
         return;
       }
 
-      var shape = Composer.Options[ComponentEnum.Board];
-      var shapeCaption = Composer.Options[ComponentEnum.Board];
-      var boardSize = series.Max(o => Composer.ShowBoard(o.Key, o.Value).Length) * shape.Size;
+      var boardSize = series.Max(o => Composer.ShowBoard(o.Key, o.Value).Length) * shape.Size * 0.75;
       var itemSize = shape.Size * 1.5;
-      var points = new DataModel[2]
-      {
-        new DataModel(),
-        new DataModel()
-      };
+      var points = new DataModel[2];
 
       // Border
 
@@ -228,9 +229,7 @@ namespace Canvas.Core.DecoratorSpace
 
       foreach (var group in series)
       {
-        var row = Composer.ShowBoard(group.Key, group.Value);
-
-        engine.CreateCaption(points[0], shapeCaption, row);
+        engine.CreateCaption(points[0], shapeCaption, Composer.ShowBoard(group.Key, group.Value));
         points[0].Y += itemSize;
       }
     }

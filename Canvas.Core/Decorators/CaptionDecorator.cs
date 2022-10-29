@@ -10,7 +10,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <summary>
     /// Location on the chart
     /// </summary>
-    public PositionEnum Position { get; set; }
+    public virtual PositionEnum Position { get; set; }
 
     /// <summary>
     /// Create index
@@ -18,7 +18,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="engine"></param>
     public virtual void CreateIndex(IEngine engine)
     {
-      var shape = Composer.Options[ComponentEnum.Caption];
+      var shape = Composer.Components[ComponentEnum.Caption];
       var space = shape.Size;
       var count = Composer.IndexCount;
       var step = engine.X / count;
@@ -49,7 +49,7 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="engine"></param>
     public virtual void CreateValue(IEngine engine)
     {
-      var shape = Composer.Options[ComponentEnum.Caption];
+      var shape = Composer.Components[ComponentEnum.Caption];
       var space = shape.Size;
       var count = Composer.ValueCount;
       var step = engine.Y / count;

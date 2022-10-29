@@ -44,6 +44,6 @@ namespace Canvas.Core
     /// <typeparam name="T"></typeparam>
     /// <param name="action"></param>
     /// <returns></returns>
-    Task<IView> Create<T>(Func<IEngine, IComposer> action) where T : IEngine, new();
+    Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new();
   }
 }

@@ -1,7 +1,6 @@
 using Canvas.Core.EngineSpace;
 using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
-using Canvas.Core.ShapeSpace;
 
 namespace Canvas.Core.DecoratorSpace
 {
@@ -13,14 +12,10 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="engine"></param>
     public virtual void CreateIndex(IEngine engine)
     {
-      var shape = Composer.Options[ComponentEnum.Grid];
+      var shape = Composer.Components[ComponentEnum.Grid];
       var count = Composer.ValueCount;
       var step = engine.Y / count;
-      var points = new DataModel[2]
-      {
-        new DataModel(),
-        new DataModel()
-      };
+      var points = new DataModel[2];
 
       for (var i = 0; i < count; i++)
       {
@@ -46,14 +41,10 @@ namespace Canvas.Core.DecoratorSpace
     /// <param name="engine"></param>
     public virtual void CreateValue(IEngine engine)
     {
-      var shape = Composer.Options[ComponentEnum.Grid];
+      var shape = Composer.Components[ComponentEnum.Grid];
       var count = Composer.IndexCount;
       var step = engine.X / count;
-      var points = new DataModel[2]
-      {
-        new DataModel(),
-        new DataModel()
-      };
+      var points = new DataModel[2];
 
       for (var i = 0; i < count; i++)
       {

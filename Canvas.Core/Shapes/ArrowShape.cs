@@ -27,8 +27,7 @@ namespace Canvas.Core.ShapeSpace
         return;
       }
 
-      var component = Composer.Options[ComponentEnum.Shape];
-      var size = component.Size / 2.0;
+      var size = Composer.Size;
       var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index, current.Value),
@@ -38,7 +37,7 @@ namespace Canvas.Core.ShapeSpace
 
       coordinates[0].Y -= (coordinates[1].X - coordinates[2].X) * Direction / 2;
 
-      Engine.CreateShape(coordinates, Component ?? component);
+      Engine.CreateShape(coordinates, Component ?? Composer.Components[ComponentEnum.Shape]);
     }
   }
 }

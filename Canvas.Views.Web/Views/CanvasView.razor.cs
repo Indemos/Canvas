@@ -1,6 +1,6 @@
 using Canvas.Core;
 using Canvas.Core.ComposerSpace;
-using Canvas.Core.EngineSpace;
+using Canvas.Core.ModelSpace;
 using System;
 using System.Threading.Tasks;
 
@@ -22,25 +22,25 @@ namespace Canvas.Views.Web.Views
     /// <typeparam name="EngineType"></typeparam>
     /// <param name="action"></param>
     /// <returns></returns>
-    public override async Task<IView> Create<EngineType>(Func<IEngine, IComposer> action)
+    public override async Task<IView> Create<EngineType>(Func<IComposer> action)
     {
       if (Composer is not null)
       {
-        Composer.OnDomain = (message, source) => { };
+        Composer.OnDomain = null;
       }
 
       Screen.OnMouseMove -= Board.OnScreenMove;
       Screen.OnMouseLeave -= Board.OnScreenLeave;
 
-      Composer = action(Screen.Engine);
+      Composer = action();
 
-      await T.Create<EngineType>(engine => Composer);
-      await B.Create<EngineType>(engine => Composer);
-      await L.Create<EngineType>(engine => Composer);
-      await R.Create<EngineType>(engine => Composer);
-      await Grid.Create<EngineType>(engine => Composer);
-      await Board.Create<EngineType>(engine => Composer);
-      await Screen.Create<EngineType>(engine => Composer);
+      await T.Create<EngineType>(() => Composer);
+      await B.Create<EngineType>(() => Composer);
+      await L.Create<EngineType>(() => Composer);
+      await R.Create<EngineType>(() => Composer);
+      await Grid.Create<EngineType>(() => Composer);
+      await Board.Create<EngineType>(() => Composer);
+      await Screen.Create<EngineType>(() => Composer);
 
       Composer.OnDomain += T.Update;
       Composer.OnDomain += B.Update;
@@ -59,5 +59,12 @@ namespace Canvas.Views.Web.Views
 
       return this;
     }
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="source"></param>
+    public override void Update(DomainModel message, string source = null) => Composer.Update(message, source);
   }
 }

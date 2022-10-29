@@ -3,8 +3,5 @@
 <PageTitle>Index</PageTitle>
 
 <div class="views">
-  @foreach (var view in _views)
-  {
-    <CanvasView @ref="_views[view.Key]"></CanvasView>
-  }
+  <CanvasGroupView @ref="ViewControl"></CanvasGroupView>
 </div>

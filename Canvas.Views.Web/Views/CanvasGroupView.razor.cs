@@ -53,7 +53,7 @@ namespace Canvas.Views.Web.Views
 
         sources.Add(source);
 
-        await view.Value.Create<EngineType>(engine =>
+        await view.Value.Create<EngineType>(() =>
         {
           source.TrySetResult();
           return composer;

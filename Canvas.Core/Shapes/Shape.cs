@@ -1,5 +1,6 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
+using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,6 @@ namespace Canvas.Core.ShapeSpace
     double? Z { get; set; }
 
     /// <summary>
-    /// Z
-    /// </summary>
-    ComponentModel? Component { get; set; }
-
-    /// <summary>
     /// Reference to panel
     /// </summary>
     IEngine Engine { get; set; }
@@ -38,6 +34,11 @@ namespace Canvas.Core.ShapeSpace
     /// Reference to composer
     /// </summary>
     IComposer Composer { get; set; }
+
+    /// <summary>
+    /// Options
+    /// </summary>
+    ComponentModel? Component { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -101,11 +102,6 @@ namespace Canvas.Core.ShapeSpace
     public double? Z { get; set; }
 
     /// <summary>
-    /// Shape
-    /// </summary>
-    public virtual ComponentModel? Component { get; set; }
-
-    /// <summary>
     /// Reference to panel
     /// </summary>
     public virtual IEngine Engine { get; set; }
@@ -114,6 +110,11 @@ namespace Canvas.Core.ShapeSpace
     /// Reference to composer
     /// </summary>
     public virtual IComposer Composer { get; set; }
+
+    /// <summary>
+    /// Options
+    /// </summary>
+    public virtual ComponentModel? Component { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -190,6 +191,6 @@ namespace Canvas.Core.ShapeSpace
     /// Clone
     /// </summary>
     /// <returns></returns>
-    public virtual object Clone() => CloneExtensions.CloneFactory.GetClone(this);
+    public virtual object Clone() => MemberwiseClone();
   }
 }

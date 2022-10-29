@@ -20,7 +20,7 @@ namespace Canvas.Core.ServiceSpace
     /// <summary>
     /// Color mode
     /// </summary>
-    public OpacityEnum Color { get; set; } = OpacityEnum.Opacity;
+    public ShadeEnum Shade { get; set; } = ShadeEnum.Opacity;
 
     /// <summary>
     /// Color map
@@ -45,7 +45,7 @@ namespace Canvas.Core.ServiceSpace
       var color = Map[(int)index];
       var opacityRatio = 1.0;
 
-      if (Equals(Color, OpacityEnum.Opacity))
+      if (Equals(Shade, ShadeEnum.Opacity))
       {
         opacityRatio = 0.0;
 

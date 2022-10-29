@@ -28,6 +28,16 @@ namespace Canvas.Core.ShapeSpace
     public double? C { get; set; }
 
     /// <summary>
+    /// Options
+    /// </summary>
+    public virtual ComponentModel? Box { get; set; }
+
+    /// <summary>
+    /// Options
+    /// </summary>
+    public virtual ComponentModel? Line { get; set; }
+
+    /// <summary>
     /// Get Min and Max for the current point
     /// </summary>
     /// <param name="index"></param>
@@ -81,11 +91,9 @@ namespace Canvas.Core.ShapeSpace
 
       var open = O ?? 0;
       var close = C ?? 0;
-      var component = Composer.Options[ComponentEnum.Shape];
-      var size = component.Size / 2.0;
+      var size = Composer.Size / 2.0;
       var downSide = Math.Min(open, close);
       var upSide = Math.Max(open, close);
-
       var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index - size, upSide),
@@ -98,8 +106,8 @@ namespace Canvas.Core.ShapeSpace
         Composer.GetPixels(Engine, index, H ?? 0),
       };
 
-      Engine.CreateBox(coordinates, Component ?? component);
-      Engine.CreateLine(rangeCoordinates, Component ?? component);
+      Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[ComponentEnum.Shape]);
+      Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[ComponentEnum.Shape]);
     }
   }
 }

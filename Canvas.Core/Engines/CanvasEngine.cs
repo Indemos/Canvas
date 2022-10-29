@@ -43,10 +43,10 @@ namespace Canvas.Core.EngineSpace
     {
       Dispose();
 
-      X = index;
-      Y = value;
+      X = index + 1;
+      Y = value + 1;
 
-      Map = new SKBitmap((int)index, (int)value);
+      Map = new SKBitmap((int)index + 1, (int)value + 1);
       Canvas = new SKCanvas(Map);
 
       return this;
@@ -77,10 +77,10 @@ namespace Canvas.Core.EngineSpace
       }
 
       Canvas.DrawLine(
-        (float)Math.Floor(coordinates[0].X),
-        (float)Math.Floor(coordinates[0].Y),
-        (float)Math.Floor(coordinates[1].X),
-        (float)Math.Floor(coordinates[1].Y),
+        (float)coordinates[0].X,
+        (float)coordinates[0].Y,
+        (float)coordinates[1].X,
+        (float)coordinates[1].Y,
         pen);
 
       pen.Dispose();

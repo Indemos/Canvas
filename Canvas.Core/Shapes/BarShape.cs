@@ -22,16 +22,14 @@ namespace Canvas.Core.ShapeSpace
         return;
       }
 
-      var component = Composer.Options[ComponentEnum.Shape];
-      var size = component.Size / 2.0;
-
+      var size = Composer.Size / 2.0;
       var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index - size, 0.0),
         Composer.GetPixels(Engine, index + size, current.Value)
       };
 
-      Engine.CreateBox(coordinates, Component ?? component);
+      Engine.CreateBox(coordinates, Component ?? Composer.Components[ComponentEnum.Shape]);
     }
   }
 }

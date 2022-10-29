@@ -18,6 +18,11 @@ namespace Canvas.Core.ComposerSpace
     string Name { get; set; }
 
     /// <summary>
+    /// Item size
+    /// </summary>
+    double Size { get; set; }
+
+    /// <summary>
     /// Index ticks
     /// </summary>
     int IndexCount { get; set; }
@@ -40,7 +45,7 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Options
     /// </summary>
-    IDictionary<ComponentEnum, ComponentModel> Options { get; set; }
+    IDictionary<ComponentEnum, ComponentModel> Components { get; set; }
 
     /// <summary>
     /// Observable domain
@@ -130,6 +135,11 @@ namespace Canvas.Core.ComposerSpace
     public virtual string Name { get; set; }
 
     /// <summary>
+    /// Item size
+    /// </summary>
+    public virtual double Size { get; set; }
+
+    /// <summary>
     /// Index ticks
     /// </summary>
     public virtual int IndexCount { get; set; }
@@ -152,7 +162,7 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Options
     /// </summary>
-    public virtual IDictionary<ComponentEnum, ComponentModel> Options { get; set; }
+    public virtual IDictionary<ComponentEnum, ComponentModel> Components { get; set; }
 
     /// <summary>
     /// View subscription
@@ -179,33 +189,34 @@ namespace Canvas.Core.ComposerSpace
     /// </summary>
     public Composer()
     {
+      Size = 0.5;
       ValueCount = 4;
       IndexCount = 10;
       Domain = new DomainModel();
-      Options = new Dictionary<ComponentEnum, ComponentModel>();
+      Components = new Dictionary<ComponentEnum, ComponentModel>();
       Items = new List<IShape>();
 
-      Options[ComponentEnum.Shape] = new ComponentModel
-      {
-        Size = 0.5,
-        Color = new SKColor(50, 50, 50)
-      };
-
-      Options[ComponentEnum.ShapeSection] = new ComponentModel
+      Components[ComponentEnum.Shape] = new ComponentModel
       {
         Size = 1,
         Color = new SKColor(50, 50, 50)
       };
 
-      Options[ComponentEnum.Grid] =
-      Options[ComponentEnum.BoardLine] = new ComponentModel
+      Components[ComponentEnum.ShapeSection] = new ComponentModel
+      {
+        Size = 1,
+        Color = new SKColor(50, 50, 50)
+      };
+
+      Components[ComponentEnum.Grid] =
+      Components[ComponentEnum.BoardLine] = new ComponentModel
       {
         Size = 1,
         Color = new SKColor(50, 50, 50),
         Composition = CompositionEnum.Dashes
       };
 
-      Options[ComponentEnum.Board] = new ComponentModel
+      Components[ComponentEnum.Board] = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.L,
@@ -213,9 +224,9 @@ namespace Canvas.Core.ComposerSpace
         Background = new SKColor(230, 230, 230)
       };
 
-      Options[ComponentEnum.Caption] =
-      Options[ComponentEnum.BoardMarker] =
-      Options[ComponentEnum.BoardCaption] = new ComponentModel
+      Components[ComponentEnum.Caption] =
+      Components[ComponentEnum.BoardMarker] =
+      Components[ComponentEnum.BoardCaption] = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.Center,

@@ -87,5 +87,18 @@ namespace Canvas.Core.ShapeSpace
 
       return shape;
     }
+
+    /// <summary>
+    /// Clone
+    /// </summary>
+    /// <returns></returns>
+    public override object Clone()
+    {
+      var clone = base.Clone() as IGroupShape;
+
+      clone.Groups = Groups.ToDictionary(o => o.Key, o => o.Value.Clone() as IGroupShape);
+
+      return clone;
+    }
   }
 }

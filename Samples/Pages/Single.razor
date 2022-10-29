@@ -31,7 +31,7 @@
         Items = points
       };
 
-      await View.Create<CanvasEngine>(engine => composer);
+      await View.Create<CanvasEngine>(() => composer);
 
       composer.Update();
     }
