@@ -120,19 +120,19 @@ In case when charts have to be synchronized or overlapped within the same viewpo
 ```C#
 Item = new 
 {
-  Groups = new 
+  Groups = new GroupShape
   {
-    ["Price Area"] = new 
+    ["Price Area"] = new Dictionary<string, GroupShape>
     {
-      Groups = new 
+      Groups = new GroupShape
       {
         ["Price Series"] = new CandleShape(),
         ["Arrow Series"] = new ArrowShape()
       }
     },
-    ["Indicator Area"] = new 
+    ["Indicator Area"] = new Dictionary<string, GroupShape>
     {
-      Groups = new 
+      Groups = new GroupShape
       { 
         ["Bar Series"] = new BarShape() 
       }
