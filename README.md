@@ -35,7 +35,7 @@ At the moment, there are four built-in chart types.
 * Candle - OHLC box, a mix of a line and a polygon
 * HeatMap - polygon 
 
-To add new chart types, e.g. `Error Bars` or `Bubbles`, implement `IGroupModel` interface. 
+To add new chart types, e.g. `Error Bars` or `Bubbles`, implement `IShape` interface. 
 
 # Pan and Zoom 
 
@@ -81,18 +81,18 @@ The simplest format used by the library is a list of models with a single `Point
 
 ```C#
 
-<CanvasWebView @ref="ViewControl"></CanvasWebView>
+<CanvasWebView @ref="View"></CanvasWebView>
 
 @code
 {
-  public CanvasWebView ViewControl { get; set; }
+  public CanvasWebView View { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
     if (setup)
     {
       var generator = new Random();
-      var points = Enumerable.Range(1, 1000).Select(i => new BarItemModel 
+      var points = Enumerable.Range(1, 1000).Select(i => new BarShape 
       { 
         X = i, 
         Y = generator.Next(-5000, 5000) 
@@ -118,34 +118,32 @@ The simplest format used by the library is a list of models with a single `Point
 In case when charts have to be synchronized or overlapped within the same viewport, data source should have format of a list where each entry point has a time stamp and a set of `Areas` and `Series` that will be rendered in the relevant viewport. 
 
 ```C#
-[
-  DateTime
+Item = new 
+{
+  Groups = new 
   {
-    Area A
+    ["Price Area"] = new 
     {
-      Line Series => double,
-      Candle Series => OHLC
+      Groups = new 
+      {
+        ["Price Series"] = new CandleShape(),
+        ["Arrow Series"] = new ArrowShape()
+      }
     },
-    Area B 
+    ["Indicator Area"] = new 
     {
-      Line Series => double,
-      Line Series => double
-    },
-    Area C 
-    {
-      Bar Series => double
+      Groups = new 
+      { 
+        ["Bar Series"] = new BarShape() 
+      }
     }
-  }, 
-  DateTime { ... },
-  DateTime { ... },
-  DateTime { ... }
-]
-
+  }
+}
 ```
 
 - **Area** is a viewport, an actual chart, each viewport can show several types of series, e.g. a mix of candles and lines.
 - **Series** is a single chart type to be displayed in the viewport, e.g. lines. 
-- **Model** is a data point of `dynamic` type, can accept different type of inputs, e.g. double or OHLC box.
+- **Shape** is a data point of `dynamic` type, can accept different type of inputs, e.g. double or OHLC box.
 
 At this moment, `Canvas` supports only horizontal orientation, so the axis X is used as an index scale that picks data points from the source list and axis Y is a value scale that represents the actual value of each data point. 
 
