@@ -81,11 +81,11 @@ The simplest format used by the library is a list of models with a single `Point
 
 ```C#
 
-<CanvasWebView @ref="View"></CanvasWebView>
+<CanvasView @ref="View"></CanvasView>
 
 @code
 {
-  public CanvasWebView View { get; set; }
+  public CanvasView View { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
