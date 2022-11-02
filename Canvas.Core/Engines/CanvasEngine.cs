@@ -9,6 +9,16 @@ namespace Canvas.Core.EngineSpace
 {
   public class CanvasEngine : Engine, IEngine
   {
+    protected SKPaint _penBox = null;
+    protected SKPaint _penLine = null;
+    protected SKPaint _penShape = null;
+    protected SKPaint _penCircle = null;
+    protected SKPaint _penCaption = null;
+    protected SKPaint _penCaptionShape = null;
+    protected SKPathEffect _dotLine = null;
+    protected SKPathEffect _dashLine = null;
+    protected SKPath _curve = null;
+
     /// <summary>
     /// Bitmap
     /// </summary>
@@ -20,17 +30,20 @@ namespace Canvas.Core.EngineSpace
     public virtual SKCanvas Canvas { get; protected set; }
 
     /// <summary>
-    /// Get instance
+    /// Instance
     /// </summary>
     /// <returns></returns>
-    public override IEngine GetInstance()
+    public override IEngine Instance
     {
-      if (Map is null)
+      get
       {
-        return null;
-      }
+        if (Map is null || Canvas is null)
+        {
+          return null;
+        }
 
-      return this;
+        return this;
+      }
     }
 
     /// <summary>
@@ -42,6 +55,73 @@ namespace Canvas.Core.EngineSpace
     public override IEngine Create(double index, double value)
     {
       Dispose();
+
+      _curve = new SKPath();
+      _dotLine = SKPathEffect.CreateDash(new float[] { 1, 3 }, 0);
+      _dashLine = SKPathEffect.CreateDash(new float[] { 3, 3 }, 0);
+
+      _penLine = new SKPaint
+      {
+        Color = SKColors.Black,
+        Style = SKPaintStyle.Stroke,
+        FilterQuality = SKFilterQuality.Low,
+        StrokeWidth = 1,
+        IsAntialias = false,
+        IsStroke = false,
+        IsDither = false
+      };
+
+      _penCircle = new SKPaint
+      {
+        Color = SKColors.Black,
+        Style = SKPaintStyle.Fill,
+        FilterQuality = SKFilterQuality.Low,
+        IsAntialias = false,
+        IsStroke = false,
+        IsDither = false
+      };
+
+      _penBox = new SKPaint
+      {
+        Color = SKColors.Black,
+        Style = SKPaintStyle.Fill,
+        FilterQuality = SKFilterQuality.Low,
+        IsAntialias = false,
+        IsStroke = false,
+        IsDither = false
+      };
+
+      _penShape = new SKPaint
+      {
+        Color = SKColors.Black,
+        Style = SKPaintStyle.Fill,
+        FilterQuality = SKFilterQuality.Low,
+        IsAntialias = false,
+        IsStroke = false,
+        IsDither = false
+      };
+
+      _penCaption = new SKPaint
+      {
+        Color = SKColors.Black,
+        TextAlign = SKTextAlign.Center,
+        FilterQuality = SKFilterQuality.Low,
+        TextSize = 10,
+        IsAntialias = true,
+        IsStroke = false,
+        IsDither = false
+      };
+
+      _penCaptionShape = new SKPaint
+      {
+        Color = SKColors.Black,
+        TextAlign = SKTextAlign.Center,
+        FilterQuality = SKFilterQuality.Low,
+        TextSize = 10,
+        IsAntialias = false,
+        IsStroke = false,
+        IsDither = false
+      };
 
       X = index + 1;
       Y = value + 1;
@@ -59,21 +139,13 @@ namespace Canvas.Core.EngineSpace
     /// <param name="shape"></param>
     public override void CreateLine(IList<DataModel> coordinates, ComponentModel shape)
     {
-      var pen = new SKPaint
-      {
-        Color = shape.Color,
-        Style = SKPaintStyle.Stroke,
-        FilterQuality = SKFilterQuality.Low,
-        StrokeWidth = (float)shape.Size,
-        IsAntialias = false,
-        IsStroke = false,
-        IsDither = false
-      };
+      _penLine.Color = shape.Color;
+      _penLine.StrokeWidth = (float)shape.Size;
 
       switch (shape.Composition)
       {
-        case CompositionEnum.Dots: pen.PathEffect = SKPathEffect.CreateDash(new float[] { 1, 3 }, 0); break;
-        case CompositionEnum.Dashes: pen.PathEffect = SKPathEffect.CreateDash(new float[] { 3, 3 }, 0); break;
+        case CompositionEnum.Dots: _penLine.PathEffect = _dotLine; break;
+        case CompositionEnum.Dashes: _penLine.PathEffect = _dashLine; break;
       }
 
       Canvas.DrawLine(
@@ -81,9 +153,7 @@ namespace Canvas.Core.EngineSpace
         (float)coordinates[0].Y,
         (float)coordinates[1].X,
         (float)coordinates[1].Y,
-        pen);
-
-      pen.Dispose();
+        _penLine);
     }
 
     /// <summary>
@@ -93,23 +163,13 @@ namespace Canvas.Core.EngineSpace
     /// <param name="shape"></param>
     public override void CreateCircle(DataModel coordinate, ComponentModel shape)
     {
-      var pen = new SKPaint
-      {
-        Color = shape.Color,
-        Style = SKPaintStyle.Fill,
-        FilterQuality = SKFilterQuality.Low,
-        IsAntialias = false,
-        IsStroke = false,
-        IsDither = false
-      };
+      _penCircle.Color = shape.Color;
 
       Canvas.DrawCircle(
-        (float)coordinate.X,
-        (float)coordinate.Y,
-        (float)shape.Size,
-        pen);
-
-      pen.Dispose();
+      (float)coordinate.X,
+      (float)coordinate.Y,
+      (float)shape.Size,
+      _penCircle);
     }
 
     /// <summary>
@@ -119,24 +179,14 @@ namespace Canvas.Core.EngineSpace
     /// <param name="shape"></param>
     public override void CreateBox(IList<DataModel> coordinates, ComponentModel shape)
     {
-      var pen = new SKPaint
-      {
-        Color = shape.Color,
-        Style = SKPaintStyle.Fill,
-        FilterQuality = SKFilterQuality.Low,
-        IsAntialias = false,
-        IsStroke = false,
-        IsDither = false
-      };
+      _penBox.Color = shape.Color;
 
       Canvas.DrawRect(
         (float)coordinates[0].X,
         (float)coordinates[0].Y,
         (float)(coordinates[1].X - coordinates[0].X),
         (float)(coordinates[1].Y - coordinates[0].Y),
-        pen);
-
-      pen.Dispose();
+        _penBox);
     }
 
     /// <summary>
@@ -147,28 +197,18 @@ namespace Canvas.Core.EngineSpace
     public override void CreateShape(IList<DataModel> coordinates, ComponentModel shape)
     {
       var origin = coordinates.ElementAtOrDefault(0);
-      var curve = new SKPath();
-      var pen = new SKPaint
-      {
-        Color = shape.Color,
-        Style = SKPaintStyle.Fill,
-        FilterQuality = SKFilterQuality.Low,
-        IsAntialias = false,
-        IsStroke = false,
-        IsDither = false
-      };
 
-      curve.MoveTo((float)origin.X, (float)origin.Y);
+      _penShape.Color = shape.Color;
+
+      _curve.Reset();
+      _curve.MoveTo((float)origin.X, (float)origin.Y);
 
       for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
+        _curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
       }
 
-      Canvas.DrawPath(curve, pen);
-
-      pen.Dispose();
-      curve.Dispose();
+      Canvas.DrawPath(_curve, _penShape);
     }
 
     /// <summary>
@@ -179,32 +219,23 @@ namespace Canvas.Core.EngineSpace
     /// <param name="content"></param>
     public override void CreateCaption(DataModel coordinate, ComponentModel shape, string content)
     {
-      var pen = new SKPaint
-      {
-        Color = shape.Color,
-        TextAlign = SKTextAlign.Center,
-        FilterQuality = SKFilterQuality.Low,
-        TextSize = (float)shape.Size,
-        IsAntialias = true,
-        IsStroke = false,
-        IsDither = false
-      };
+      _penCaption.Color = shape.Color;
+      _penCaption.TextSize = (float)shape.Size;
+      _penCaption.TextAlign = SKTextAlign.Center;
 
       switch (shape.Position)
       {
-        case PositionEnum.L: pen.TextAlign = SKTextAlign.Left; break;
-        case PositionEnum.R: pen.TextAlign = SKTextAlign.Right; break;
+        case PositionEnum.L: _penCaption.TextAlign = SKTextAlign.Left; break;
+        case PositionEnum.R: _penCaption.TextAlign = SKTextAlign.Right; break;
       }
 
-      var space = (pen.FontSpacing - pen.TextSize) / 2;
+      var space = (_penCaption.FontSpacing - _penCaption.TextSize) / 2;
 
       Canvas.DrawText(
         content,
         (float)coordinate.X,
         (float)(coordinate.Y - space),
-        pen);
-
-      pen.Dispose();
+        _penCaption);
     }
 
     /// <summary>
@@ -213,35 +244,25 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateLabelShape(IList<DataModel> coordinates, ComponentModel shape, string content)
+    public override void CreateCaptionShape(IList<DataModel> coordinates, ComponentModel shape, string content)
     {
       var origin = coordinates.ElementAtOrDefault(0);
-      var curve = new SKPath();
-      var pen = new SKPaint
-      {
-        Color = shape.Color,
-        TextAlign = SKTextAlign.Center,
-        FilterQuality = SKFilterQuality.Low,
-        TextSize = (float)shape.Size,
-        IsAntialias = false,
-        IsStroke = false,
-        IsDither = false
-      };
 
-      curve.MoveTo((float)origin.X, (float)origin.Y);
+      _penCaptionShape.Color = shape.Color;
+      _penCaptionShape.TextSize = (float)shape.Size;
+
+      _curve.Reset();
+      _curve.MoveTo((float)origin.X, (float)origin.Y);
 
       for (var i = 1; i < coordinates.Count; i++)
       {
-        curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
+        _curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
       }
 
-      pen.Color = shape.Color;
-      pen.TextSize = (float)shape.Size;
+      _penCaptionShape.Color = shape.Color;
+      _penCaptionShape.TextSize = (float)shape.Size;
 
-      Canvas.DrawTextOnPath(content, curve, 0, pen.TextSize / 2, pen);
-
-      pen.Dispose();
-      curve.Dispose();
+      Canvas.DrawTextOnPath(content, _curve, 0, _penCaptionShape.TextSize / 2, _penCaptionShape);
     }
 
     /// <summary>
@@ -251,18 +272,13 @@ namespace Canvas.Core.EngineSpace
     /// <param name="size"></param>
     public override DataModel GetContentMeasure(string content, double size)
     {
-      var pen = new SKPaint
-      {
-        TextSize = (float)size
-      };
+      _penCaption.TextSize = (float)size;
 
       var item = new DataModel
       {
-        X = content.Length * Math.Min(pen.FontMetrics.MaxCharacterWidth, size),
-        Y = pen.FontSpacing
+        X = content.Length * Math.Min(_penCaption.FontMetrics.MaxCharacterWidth, size),
+        Y = _penCaption.FontSpacing
       };
-
-      pen.Dispose();
 
       return item;
     }
@@ -294,11 +310,39 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     public override void Dispose()
     {
-      Canvas?.Dispose();
-      Map?.Dispose();
+      var map = Map;
+      var canvas = Canvas;
+      var dotLine = _dotLine;
+      var dashLine = _dashLine;
+      var penLine = _penLine;
+      var penCircle = _penCircle;
+      var penBox = _penBox;
+      var penShape = _penBox;
+      var penCaption = _penCaption;
+      var penCaptionShape = _penCaptionShape;
 
-      Canvas = null;
       Map = null;
+      Canvas = null;
+
+      _dotLine = null;
+      _dashLine = null;
+      _penLine = null;
+      _penCircle = null;
+      _penBox = null;
+      _penShape = null;
+      _penCaption = null;
+      _penCaptionShape = null;
+
+      map?.Dispose();
+      canvas?.Dispose();
+      dotLine?.Dispose();
+      dashLine?.Dispose();
+      penLine?.Dispose();
+      penCircle?.Dispose();
+      penBox?.Dispose();
+      penShape?.Dispose();
+      penCaption?.Dispose();
+      penCaptionShape?.Dispose();
     }
   }
 }

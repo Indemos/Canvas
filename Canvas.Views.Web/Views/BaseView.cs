@@ -50,15 +50,17 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual void Update(DomainModel message, string source = null)
     {
-      ScheduleService.Send(() =>
+      ScheduleService?.Send(() =>
       {
-        if (Engine?.GetInstance() is not null)
+        if (Engine.Instance is null)
         {
-          Engine.Clear();
-          Render();
-          Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-          InvokeAsync(StateHasChanged);
+          return 0;
         }
+
+        Engine.Clear();
+        Render();
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
+        InvokeAsync(StateHasChanged);
 
         return 0;
       });
@@ -72,14 +74,16 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual async Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
     {
+      Dispose();
+
+      ScheduleService = new SchedulerService();
+      ViewService = new ViewService { View = this };
+      ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
+      ScriptService.OnSize = async o => await setup();
+
       async Task setup()
       {
-        Dispose();
-
-        ScheduleService = new SchedulerService();
-        ViewService = new ViewService { View = this };
-        ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
-        ScriptService.OnSize = async o => await setup();
+        await ScheduleService.Send(() => Engine?.Dispose()).Task;
 
         var engine = new T();
         var message = await CreateViewMessage();
@@ -100,10 +104,20 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     public virtual void Dispose()
     {
-      Engine?.Dispose();
-      ViewService?.Dispose();
-      ScriptService?.Dispose();
-      ScheduleService?.Dispose();
+      var engine = Engine;
+      var scheduleService = ScheduleService;
+      var scriptService = ScriptService;
+      var viewService = ViewService;
+
+      Engine = null;
+      ScheduleService = null;
+      ScriptService = null;
+      ViewService = null;
+
+      engine?.Dispose();
+      scheduleService?.Dispose();
+      scriptService?.Dispose();
+      viewService?.Dispose();
     }
 
     /// <summary>

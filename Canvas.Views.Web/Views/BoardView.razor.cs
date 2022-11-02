@@ -1,5 +1,6 @@
 using Canvas.Core;
 using Canvas.Core.DecoratorSpace;
+using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
 using SkiaSharp;
 using System;
@@ -42,9 +43,9 @@ namespace Canvas.Views.Web.Views
 
     protected virtual void UpdateDecorator(Action action = null)
     {
-      Completion = ScheduleService.Send(() =>
+      Completion = ScheduleService?.Send(() =>
       {
-        if (Engine?.GetInstance() is null)
+        if (Engine.Instance is null)
         {
           return 0;
         }
@@ -57,7 +58,6 @@ namespace Canvas.Views.Web.Views
         }
 
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-
         InvokeAsync(StateHasChanged);
 
         return 0;

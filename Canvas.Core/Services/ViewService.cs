@@ -20,11 +20,6 @@ namespace Canvas.Core.ServiceSpace
     /// <param name="e"></param>
     public virtual void OnWheel(ViewModel e)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       var isZoom = e.IsShape;
       var message = Composer.Domain;
 
@@ -43,11 +38,6 @@ namespace Canvas.Core.ServiceSpace
     /// <param name="e"></param>
     public virtual void OnMouseMove(ViewModel e)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       ScreenPosition ??= e;
 
       if (e.IsMove)
@@ -75,11 +65,6 @@ namespace Canvas.Core.ServiceSpace
     /// <param name="orientation"></param>
     public virtual void OnScale(ViewModel e, int orientation = 0)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       Position ??= e;
 
       if (e.IsMove)
@@ -113,11 +98,6 @@ namespace Canvas.Core.ServiceSpace
     /// <param name="e"></param>
     public virtual void OnMouseDown(ViewModel e)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       if (e.IsControl)
       {
         var message = Composer.Domain;
@@ -134,11 +114,6 @@ namespace Canvas.Core.ServiceSpace
     /// <param name="e"></param>
     public virtual void OnMouseLeave(ViewModel e)
     {
-      if (Engine?.GetInstance() is null)
-      {
-        return;
-      }
-
       ScreenPosition = null;
     }
 

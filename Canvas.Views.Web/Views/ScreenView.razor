@@ -1,10 +1,10 @@
 @inherits BaseView
 
 <div class="canvas-screen"
-  @onwheel="OnWheelAction"
-  @onmousewheel="OnWheelAction"
-  @onmousemove="OnMouseMoveAction"
-  @onmouseout="OnMouseLeaveAction"
-  @onmousedown="OnMouseDownAction">
+    @onwheel="OnWheelAction"
+    @onmousewheel="OnWheelAction"
+    @onmousemove="OnMouseMoveAction"
+    @onmouseout="OnMouseLeaveAction"
+    @onmousedown="OnMouseDownAction">
   <img @ref="Container" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
 </div>

@@ -34,6 +34,23 @@ namespace Canvas.Core.ServiceSpace
     /// Action processor
     /// </summary>
     /// <param name="action"></param>
+    public virtual TaskCompletionSource Send(Action action)
+    {
+      var completion = new TaskCompletionSource();
+
+      Instance.Schedule(() =>
+      {
+        action();
+        completion.TrySetResult();
+      });
+
+      return completion;
+    }
+
+    /// <summary>
+    /// Action processor
+    /// </summary>
+    /// <param name="action"></param>
     public virtual TaskCompletionSource<T> Send<T>(Func<T> action)
     {
       var completion = new TaskCompletionSource<T>();

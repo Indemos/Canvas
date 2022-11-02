@@ -19,10 +19,10 @@ namespace Canvas.Core.EngineSpace
     double Y { get; set; }
 
     /// <summary>
-    /// Get instance
+    /// Instance
     /// </summary>
     /// <returns></returns>
-    IEngine GetInstance();
+    IEngine Instance { get; }
 
     /// <summary>
     /// Create
@@ -73,7 +73,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateLabelShape(IList<DataModel> coordinates, ComponentModel shape, string content);
+    void CreateCaptionShape(IList<DataModel> coordinates, ComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
@@ -109,10 +109,10 @@ namespace Canvas.Core.EngineSpace
     public virtual double Y { get; set; }
 
     /// <summary>
-    /// Get instance
+    /// Instance
     /// </summary>
     /// <returns></returns>
-    public abstract IEngine GetInstance();
+    public virtual IEngine Instance { get; }
 
     /// <summary>
     /// Create
@@ -163,7 +163,7 @@ namespace Canvas.Core.EngineSpace
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public abstract void CreateLabelShape(IList<DataModel> coordinates, ComponentModel shape, string content);
+    public abstract void CreateCaptionShape(IList<DataModel> coordinates, ComponentModel shape, string content);
 
     /// <summary>
     /// Measure content
