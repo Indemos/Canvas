@@ -58,7 +58,7 @@ namespace Canvas.Views.Web.Views
 
       ScheduleService?.Send(async () =>
       {
-        if (Engine.Instance is null)
+        if (Engine?.Instance is null)
         {
           return;
         }
