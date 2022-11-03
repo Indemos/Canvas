@@ -21,6 +21,7 @@ namespace Canvas.Views.Web.Views
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     protected virtual string Route { get; set; }
+    protected virtual Task Updater { get; set; }
     protected virtual ViewService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
     protected virtual SchedulerService ScheduleService { get; set; }
@@ -50,19 +51,23 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual void Update(DomainModel message, string source = null)
     {
-      ScheduleService?.Send(() =>
+      if (Updater?.IsCompleted is false)
+      {
+        return;
+      }
+
+      ScheduleService?.Send(async () =>
       {
         if (Engine.Instance is null)
         {
-          return 0;
+          return;
         }
 
         Engine.Clear();
         Render();
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-        InvokeAsync(StateHasChanged);
 
-        return 0;
+        await (Updater = InvokeAsync(StateHasChanged));
       });
     }
 

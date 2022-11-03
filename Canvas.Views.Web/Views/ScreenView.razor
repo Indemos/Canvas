@@ -1,10 +1,152 @@
 @inherits BaseView
 
-<div class="canvas-screen"
+@{
+  var imageN = new List<string>();
+  var imageS = new List<string>();
+  var imageW = new List<string>();
+  var imageE = new List<string>();
+  var imageVX = new List<string>();
+  var imageVY = new List<string>();
+  var positionN = new List<string>();
+  var positionS = new List<string>();
+  var positionW = new List<string>();
+  var positionE = new List<string>();
+  var positionVX = new List<string>();
+  var positionVY = new List<string>();
+  var grid = "linear-gradient(#DDD,#DDD)";
+}
+
+<div class="canvas-container" space>
+
+  <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleAction(e, 1)">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
+    }
+
+    @foreach (var o in GetIndexEnumerator())
+    {
+      <span class="canvas-label" style="left: @(o.Item1)px"><b>@o.Item2</b></span>
+    }
+
+  </div>
+
+  <div class="canvas-scale canvas-scale-s" @onmousemove="e => OnScaleAction(e, 1)">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
+    }
+
+    @foreach (var o in GetIndexEnumerator())
+    {
+      imageN.Add(grid);
+      imageS.Add(grid);
+      imageVX.Add(grid);
+      positionN.Add($"{ o.Item1 }px 100%");
+      positionS.Add($"{ o.Item1 }px 0");
+      positionVX.Add($"{ o.Item1 }px 100%");
+
+      <span class="canvas-label" style="left: @(o.Item1)px"><b>@o.Item2</b></span>
+    }
+
+  </div>
+
+  <div class="canvas-scale canvas-scale-w" @onmousemove="e => OnScaleAction(e, -1)">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
+    }
+
+    @foreach (var o in GetValueEnumerator())
+    {
+      <span class="canvas-label" style="top: @(o.Item1)px"><b>@o.Item2</b></span>
+    }
+
+  </div>
+
+  <div class="canvas-scale canvas-scale-e" @onmousemove="e => OnScaleAction(e, -1)">
+
+    @if (Cursor is not null)
+    {
+      <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
+    }
+
+    @foreach (var o in GetValueEnumerator())
+    {
+      imageW.Add(grid);
+      imageE.Add(grid);
+      imageVY.Add(grid);
+      positionW.Add($"100% { o.Item1 }px");
+      positionE.Add($"0 { o.Item1 }px");
+      positionVY.Add($"100% { o.Item1 }px");
+
+      <span class="canvas-label" style="top: @(o.Item1)px" alt="Canvas"><b>@o.Item2</b></span>
+    }
+
+  </div>
+
+  <div class="canvas-view"
     @onwheel="OnWheelAction"
     @onmousewheel="OnWheelAction"
     @onmousemove="OnMouseMoveAction"
     @onmouseout="OnMouseLeaveAction"
     @onmousedown="OnMouseDownAction">
-  <img @ref="Container" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
+
+    @if (Cursor is not null)
+    {
+      <div class="canvas-cross" style="background-position: @(Cursor?.Data.X)px 100%, 100% @(Cursor?.Data.Y)px"></div>
+
+      @if (Series?.Count > 0)
+      {
+        <div class="canvas-board">
+
+          @foreach (var series in Series)
+          {
+            <div class="canvas-board-item"><b>@series.Key:</b> @string.Join(" / ", series.Value ?? new double[1] { 0 })</div>
+          }
+
+        </div>
+      }
+    }
+
+    <img @ref="Container" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
+  </div>
+
 </div>
+
+<style type="text/css">
+
+  .canvas-container[space] .canvas-scale-T {
+    background-image: @(string.Join(",", imageN));
+    background-position: @(string.Join(",", positionN));
+  }
+
+  .canvas-container[space] .canvas-scale-B {
+    background-image: @(string.Join(",", imageS));
+    background-position: @(string.Join(",", positionS));
+  }
+
+  .canvas-container[space] .canvas-scale-L {
+    background-image: @(string.Join(",", imageW));
+    background-position: @(string.Join(",", positionW));
+  }
+
+  .canvas-container[space] .canvas-scale-R {
+    background-image: @(string.Join(",", imageE));
+    background-position: @(string.Join(",", positionE));
+  }
+
+  .canvas-container[space] .canvas-view {
+    background-image: @(string.Join(",", imageVX));
+    background-position: @(string.Join(",", positionVX));
+  }
+
+  .canvas-container[space] .canvas-view img, .canvas-container[space] .canvas-view iframe {
+    background-image: @(string.Join(",", imageVY));
+    background-position: @(string.Join(",", positionVY));
+  }
+
+</style>

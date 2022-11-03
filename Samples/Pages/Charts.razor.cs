@@ -63,11 +63,11 @@ namespace Canvas.Client.Pages
         Interval.Enabled = true;
         Interval.Elapsed += (o, e) =>
         {
-          lock (this)
+          //lock (this)
           {
             if (Interval is not null)
             {
-              Counter(Interval.Enabled = Points.Count < 100);
+              Counter(true);
             }
           }
         };
@@ -137,7 +137,7 @@ namespace Canvas.Client.Pages
     /// <returns></returns>
     protected bool IsNextFrame()
     {
-      return Points.Count == 0 || DateTime.Now.Ticks - Time.Ticks >= TimeSpan.FromMilliseconds(50).Ticks;
+      return Points.Count == 0 || DateTime.Now.Ticks - Time.Ticks >= TimeSpan.FromMilliseconds(500).Ticks;
     }
 
     /// <summary>

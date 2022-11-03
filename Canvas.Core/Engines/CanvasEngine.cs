@@ -123,10 +123,10 @@ namespace Canvas.Core.EngineSpace
         IsDither = false
       };
 
-      X = index + 1;
-      Y = value + 1;
+      X = index;
+      Y = value;
 
-      Map = new SKBitmap((int)index + 1, (int)value + 1);
+      Map = new SKBitmap((int)index, (int)value);
       Canvas = new SKCanvas(Map);
 
       return this;
