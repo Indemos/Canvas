@@ -7,6 +7,7 @@ using Canvas.Core.ServiceSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using ScheduleSpace;
 using ScriptContainer;
 using SkiaSharp;
 using System;
@@ -24,7 +25,7 @@ namespace Canvas.Views.Web.Views
     protected virtual Task Updater { get; set; }
     protected virtual ViewService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
-    protected virtual SchedulerService ScheduleService { get; set; }
+    protected virtual IMessageScheduler ScheduleService { get; set; }
     protected virtual ElementReference Container { get; set; }
 
     /// <summary>
@@ -81,7 +82,7 @@ namespace Canvas.Views.Web.Views
     {
       Dispose();
 
-      ScheduleService = new SchedulerService();
+      ScheduleService = new MessageScheduler();
       ViewService = new ViewService { View = this };
       ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
       ScriptService.OnSize = async o => await setup();
