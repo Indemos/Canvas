@@ -78,7 +78,7 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var component = Composer.Components[ComponentEnum.ShapeSection];
+      var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
       var step = (Composer.Domain.MaxValue - Composer.Domain.MinValue + 1) / pointsCount;
 
       foreach (var point in Points)

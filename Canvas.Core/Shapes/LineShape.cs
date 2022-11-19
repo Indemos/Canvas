@@ -23,7 +23,7 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var component = Composer.Components[ComponentEnum.ShapeSection];
+      var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
       var coordinates = new DataModel[]
       {
         Composer.GetPixels(Engine, index, (previous ?? current).Value),

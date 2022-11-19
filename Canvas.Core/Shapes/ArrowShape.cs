@@ -37,7 +37,7 @@ namespace Canvas.Core.ShapeSpace
 
       coordinates[0].Y -= (coordinates[1].X - coordinates[2].X) * Direction / 2;
 
-      Engine.CreateShape(coordinates, Component ?? Composer.Components[ComponentEnum.Shape]);
+      Engine.CreateShape(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
   }
 }

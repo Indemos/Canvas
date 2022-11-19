@@ -106,8 +106,8 @@ namespace Canvas.Core.ShapeSpace
         Composer.GetPixels(Engine, index, H ?? 0),
       };
 
-      Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[ComponentEnum.Shape]);
-      Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[ComponentEnum.Shape]);
+      Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
   }
 }

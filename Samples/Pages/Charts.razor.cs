@@ -63,13 +63,7 @@ namespace Canvas.Client.Pages
         Interval.Enabled = true;
         Interval.Elapsed += (o, e) =>
         {
-          //lock (this)
-          {
-            if (Interval is not null)
-            {
-              Counter(true);
-            }
-          }
+          if (Points.Count < 100) Counter(true);
         };
       }
 

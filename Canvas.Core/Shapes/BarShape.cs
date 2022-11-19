@@ -29,7 +29,7 @@ namespace Canvas.Core.ShapeSpace
         Composer.GetPixels(Engine, index + size, current.Value)
       };
 
-      Engine.CreateBox(coordinates, Component ?? Composer.Components[ComponentEnum.Shape]);
+      Engine.CreateBox(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
   }
 }

@@ -20,14 +20,14 @@ namespace Canvas.Views.Web.Views
     {
       if (Composer is not null)
       {
-        Composer.OnDomain = null;
+        Composer.Views.Clear();
       }
 
       Composer = action();
 
       await Screen.Create<EngineType>(() => Composer);
 
-      Composer.OnDomain += Screen.Update;
+      Composer.Views[nameof(Screen)] = Screen;
 
       return this;
     }
@@ -37,6 +37,6 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="message"></param>
     /// <param name="source"></param>
-    public override void Update(DomainModel message, string source = null) => Composer.Update(message, source);
+    public override Task Update(DomainModel message, string source = null) => Composer.Update(message, source);
   }
 }

@@ -36,7 +36,7 @@ namespace Canvas.Core
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    void Update(DomainModel message, string source = null);
+    Task Update(DomainModel message, string source = null);
 
     /// <summary>
     /// Create

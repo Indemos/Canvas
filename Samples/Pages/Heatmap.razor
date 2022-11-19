@@ -58,8 +58,7 @@
       };
 
       await ViewControl.Create<CanvasEngine>(() => composer);
-
-      composer.Update();
+      await composer.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

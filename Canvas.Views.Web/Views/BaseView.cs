@@ -23,7 +23,7 @@ namespace Canvas.Views.Web.Views
 
     protected virtual string Route { get; set; }
     protected virtual Task Updater { get; set; }
-    protected virtual ViewService ViewService { get; set; }
+    protected virtual EventService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
     protected virtual IMessageScheduler ScheduleService { get; set; }
     protected virtual ElementReference Container { get; set; }
@@ -50,14 +50,14 @@ namespace Canvas.Views.Web.Views
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual void Update(DomainModel message, string source = null)
+    public virtual Task Update(DomainModel message, string source = null)
     {
       if (Updater?.IsCompleted is false)
       {
-        return;
+        return Updater;
       }
 
-      ScheduleService?.Send(async () =>
+      return Updater = ScheduleService?.Send(async () =>
       {
         if (Engine?.Instance is null)
         {
@@ -68,8 +68,9 @@ namespace Canvas.Views.Web.Views
         Render();
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
-        await (Updater = InvokeAsync(StateHasChanged));
-      });
+        await InvokeAsync(StateHasChanged);
+
+      }).Task;
     }
 
     /// <summary>
@@ -83,7 +84,7 @@ namespace Canvas.Views.Web.Views
       Dispose();
 
       ScheduleService = new MessageScheduler();
-      ViewService = new ViewService { View = this };
+      ViewService = new EventService { View = this };
       ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
       ScriptService.OnSize = async o => await setup();
 
@@ -97,7 +98,7 @@ namespace Canvas.Views.Web.Views
         Engine = await ScheduleService.Send(() => engine.Create(message.Data.X, message.Data.Y)).Task;
         Composer = action();
 
-        Update(Composer.Domain);
+        await Update(Composer.Domain);
       }
 
       await setup();

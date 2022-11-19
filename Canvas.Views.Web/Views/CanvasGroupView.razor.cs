@@ -63,6 +63,7 @@ namespace Canvas.Views.Web.Views
         {
           if (source is not null && Equals(composer.Name, o.Value.Composer.Name) is false)
           {
+            message.ValueDomain = o.Value.Composer.Domain.ValueDomain;
             o.Value.Composer.Update(message);
           }
         });

@@ -149,7 +149,7 @@ At this moment, `Canvas` supports only horizontal orientation, so the axis X is 
 
 # Preview 
 
-![](Screens/Preview.png)
+![](Screens/Preview.gif)
 
 # Roadmap 
 

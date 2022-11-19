@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace Canvas.Core.ComposerSpace
 {
@@ -43,14 +44,14 @@ namespace Canvas.Core.ComposerSpace
     IList<IShape> Items { get; set; }
 
     /// <summary>
-    /// Options
+    /// Views
     /// </summary>
-    IDictionary<ComponentEnum, ComponentModel> Components { get; set; }
+    IDictionary<string, IView> Views { get; set; }
 
     /// <summary>
-    /// Observable domain
+    /// Options
     /// </summary>
-    Action<DomainModel, string> OnDomain { get; set; }
+    IDictionary<string, ComponentModel> Components { get; set; }
 
     /// <summary>
     /// Format indices
@@ -68,11 +69,16 @@ namespace Canvas.Core.ComposerSpace
     Func<string, IList<double>, string> ShowBoard { get; set; }
 
     /// <summary>
+    /// Domain update event
+    /// </summary>
+    Action<DomainModel, string> OnDomain { get; set; }
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="message"></param>
     /// <param name="source"></param>
-    void Update(DomainModel? message = null, string source = null);
+    Task Update(DomainModel? message = null, string source = null);
 
     /// <summary>
     /// Update items
@@ -160,29 +166,34 @@ namespace Canvas.Core.ComposerSpace
     public virtual IList<IShape> Items { get; set; }
 
     /// <summary>
-    /// Options
+    /// Views
     /// </summary>
-    public virtual IDictionary<ComponentEnum, ComponentModel> Components { get; set; }
+    public virtual IDictionary<string, IView> Views { get; set; }
 
     /// <summary>
-    /// View subscription
+    /// Options
     /// </summary>
-    public virtual Action<DomainModel, string> OnDomain { get; set; } = (message, source) => { };
+    public virtual IDictionary<string, ComponentModel> Components { get; set; }
 
     /// <summary>
     /// Format indices
     /// </summary>
-    public virtual Func<double, string> ShowIndex { get; set; } = input => $"{input:0.00}";
+    public virtual Func<double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    public virtual Func<double, string> ShowValue { get; set; } = input => $"{input:0.00}";
+    public virtual Func<double, string> ShowValue { get; set; }
 
     /// <summary>
     /// Format board
     /// </summary>
-    public virtual Func<string, IList<double>, string> ShowBoard { get; set; } = (name, values) => $"{ name }: { string.Join(", ", values.Select(o => $"{o:0.00}")) }";
+    public virtual Func<string, IList<double>, string> ShowBoard { get; set; }
+
+    /// <summary>
+    /// Domain update event
+    /// </summary>
+    public virtual Action<DomainModel, string> OnDomain { get; set; }
 
     /// <summary>
     /// Constructor
@@ -192,31 +203,39 @@ namespace Canvas.Core.ComposerSpace
       Size = 0.5;
       ValueCount = 4;
       IndexCount = 10;
+
       Domain = new DomainModel();
-      Components = new Dictionary<ComponentEnum, ComponentModel>();
       Items = new List<IShape>();
+      Views = new Dictionary<string, IView>();
+      Components = new Dictionary<string, ComponentModel>();
 
-      Components[ComponentEnum.Shape] = new ComponentModel
+      ShowIndex = (input) => $"{input:0.00}";
+      ShowValue = (input) => $"{input:0.00}";
+      ShowBoard = (name, values) => $"{ name }: { string.Join(", ", values.Select(o => $"{o:0.00}")) }";
+
+      OnDomain = (message, source) => { };
+
+      Components[nameof(ComponentEnum.Shape)] = new ComponentModel
       {
         Size = 1,
         Color = new SKColor(50, 50, 50)
       };
 
-      Components[ComponentEnum.ShapeSection] = new ComponentModel
+      Components[nameof(ComponentEnum.ShapeSection)] = new ComponentModel
       {
         Size = 1,
         Color = new SKColor(50, 50, 50)
       };
 
-      Components[ComponentEnum.Grid] =
-      Components[ComponentEnum.BoardLine] = new ComponentModel
+      Components[nameof(ComponentEnum.Grid)] =
+      Components[nameof(ComponentEnum.BoardLine)] = new ComponentModel
       {
         Size = 1,
         Color = new SKColor(50, 50, 50),
         Composition = CompositionEnum.Dashes
       };
 
-      Components[ComponentEnum.Board] = new ComponentModel
+      Components[nameof(ComponentEnum.Board)] = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.L,
@@ -224,9 +243,9 @@ namespace Canvas.Core.ComposerSpace
         Background = new SKColor(230, 230, 230)
       };
 
-      Components[ComponentEnum.Caption] =
-      Components[ComponentEnum.BoardMarker] =
-      Components[ComponentEnum.BoardCaption] = new ComponentModel
+      Components[nameof(ComponentEnum.Caption)] =
+      Components[nameof(ComponentEnum.BoardMarker)] =
+      Components[nameof(ComponentEnum.BoardCaption)] = new ComponentModel
       {
         Size = 10,
         Position = PositionEnum.Center,
@@ -241,7 +260,7 @@ namespace Canvas.Core.ComposerSpace
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual void Update(DomainModel? message = null, string source = null)
+    public virtual Task Update(DomainModel? message = null, string source = null)
     {
       var domain = message ?? Domain;
 
@@ -249,6 +268,8 @@ namespace Canvas.Core.ComposerSpace
       domain.AutoValueDomain = ComposeValueDomain(domain);
 
       OnDomain(Domain = domain, source);
+
+      return Task.WhenAll(Views.Values.Select(o => o.Update(domain, source)));
     }
 
     /// <summary>
