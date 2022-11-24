@@ -16,6 +16,21 @@ namespace Canvas.Views.Web.Views
     protected override void Render() => Composer.UpdateItems(Engine, Composer.Domain);
 
     /// <summary>
+    /// Board values
+    /// </summary>
+    /// <param name="series"></param>
+    /// <returns></returns>
+    public virtual string ShowSeries(IList<double> series)
+    {
+      if (series is not null)
+      {
+        return string.Join(" / ", series.Select(o => Composer.ShowValue(o)));
+      }
+
+      return "0";
+    }
+
+    /// <summary>
     /// Enumerate indices
     /// </summary>
     public virtual IEnumerable<(double, string)> GetIndexEnumerator()
@@ -112,6 +127,8 @@ namespace Canvas.Views.Web.Views
 
       var values = Composer.GetValues(Engine, coordinates);
       var item = Composer.Items.ElementAtOrDefault((int)values.X);
+
+      Series = null;
 
       if (item is not null)
       {
