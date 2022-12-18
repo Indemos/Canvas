@@ -64,7 +64,9 @@ namespace Canvas.Views.Web.Views
           return;
         }
 
+        Engine.Clear();
         Render();
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
         await InvokeAsync(StateHasChanged);
       });
@@ -80,7 +82,7 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual async Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
     {
-      Dispose();
+      await DisposeAsync();
 
       ScheduleService = new MessageScheduler();
       ViewService = new EventService { View = this };
@@ -89,15 +91,19 @@ namespace Canvas.Views.Web.Views
 
       async Task setup()
       {
-        await ScheduleService.Send(() => Engine?.Dispose()).Task;
+        await ScheduleService.Send(async () =>
+        {
+          Engine?.Dispose();
 
-        var engine = new T();
-        var message = await CreateViewMessage();
+          var engine = new T();
+          var message = await CreateViewMessage();
 
-        Engine = await ScheduleService.Send(() => engine.Create(message.Data.X, message.Data.Y)).Task;
-        Composer = action();
+          Engine = engine.Create(message.Data.X, message.Data.Y);
+          Composer = action();
 
-        await Update(Composer.Domain);
+          await Update(Composer.Domain);
+
+        }).Task;
       }
 
       await setup();
@@ -108,22 +114,15 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Dispose
     /// </summary>
-    public virtual void Dispose()
+    public virtual async ValueTask DisposeAsync()
     {
-      var engine = Engine;
-      var scheduleService = ScheduleService;
-      var scriptService = ScriptService;
-      var viewService = ViewService;
+      if (ScheduleService is not null)
+      {
+        await ScheduleService.Send(() => Engine?.Dispose()).Task;
+      }
 
-      Engine = null;
-      ScheduleService = null;
-      ScriptService = null;
-      ViewService = null;
-
-      engine?.Dispose();
-      scheduleService?.Dispose();
-      scriptService?.Dispose();
-      viewService?.Dispose();
+      ScheduleService?.Dispose();
+      ScriptService?.Dispose();
     }
 
     /// <summary>

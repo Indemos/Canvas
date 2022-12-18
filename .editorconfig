@@ -24,3 +24,9 @@ dotnet_diagnostic.IDE0017.severity = none
 dotnet_diagnostic.IDE0044.severity = none
 dotnet_diagnostic.IDE0059.severity = none
 dotnet_diagnostic.IDE0063.severity = none
+
+[*.razor]
+dotnet_diagnostic.CSS039.severity = none
+
+[*.css]
+dotnet_diagnostic.CSS039.severity = none

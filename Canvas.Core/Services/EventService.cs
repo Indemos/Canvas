@@ -1,18 +1,17 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
-using System;
 
 namespace Canvas.Core.ServiceSpace
 {
-  public class EventService : IDisposable
+  public class EventService
   {
     public virtual IView View { get; set; }
 
     protected virtual ViewModel? Position { get; set; }
     protected virtual ViewModel? ScreenPosition { get; set; }
-    protected virtual IComposer Composer => View?.Composer;
     protected virtual IEngine Engine => View?.Engine;
+    protected virtual IComposer Composer => View?.Composer;
 
     /// <summary>
     /// Mouse wheel event
@@ -115,13 +114,6 @@ namespace Canvas.Core.ServiceSpace
     public virtual void OnMouseLeave(ViewModel e)
     {
       ScreenPosition = null;
-    }
-
-    /// <summary>
-    /// Dispose
-    /// </summary>
-    public void Dispose()
-    {
     }
   }
 }

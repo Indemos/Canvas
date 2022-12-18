@@ -1,7 +1,5 @@
 using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Components.Web;
-using SkiaSharp;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,12 +13,7 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Render
     /// </summary>
-    protected override void Render()
-    {
-      Engine.Clear();
-      Composer.UpdateItems(Engine, Composer.Domain);
-      Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-    }
+    protected override void Render() => Composer.UpdateItems(Engine, Composer.Domain);
 
     /// <summary>
     /// Board values

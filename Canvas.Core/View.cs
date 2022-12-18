@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Canvas.Core
 {
-  public interface IView : IDisposable
+  public interface IView : IAsyncDisposable
   {
     /// <summary>
     /// Engine

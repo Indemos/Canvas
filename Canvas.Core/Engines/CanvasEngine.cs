@@ -310,39 +310,20 @@ namespace Canvas.Core.EngineSpace
     /// </summary>
     public override void Dispose()
     {
-      var map = Map;
-      var canvas = Canvas;
-      var dotLine = _dotLine;
-      var dashLine = _dashLine;
-      var penLine = _penLine;
-      var penCircle = _penCircle;
-      var penBox = _penBox;
-      var penShape = _penBox;
-      var penCaption = _penCaption;
-      var penCaptionShape = _penCaptionShape;
+      Map?.Dispose();
+      Canvas?.Dispose();
+
+      _dotLine?.Dispose();
+      _dashLine?.Dispose();
+      _penLine?.Dispose();
+      _penCircle?.Dispose();
+      _penBox?.Dispose();
+      _penShape?.Dispose();
+      _penCaption?.Dispose();
+      _penCaptionShape?.Dispose();
 
       Map = null;
       Canvas = null;
-
-      _dotLine = null;
-      _dashLine = null;
-      _penLine = null;
-      _penCircle = null;
-      _penBox = null;
-      _penShape = null;
-      _penCaption = null;
-      _penCaptionShape = null;
-
-      map?.Dispose();
-      canvas?.Dispose();
-      dotLine?.Dispose();
-      dashLine?.Dispose();
-      penLine?.Dispose();
-      penCircle?.Dispose();
-      penBox?.Dispose();
-      penShape?.Dispose();
-      penCaption?.Dispose();
-      penCaptionShape?.Dispose();
     }
   }
 }
