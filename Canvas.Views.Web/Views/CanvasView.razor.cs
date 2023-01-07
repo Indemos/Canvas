@@ -18,11 +18,6 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public override async Task<IView> Create<EngineType>(Func<IComposer> action)
     {
-      if (Composer is not null)
-      {
-        Composer.Views.Clear();
-      }
-
       Composer = action();
 
       await Screen.Create<EngineType>(() => Composer);

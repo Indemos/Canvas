@@ -6,8 +6,10 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Canvas.Core.ComposerSpace
 {
@@ -262,14 +264,11 @@ namespace Canvas.Core.ComposerSpace
     /// <returns></returns>
     public virtual Task Update(DomainModel? message = null, string source = null)
     {
-      var domain = message ?? Domain;
+      Domain = ComposeDomain(message ?? Domain);
 
-      domain.AutoIndexDomain = ComposeIndexDomain();
-      domain.AutoValueDomain = ComposeValueDomain(domain);
+      OnDomain(Domain, source);
 
-      OnDomain(Domain = domain, source);
-
-      return Task.WhenAll(Views.Values.Select(o => o.Update(domain, source)));
+      return Task.WhenAll(Views.Values.Select(o => o.Update(Domain, source)));
     }
 
     /// <summary>
@@ -280,18 +279,39 @@ namespace Canvas.Core.ComposerSpace
     /// <returns></returns>
     public virtual void UpdateItems(IEngine engine, DomainModel domain)
     {
-      foreach (var i in GetEnumerator(domain))
+      var rate = 1.0;
+      var min = double.MaxValue;
+      var max = double.MinValue;
+      var count = domain.MaxIndex - domain.MinIndex;
+      var samplesCount = Views.First().Value.Engine.X;
+
+      if (count > samplesCount * 2)
+      {
+        rate = Math.Ceiling(count / samplesCount);
+      }
+
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
+        var itemDomain = item?.GetDomain(i, null, Items);
 
-        if (item is null)
+        if (itemDomain is null)
         {
           continue;
         }
 
+        min = Math.Min(min, itemDomain[0]);
+        max = Math.Max(min, itemDomain[1]);
+
         item.Engine = engine;
         item.Composer = this;
         item.CreateShape(i, null, Items);
+
+        if (i % rate == 0)
+        {
+          min = double.MaxValue;
+          max = double.MinValue;
+        }
       }
     }
 
@@ -455,51 +475,37 @@ namespace Canvas.Core.ComposerSpace
     }
 
     /// <summary>
-    /// Get min and max indices
-    /// </summary>
-    /// <returns></returns>
-    protected virtual IList<int> ComposeIndexDomain()
-    {
-      return new[] { 0, Math.Max(Items.Count, IndexCount) };
-    }
-
-    /// <summary>
     /// Get min and max values
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    protected virtual IList<double> ComposeValueDomain(DomainModel domain)
+    protected virtual DomainModel ComposeDomain(DomainModel domain)
     {
+      var autoMin = 0;
+      var autoMax = Math.Max(Items.Count, IndexCount);
+      var response = domain;
+
+      response.AutoValueDomain = new[] { 0.0, 0.0 };
+      response.AutoIndexDomain = new[] { autoMin, autoMax };
+
       var average = 0.0;
       var min = double.MaxValue;
       var max = double.MinValue;
-      var response = new[] { 0.0, 0.0 };
 
-      foreach (var i in GetEnumerator(domain))
+      for (var i = response.MinIndex; i < response.MaxIndex; i++)
       {
-        var item = Items.ElementAtOrDefault(i);
-        var itemDomain = item?.GetDomain(i, null, Items);
-
-        if (itemDomain is null)
-        {
-          continue;
-        }
-
-        item.Composer = this;
-        min = Math.Min(min, itemDomain[0]);
-        max = Math.Max(max, itemDomain[1]);
-        average += max - min;
+        (min, max, average) = GetExtremes(i, min, max, average);
       }
 
       if (min > max)
       {
-        return null;
+        return response;
       }
 
       if (Equals(min, max))
       {
-        response[0] = Math.Min(0, min);
-        response[1] = Math.Max(0, max);
+        response.AutoValueDomain[0] = Math.Min(0, min);
+        response.AutoValueDomain[1] = Math.Max(0, max);
 
         return response;
       }
@@ -508,32 +514,42 @@ namespace Canvas.Core.ComposerSpace
       {
         var extreme = Math.Max(Math.Abs(min), Math.Abs(max));
 
-        response[0] = -extreme;
-        response[1] = extreme;
+        response.AutoValueDomain[0] = -extreme;
+        response.AutoValueDomain[1] = extreme;
 
         return response;
       }
 
-      response[0] = min;
-      response[1] = max;
+      response.AutoValueDomain[0] = min;
+      response.AutoValueDomain[1] = max;
 
       return response;
     }
 
     /// <summary>
-    /// Enumerate
+    /// Calculate min and max for value domain
     /// </summary>
-    /// <param name="domain"></param>
+    /// <param name="i"></param>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <param name="average"></param>
     /// <returns></returns>
-    protected virtual IEnumerable<int> GetEnumerator(DomainModel domain)
+    protected virtual (double, double, double) GetExtremes(int i, double min, double max, double average)
     {
-      var min = domain.MinIndex;
-      var max = domain.MaxIndex;
+      var item = Items.ElementAtOrDefault(i);
+      var domain = item?.GetDomain(i, null, Items);
 
-      for (var i = min; i < max; i++)
+      if (domain is null)
       {
-        yield return i;
+        return (min, max, average);
       }
+
+      item.Composer = this;
+      min = Math.Min(min, domain[0]);
+      max = Math.Max(max, domain[1]);
+      average += max - min;
+
+      return (min, max, average);
     }
   }
 }

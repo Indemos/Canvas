@@ -17,7 +17,7 @@ namespace Canvas.Core.ComposerSpace
     /// <returns></returns>
     public override void UpdateItems(IEngine engine, DomainModel domain)
     {
-      foreach (var i in GetEnumerator(domain))
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var group = Items.ElementAtOrDefault(i) as IGroupShape;
 
@@ -36,68 +36,37 @@ namespace Canvas.Core.ComposerSpace
     }
 
     /// <summary>
-    /// Get min and max values
+    /// Calculate min and max for value domain
     /// </summary>
-    /// <param name="domain"></param>
+    /// <param name="i"></param>
+    /// <param name="min"></param>
+    /// <param name="max"></param>
+    /// <param name="average"></param>
     /// <returns></returns>
-    protected override IList<double> ComposeValueDomain(DomainModel domain)
+    protected override (double, double, double) GetExtremes(int i, double min, double max, double average)
     {
-      var average = 0.0;
-      var min = double.MaxValue;
-      var max = double.MinValue;
-      var response = new[] { 0.0, 0.0 };
+      var group = Items.ElementAtOrDefault(i) as IGroupShape;
 
-      foreach (var i in GetEnumerator(domain))
+      if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupShape series) is false)
       {
-        var group = Items.ElementAtOrDefault(i) as IGroupShape;
+        return (min, max, average);
+      }
 
-        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupShape series) is false)
+      foreach (var shape in series.Groups)
+      {
+        shape.Value.Composer = this;
+
+        var domain = shape.Value.GetDomain(i, shape.Key, Items);
+
+        if (domain is not null)
         {
-          continue;
-        }
-
-        foreach (var shape in series.Groups)
-        {
-          shape.Value.Composer = this;
-
-          var itemDomain = shape.Value.GetDomain(i, shape.Key, Items);
-
-          if (itemDomain is not null)
-          {
-            min = Math.Min(min, itemDomain[0]);
-            max = Math.Max(max, itemDomain[1]);
-            average += max - min;
-          }
+          min = Math.Min(min, domain[0]);
+          max = Math.Max(max, domain[1]);
+          average += max - min;
         }
       }
 
-      if (min > max)
-      {
-        return null;
-      }
-
-      if (min == max)
-      {
-        response[0] = Math.Min(0, min);
-        response[1] = Math.Max(0, max);
-
-        return response;
-      }
-
-      if (min < 0 && max > 0)
-      {
-        var extreme = Math.Max(Math.Abs(min), Math.Abs(max));
-
-        response[0] = -extreme;
-        response[1] = extreme;
-
-        return response;
-      }
-
-      response[0] = min;
-      response[1] = max;
-
-      return response;
+      return (min, max, average);
     }
   }
 }

@@ -54,7 +54,7 @@ namespace Canvas.Views.Web.Views
     {
       if (Updater?.Task?.IsCompleted is false)
       {
-        Updater?.SetCanceled();
+        Updater?.TrySetCanceled();
       }
 
       Updater = ScheduleService?.Send(async () =>

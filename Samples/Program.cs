@@ -26,11 +26,6 @@ namespace Canvas.Client
 
       app.UseStaticFiles();
       app.UseRouting();
-      app.UseEndpoints(endpoints =>
-      {
-        endpoints.MapControllers();
-      });
-
       app.MapBlazorHub();
       app.MapFallbackToPage("/Host");
       app.Run();
