@@ -155,5 +155,4 @@ At this moment, `Canvas` supports only horizontal orientation, so the axis X is 
 
 Each chart of type `CanvasView` consists of many composable pieces for the grid, scales, main screen. 
 To improve performance, each piece uses its own thread. 
-Additional testing is needed to verify correct disposal in each thread. 
-Also, to increase performance even more, downsampling could be implemented, e.g. when number of points is greater that width of the screen in pixels, because all points wouldn't fit on the screen anyway. 
+To increase performance, downsampling could be implemented, e.g. when number of points is greater that width of the screen in pixels, because all points wouldn't fit on the screen anyway. 

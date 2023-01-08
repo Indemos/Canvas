@@ -213,7 +213,7 @@ namespace Canvas.Core.ComposerSpace
 
       ShowIndex = (input) => $"{input:0.00}";
       ShowValue = (input) => $"{input:0.00}";
-      ShowBoard = (name, values) => $"{ name }: { string.Join(", ", values.Select(o => $"{o:0.00}")) }";
+      ShowBoard = (name, values) => $"{name}: {string.Join(", ", values.Select(o => $"{o:0.00}"))}";
 
       OnDomain = (message, source) => { };
 
@@ -279,16 +279,38 @@ namespace Canvas.Core.ComposerSpace
     /// <returns></returns>
     public virtual void UpdateItems(IEngine engine, DomainModel domain)
     {
-      var rate = 1.0;
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      {
+        var item = Items.ElementAtOrDefault(i);
+        var itemDomain = item?.GetDomain(i, null, Items);
+
+        if (itemDomain is null)
+        {
+          continue;
+        }
+
+        item.Engine = engine;
+        item.Composer = this;
+        item.CreateShape(i, null, Items);
+      }
+    }
+
+    /// <summary>
+    /// Update items
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="domain"></param>
+    /// <returns></returns>
+    public virtual void UpdateSamples(IEngine engine, DomainModel domain)
+    {
       var min = double.MaxValue;
       var max = double.MinValue;
+      var minItem = null as IShape;
+      var maxItem = null as IShape;
       var count = domain.MaxIndex - domain.MinIndex;
-      var samplesCount = Views.First().Value.Engine.X;
-
-      if (count > samplesCount * 2)
-      {
-        rate = Math.Ceiling(count / samplesCount);
-      }
+      var samplesCount = engine.X;
+      var rate = Math.Round(count / samplesCount);
+      var index = 0;
 
       for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
@@ -300,15 +322,32 @@ namespace Canvas.Core.ComposerSpace
           continue;
         }
 
-        min = Math.Min(min, itemDomain[0]);
-        max = Math.Max(min, itemDomain[1]);
+        if (itemDomain[0] < min)
+        {
+          min = itemDomain[0];
+          minItem = item;
+        }
 
-        item.Engine = engine;
-        item.Composer = this;
-        item.CreateShape(i, null, Items);
+        if (itemDomain[1] > max)
+        {
+          max = itemDomain[1];
+          maxItem = item;
+        }
 
         if (i % rate == 0)
         {
+          switch (true)
+          {
+            case true when Math.Abs(min) > Math.Abs(max): item = minItem; break;
+            case true when Math.Abs(min) < Math.Abs(max): item = maxItem; break;
+          }
+
+          item.Engine = engine;
+          item.Composer = this;
+          item.CreateShape(index++, null, Items);
+
+          minItem = null;
+          maxItem = null;
           min = double.MaxValue;
           max = double.MinValue;
         }
