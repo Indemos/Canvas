@@ -31,6 +31,16 @@ namespace Canvas.Views.Web.Views
     }
 
     /// <summary>
+    /// Get index step
+    /// </summary>
+    public virtual double IndexStep => (Engine?.X ?? 0) / (Composer?.IndexCount ?? 1);
+
+    /// <summary>
+    /// Get value step
+    /// </summary>
+    public virtual double ValueStep => (Engine?.Y ?? 0) / (Composer?.ValueCount ?? 1);
+
+    /// <summary>
     /// Enumerate indices
     /// </summary>
     public virtual IEnumerable<(double, string)> GetIndexEnumerator()

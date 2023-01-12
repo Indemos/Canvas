@@ -1,22 +1,8 @@
 @inherits BaseView
 
-@{
-  var imageN = new List<string>();
-  var imageS = new List<string>();
-  var imageW = new List<string>();
-  var imageE = new List<string>();
-  var imageVX = new List<string>();
-  var imageVY = new List<string>();
-  var positionN = new List<string>();
-  var positionS = new List<string>();
-  var positionW = new List<string>();
-  var positionE = new List<string>();
-  var positionVX = new List<string>();
-  var positionVY = new List<string>();
-  var grid = "linear-gradient(#DDD,#DDD)";
-}
+@{ var steps = IndexStep + "px " + ValueStep + "px "; }
 
-<div class="canvas-container">
+<div class="canvas-container" space>
 
   <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleAction(e, 1)">
 
@@ -41,13 +27,6 @@
 
     @foreach (var o in GetIndexEnumerator())
     {
-      imageN.Add(grid);
-      imageS.Add(grid);
-      imageVX.Add(grid);
-      positionN.Add($"{ o.Item1 }px 100%");
-      positionS.Add($"{ o.Item1 }px 0");
-      positionVX.Add($"{ o.Item1 }px 100%");
-
       <span class="canvas-label" style="left: @(o.Item1)px"><b>@o.Item2</b></span>
     }
 
@@ -76,13 +55,6 @@
 
     @foreach (var o in GetValueEnumerator())
     {
-      imageW.Add(grid);
-      imageE.Add(grid);
-      imageVY.Add(grid);
-      positionW.Add($"100% { o.Item1 }px");
-      positionE.Add($"0 { o.Item1 }px");
-      positionVY.Add($"100% { o.Item1 }px");
-
       <span class="canvas-label" style="top: @(o.Item1)px" alt="Canvas"><b>@o.Item2</b></span>
     }
 
@@ -112,41 +84,16 @@
       }
     }
 
-    <img @ref="Container" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
+    <img alt="Chart" @ref="Container" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
   </div>
 
 </div>
 
 <style type="text/css">
 
-  .canvas-container[space] .canvas-scale-T {
-    background-image: @string.Join(",", imageN);
-    background-position: @string.Join(",", positionN);
-  }
-
-  .canvas-container[space] .canvas-scale-B {
-    background-image: @string.Join(",", imageS);
-    background-position: @string.Join(",", positionS);
-  }
-
-  .canvas-container[space] .canvas-scale-L {
-    background-image: @string.Join(",", imageW);
-    background-position: @string.Join(",", positionW);
-  }
-
-  .canvas-container[space] .canvas-scale-R {
-    background-image: @string.Join(",", imageE);
-    background-position: @string.Join(",", positionE);
-  }
-
-  .canvas-container[space] .canvas-view {
-    background-image: @string.Join(",", imageVX);
-    background-position: @string.Join(",", positionVX);
-  }
-
-  .canvas-container[space] .canvas-view img, .canvas-container[space] .canvas-view iframe {
-    background-image: @string.Join(",", imageVY);
-    background-position: @string.Join(",", positionVY);
+  .canvas-container[space] .canvas-view img {
+    background-image: conic-gradient(from 90deg at 1px 1px,#0000 90deg, #DDD 0);
+    background-size: @steps;
   }
 
 </style>

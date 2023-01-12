@@ -71,7 +71,7 @@ namespace Canvas.Views.Web.Views
         await InvokeAsync(StateHasChanged);
       });
 
-      return Updater.Task;
+      return Updater?.Task ?? Task.CompletedTask;
     }
 
     /// <summary>
