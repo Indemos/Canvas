@@ -9,7 +9,7 @@ Nevertheless, trying various options from that guide I wasn't able to find anyth
 - Examples can be found [here](https://github.com/Indemos/Canvas/tree/main/Samples/Pages) 
 - Possible application of this library is [here](https://github.com/Indemos/Terminal) 
 
-# Package 
+# Status 
 
 ```
 Install-Package Canvas.Views.Web
