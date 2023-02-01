@@ -35,7 +35,6 @@
 
 .canvas-label {
   position: absolute;
-  pointer-events: none;
   font: 10px arial, helvetica, sans-serif;
 }
 
@@ -43,7 +42,6 @@
   display: block;
   font-weight: normal;
   position: relative;
-  pointer-events: none;
 }
 
 .canvas-marker b {
@@ -51,7 +49,6 @@
   padding: 5px 10px;
   background: #999;
   color: #FFF;
-  pointer-events: none;
 }
 
 .canvas-view {
@@ -63,7 +60,6 @@
 }
 
 .canvas-view iframe, .canvas-view img, .canvas-view canvas {
-  pointer-events: none;
   background-size: 100% 1px;
 }
 
@@ -168,4 +164,16 @@
 
 .canvas-board-item b {
   font-weight: 600;
+}
+
+.canvas-label,
+.canvas-label *,
+.canvas-marker,
+.canvas-marker *,
+.canvas-board,
+.canvas-board *,
+.canvas-view img,
+.canvas-view iframe,
+.canvas-view canvas {
+  pointer-events: none;
 }
