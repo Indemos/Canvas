@@ -9,11 +9,15 @@ Nevertheless, trying various options from that guide I wasn't able to find anyth
 - Examples can be found [here](https://github.com/Indemos/Canvas/tree/main/Samples/Pages) 
 - Possible application of this library is [here](https://github.com/Indemos/Terminal) 
 
-# Nuget 
+# Status 
 
 ```
 Install-Package Canvas.Views.Web
 ```
+
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Indemos/Canvas/dotnet.yml?event=push)
+![GitHub](https://img.shields.io/github/license/Indemos/Canvas)
+![GitHub](https://img.shields.io/badge/system-Windows%20%7C%20Linux%20%7C%20Mac-blue)
 
 # Drawing Methods 
 
