@@ -11,9 +11,9 @@
       <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
     }
 
-    @foreach (var o in GetIndexEnumerator())
+    @foreach (var (i, o) in GetIndexEnumerator())
     {
-      <span class="canvas-label" style="left: @(o.Item1)px"><b>@o.Item2</b></span>
+      <span class="canvas-label" style="left: @(i)px"><b>@o</b></span>
     }
 
   </div>
@@ -25,9 +25,9 @@
       <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
     }
 
-    @foreach (var o in GetIndexEnumerator())
+    @foreach (var (i, o) in GetIndexEnumerator())
     {
-      <span class="canvas-label" style="left: @(o.Item1)px"><b>@o.Item2</b></span>
+      <span class="canvas-label" style="left: @(i)px"><b>@o</b></span>
     }
 
   </div>
@@ -39,9 +39,9 @@
       <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
     }
 
-    @foreach (var o in GetValueEnumerator())
+    @foreach (var (i, o) in GetValueEnumerator())
     {
-      <span class="canvas-label" style="top: @(o.Item1)px"><b>@o.Item2</b></span>
+      <span class="canvas-label" style="top: @(i)px"><b>@o</b></span>
     }
 
   </div>
@@ -53,9 +53,9 @@
       <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
     }
 
-    @foreach (var o in GetValueEnumerator())
+    @foreach (var (i, o) in GetValueEnumerator())
     {
-      <span class="canvas-label" style="top: @(o.Item1)px" alt="Canvas"><b>@o.Item2</b></span>
+      <span class="canvas-label" style="top: @(i)px" alt="Canvas"><b>@o</b></span>
     }
 
   </div>

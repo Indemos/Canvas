@@ -2,6 +2,7 @@ using Canvas.Core.EnumSpace;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Canvas.Core.ServiceSpace
 {
@@ -10,22 +11,22 @@ namespace Canvas.Core.ServiceSpace
     /// <summary>
     /// Min value
     /// </summary>
-    public double Min { get; set; }
+    public virtual double Min { get; set; }
 
     /// <summary>
     /// Max value
     /// </summary>
-    public double Max { get; set; }
+    public virtual double Max { get; set; }
 
     /// <summary>
     /// Color mode
     /// </summary>
-    public ShadeEnum Shade { get; set; } = ShadeEnum.Opacity;
+    public virtual ShadeEnum Mode { get; set; } = ShadeEnum.Mirror;
 
     /// <summary>
     /// Color map
     /// </summary>
-    public IList<SKColor> Map { get; set; } = new SKColor[] {
+    public virtual IList<SKColor> Map { get; set; } = new SKColor[] {
       SKColors.Blue,
       SKColors.Red
     };
@@ -33,26 +34,28 @@ namespace Canvas.Core.ServiceSpace
     /// <summary>
     /// Create color for value
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
-    public SKColor GetColor(double input)
+    /// <param name="value"></param>
+    public virtual SKColor GetColor(double input)
     {
-      var colorCount = Math.Max(Map.Count, double.Epsilon);
-      var inputCount = Math.Max(Max - Min, double.Epsilon);
-      var colorRatio = 1.0 / colorCount;
-      var inputRatio = input / inputCount;
-      var index = colorCount * inputRatio;
-      var color = Map[(int)index];
+      var percentage = (input - Min) / (Max - Min);
+      var color = SKColors.Transparent;
       var opacityRatio = 1.0;
 
-      if (Equals(Shade, ShadeEnum.Opacity))
+      if (Equals(Mode, ShadeEnum.Intensity))
+      {
+        color = Map.First();
+        opacityRatio = percentage;
+      }
+
+      if (Equals(Mode, ShadeEnum.Mirror))
       {
         opacityRatio = 0.0;
+        color = Map[(int)Math.Round(percentage)];
 
         switch (true)
         {
-          case true when index > colorCount / 2: opacityRatio = inputRatio / colorRatio; break;
-          case true when index < colorCount / 2: opacityRatio = 1.0 - inputRatio / colorRatio; break;
+          case true when percentage > 0.5: opacityRatio = percentage; break;
+          case true when percentage < 0.5: opacityRatio = 1.0 - percentage; break;
         }
       }
 

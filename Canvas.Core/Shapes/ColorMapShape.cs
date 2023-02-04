@@ -1,5 +1,5 @@
-using Canvas.Core.EnumSpace;
 using Canvas.Core.ShapeSpace;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +10,7 @@ namespace Canvas.Core.ModelSpace
     /// <summary>
     /// Points
     /// </summary>
-    public virtual IList<IShape> Points { get; set; }
+    public virtual IList<ComponentModel> Points { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -19,47 +19,25 @@ namespace Canvas.Core.ModelSpace
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override double[] GetDomain(int index, string name, IList<IShape> items)
-    {
-      if (Points is null)
-      {
-        return null;
-      }
-
-      return new double[] { Points.Min(o => o.Y ?? 0), Points.Max(o => o.Y ?? 0) };
-    }
+    public override double[] GetDomain(int index, string name, IList<IShape> items) => new double[] { 0, Points.Count };
 
     /// <summary>
     /// Get series values
     /// </summary>
+    /// <param name="view"></param>
     /// <param name="coordinates"></param>
-    /// <param name="values"></param>
     /// <returns></returns>
-    public override IList<double> GetSeriesValues(DataModel coordinates, DataModel values)
+    public override IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
     {
-      if (Equals(Points.Count, 0))
-      {
-        return new double[] { 0 };
-      }
+      var indexRatio = Math.Max(coordinates.X / view.X, 0.0);
+      var indexPosition = (int)Math.Round(Composer.Items.Count * indexRatio, MidpointRounding.ToZero);
+      var item = Composer.Items.ElementAtOrDefault(indexPosition) as ColorMapShape;
 
-      var minItem = values;
-      var minIndex = Composer.Domain.MinValue;
-      var points = Composer.Items.ElementAt((int)values.X) as ColorMapShape;
+      var valueRatio = Math.Max(coordinates.Y / view.Y, 0.0);
+      var valuePosition = (int)Math.Round(item.Points.Count * valueRatio, MidpointRounding.ToZero);
+      var value = item.Points.ElementAtOrDefault(item.Points.Count - valuePosition - 1).Size;
 
-      foreach (var point in points.Points)
-      {
-        if (values.Y - point.Y <= values.Y - minIndex && point.Y <= values.Y)
-        {
-          minIndex = point.Y.Value;
-          minItem = new DataModel
-          {
-            X = point.X.Value,
-            Y = point.Y.Value
-          };
-        }
-      }
-
-      return new double[] { minItem.Z };
+      return new double[] { value };
     }
 
     /// <summary>
@@ -78,16 +56,15 @@ namespace Canvas.Core.ModelSpace
         return;
       }
 
-      var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
-      var step = (Composer.Domain.MaxValue - Composer.Domain.MinValue + 1) / pointsCount;
+      var step = (Composer.Domain.MaxValue - Composer.Domain.MinValue) / pointsCount;
 
-      foreach (var point in Points)
+      for (var i = 0; i < Points.Count; i++)
       {
-        var open = Composer.GetPixels(Engine, index, point.Y.Value);
-        var close = Composer.GetPixels(Engine, index + 1, point.Y.Value + step);
+        var open = Composer.GetPixels(Engine, index, i);
+        var close = Composer.GetPixels(Engine, index + 1, i + step);
         var points = new DataModel[] { open, close };
 
-        Engine.CreateBox(points, point.Component ?? component);
+        Engine.CreateBox(points, Points[i]);
       }
     }
   }

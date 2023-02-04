@@ -3,10 +3,12 @@
 @using Canvas.Core
 @using Canvas.Core.ComposerSpace
 @using Canvas.Core.EngineSpace
+@using Canvas.Core.EnumSpace;
 @using Canvas.Core.ModelSpace
 @using Canvas.Core.ShapeSpace
 @using Canvas.Core.ServiceSpace
 @using ScriptContainer
+@using SkiaSharp;
 
 <div class="demo">
   <CanvasView @ref="ViewControl"></CanvasView>
@@ -29,32 +31,29 @@
     if (setup)
     {
       var min = 0;
-      var max = 100;
+      var max = 20;
       var generator = new Random();
-      var colorService = new ColorService { Min = min, Max = max };
-      var points = Enumerable.Range(min, max).Select(i => new ColorMapShape
+      var colorService = new ColorService { Min = min, Max = max, Mode = ShadeEnum.Intensity };
+      var points = Enumerable.Range(0, 10).Select(i => new ColorMapShape
       {
         Points = Enumerable
           .Range(min, max)
-          .Select(o => new ColorMapShape
-          {
-            X = i,
-            Y = o,
-            Z = o,
-            Component = new ComponentModel
-            {
-              Color = colorService.GetColor(o)
-            }
-          } as IShape)
+          .Select(o => new ComponentModel { Size = o, Color = colorService.GetColor(o) })
           .OrderBy(o => generator.Next())
           .ToList()
 
       } as IShape).ToList();
 
+      var indexCount = 0;
+      var valueCount = 0;
+      var indexLabels= new[] { "CAD", "AUD", "NZD", "SGD", "UAH", "GBP", "JPY", "CNY", "INR", "SEK" };
+      var valueLabels = new[] { "USD", "EUR", "CHF" };
       var composer = new Composer
       {
         Name = "Demo",
-        Items = points
+        Items = points,
+        //ShowIndex = o => indexLabels.ElementAtOrDefault(indexCount++),
+        //ShowValue = o => valueLabels.ElementAtOrDefault(valueCount++)
       };
 
       await ViewControl.Create<CanvasEngine>(() => composer);

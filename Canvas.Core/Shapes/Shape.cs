@@ -61,18 +61,18 @@ namespace Canvas.Core.ShapeSpace
     /// <summary>
     /// Get series
     /// </summary>
+    /// <param name="view"></param>
     /// <param name="coordinates"></param>
-    /// <param name="values"></param>
     /// <returns></returns>
-    IDictionary<string, IList<double>> GetSeries(DataModel coordinates, DataModel values);
+    IDictionary<string, IList<double>> GetSeries(DataModel view, DataModel coordinates);
 
     /// <summary>
     /// Get series values
     /// </summary>
+    /// <param name="view"></param>
     /// <param name="coordinates"></param>
-    /// <param name="values"></param>
     /// <returns></returns>
-    IList<double> GetSeriesValues(DataModel coordinates, DataModel values);
+    IList<double> GetSeriesValues(DataModel view, DataModel coordinates);
 
     /// <summary>
     /// Get specific group by position and name
@@ -153,24 +153,24 @@ namespace Canvas.Core.ShapeSpace
     /// <summary>
     /// Get series
     /// </summary>
+    /// <param name="view"></param>
     /// <param name="coordinates"></param>
-    /// <param name="values"></param>
     /// <returns></returns>
-    public virtual IDictionary<string, IList<double>> GetSeries(DataModel coordinates, DataModel values)
+    public virtual IDictionary<string, IList<double>> GetSeries(DataModel view, DataModel coordinates)
     {
       return new Dictionary<string, IList<double>>
       {
-        [Composer.Name] = GetSeriesValues(coordinates, values)
+        [Composer.Name] = GetSeriesValues(view, coordinates)
       };
     }
 
     /// <summary>
     /// Get series values
     /// </summary>
+    /// <param name="view"></param>
     /// <param name="coordinates"></param>
-    /// <param name="values"></param>
     /// <returns></returns>
-    public virtual IList<double> GetSeriesValues(DataModel coordinates, DataModel values)
+    public virtual IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
     {
       return new double[] { Y ?? 0 };
     }

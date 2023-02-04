@@ -61,10 +61,10 @@ namespace Canvas.Core.ShapeSpace
     /// <summary>
     /// Get series values
     /// </summary>
+    /// <param name="view"></param>
     /// <param name="coordinates"></param>
-    /// <param name="values"></param>
     /// <returns></returns>
-    public override IList<double> GetSeriesValues(DataModel coordinates, DataModel values)
+    public override IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
     {
       return new double[]
       {

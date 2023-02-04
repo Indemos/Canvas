@@ -1,5 +1,6 @@
 using Canvas.Core.ModelSpace;
 using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,7 +54,7 @@ namespace Canvas.Views.Web.Views
 
         for (var i = 1; i < count; i++)
         {
-          yield return 
+          yield return
           (
             distance * i,
             Composer.ShowIndex(Composer.Domain.MinIndex + i * stepValue)
@@ -136,14 +137,20 @@ namespace Canvas.Views.Web.Views
       };
 
       var values = Composer.GetValues(Engine, coordinates);
-      var item = Composer.Items.ElementAtOrDefault((int)values.X);
+      var item = Composer.Items.ElementAtOrDefault((int)Math.Round(values.X));
 
       Series = null;
 
       if (item is not null)
       {
+        var view = new DataModel
+        {
+          X = Engine.X,
+          Y = Engine.Y
+        };
+
         item.Composer = Composer;
-        Series = item.GetSeries(coordinates, values);
+        Series = item.GetSeries(view, coordinates);
       }
 
       return new PositionModel
