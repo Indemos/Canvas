@@ -34,13 +34,14 @@ namespace Canvas.Views.Web.Views
     /// Create
     /// </summary>
     /// <param name="item"></param>
-    public async Task CreateViews<EngineType>() where EngineType : IEngine, new()
+    public async Task<IList<IComposer>> CreateViews<EngineType>() where EngineType : IEngine, new()
     {
+      var composers = new List<IComposer>();
+      var sources = new List<TaskCompletionSource>();
+
       Item.Groups.ForEach(view => Views[view.Key] = null);
 
       await InvokeAsync(StateHasChanged);
-
-      var sources = new List<TaskCompletionSource>();
 
       foreach (var view in Views)
       {
@@ -52,6 +53,7 @@ namespace Canvas.Views.Web.Views
         };
 
         sources.Add(source);
+        composers.Add(composer);
 
         await view.Value.Create<EngineType>(() =>
         {
@@ -71,7 +73,7 @@ namespace Canvas.Views.Web.Views
 
       await Task.WhenAll(sources.Select(o => o.Task));
 
-      Update(new DomainModel());
+      return composers;
     }
 
     /// <summary>

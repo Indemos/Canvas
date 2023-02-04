@@ -56,7 +56,17 @@ namespace Canvas.Client.Pages
           }
         };
 
-        await ViewControl.CreateViews<CanvasEngine>();
+        var composers = await ViewControl.CreateViews<CanvasEngine>();
+
+        //composers.ForEach(o => o.ShowIndex = (i, v) =>
+        //{
+        //  var stamp = (long)(
+        //    o.Items.ElementAtOrDefault(i)?.X ??
+        //    o.Items.ElementAtOrDefault(0)?.X ??
+        //    DateTime.Now.Ticks);
+
+        //  return $"{new DateTime(stamp)}";
+        //});
 
         Time = DateTime.Now;
         Price = Generator.Next(1000, 5000);
@@ -95,6 +105,7 @@ namespace Canvas.Client.Pages
 
         groupCandle.L = point;
         groupCandle.H = point;
+        group.X = DateTime.Now.Ticks;
 
         Time = DateTime.Now;
         Price = groupCandle.C ?? point;

@@ -11,7 +11,7 @@
       <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
     }
 
-    @foreach (var (i, o) in GetIndexEnumerator())
+    @foreach (var (i, o) in GetIndices())
     {
       <span class="canvas-label" style="left: @(i)px"><b>@o</b></span>
     }
@@ -25,7 +25,7 @@
       <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
     }
 
-    @foreach (var (i, o) in GetIndexEnumerator())
+    @foreach (var (i, o) in GetIndices())
     {
       <span class="canvas-label" style="left: @(i)px"><b>@o</b></span>
     }
@@ -39,7 +39,7 @@
       <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
     }
 
-    @foreach (var (i, o) in GetValueEnumerator())
+    @foreach (var (i, o) in GetValues())
     {
       <span class="canvas-label" style="top: @(i)px"><b>@o</b></span>
     }
@@ -53,7 +53,7 @@
       <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
     }
 
-    @foreach (var (i, o) in GetValueEnumerator())
+    @foreach (var (i, o) in GetValues())
     {
       <span class="canvas-label" style="top: @(i)px" alt="Canvas"><b>@o</b></span>
     }
@@ -61,6 +61,7 @@
   </div>
 
   <div class="canvas-view"
+    @ref="Container"
     @onwheel="OnWheelAction"
     @onmousewheel="OnWheelAction"
     @onmousemove="OnMouseMoveAction"
@@ -84,7 +85,10 @@
       }
     }
 
-    <img alt="Chart" @ref="Container" src="@(Route ?? "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>")" />
+    @if (Route is not null)
+    {
+      <img alt="Chart" src="@Route" />
+    }
   </div>
 
 </div>

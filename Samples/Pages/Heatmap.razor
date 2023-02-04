@@ -31,7 +31,7 @@
     if (setup)
     {
       var min = 0;
-      var max = 20;
+      var max = 5;
       var generator = new Random();
       var colorService = new ColorService { Min = min, Max = max, Mode = ShadeEnum.Intensity };
       var points = Enumerable.Range(0, 10).Select(i => new ColorMapShape
@@ -44,16 +44,17 @@
 
       } as IShape).ToList();
 
-      var indexCount = 0;
-      var valueCount = 0;
-      var indexLabels= new[] { "CAD", "AUD", "NZD", "SGD", "UAH", "GBP", "JPY", "CNY", "INR", "SEK" };
-      var valueLabels = new[] { "USD", "EUR", "CHF" };
+      var indexLabels= new[] { "CAD", "DKK", "NZD", "SGD", "UAH", "NOK", "JPY", "CNY", "INR", "SEK" };
+      var valueLabels = new[] { "USD", "EUR", "CHF", "AUD", "GBP" };
       var composer = new Composer
       {
-        Name = "Demo",
+        Name = "Correlation",
         Items = points,
-        //ShowIndex = o => indexLabels.ElementAtOrDefault(indexCount++),
-        //ShowValue = o => valueLabels.ElementAtOrDefault(valueCount++)
+        ValueCount = max,
+        ShowIndex = null,
+        ShowValue = null,
+        ShowCellIndex = (i, o) => indexLabels.ElementAtOrDefault((int)i),
+        ShowCellValue = (i, o) => valueLabels.ElementAtOrDefault((int)i)
       };
 
       await ViewControl.Create<CanvasEngine>(() => composer);

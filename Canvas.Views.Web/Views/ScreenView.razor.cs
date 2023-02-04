@@ -25,7 +25,7 @@ namespace Canvas.Views.Web.Views
     {
       if (series is not null)
       {
-        return string.Join(" / ", series.Select(o => Composer.ShowValue(o)));
+        return string.Join(" / ", series.Select(o => Composer.ShowBoard(o)));
       }
 
       return "0";
@@ -44,7 +44,7 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    public virtual IEnumerable<(double, string)> GetIndexEnumerator()
+    public virtual IEnumerable<(double, string)> GetIndices()
     {
       if (Engine is not null)
       {
@@ -52,13 +52,28 @@ namespace Canvas.Views.Web.Views
         var distance = (double)Engine.X / count;
         var stepValue = (double)(Composer.Domain.MaxIndex - Composer.Domain.MinIndex) / count;
 
-        for (var i = 1; i < count; i++)
+        if (Composer.ShowIndex is not null)
         {
-          yield return
-          (
-            distance * i,
-            Composer.ShowIndex(Composer.Domain.MinIndex + i * stepValue)
-          );
+          for (var i = 1; i < count; i++)
+          {
+            yield return
+            (
+              distance * i,
+              Composer.ShowIndex(i - 1, Composer.Domain.MinIndex + i * stepValue)
+            );
+          }
+        }
+
+        if (Composer.ShowCellIndex is not null)
+        {
+          for (var i = 1; i <= count; i++)
+          {
+            yield return
+            (
+              distance * i - distance / 2.0,
+              Composer.ShowCellIndex(i - 1, Composer.Domain.MinIndex + i * stepValue - stepValue / 2.0)
+            );
+          }
         }
       }
     }
@@ -66,7 +81,7 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Enumerate values
     /// </summary>
-    public virtual IEnumerable<(double, string)> GetValueEnumerator()
+    public virtual IEnumerable<(double, string)> GetValues()
     {
       if (Engine is not null)
       {
@@ -74,13 +89,28 @@ namespace Canvas.Views.Web.Views
         var distance = (double)Engine.Y / count;
         var stepValue = (double)(Composer.Domain.MaxValue - Composer.Domain.MinValue) / count;
 
-        for (var i = 1; i < count; i++)
+        if (Composer.ShowValue is not null)
         {
-          yield return
-          (
-            distance * i,
-            Composer.ShowValue(Composer.Domain.MinValue + (count - i) * stepValue)
-          );
+          for (var i = 1; i < count; i++)
+          {
+            yield return
+            (
+              distance * i,
+              Composer.ShowValue(i - 1, Composer.Domain.MinValue + (count - i) * stepValue)
+            );
+          }
+        }
+
+        if (Composer.ShowCellValue is not null)
+        {
+          for (var i = 1; i <= count; i++)
+          {
+            yield return
+            (
+              distance * i - distance / 2.0,
+              Composer.ShowCellValue(i - 1, Composer.Domain.MinValue + (count - i) * stepValue - stepValue / 2.0)
+            );
+          }
         }
       }
     }
@@ -156,8 +186,8 @@ namespace Canvas.Views.Web.Views
       return new PositionModel
       {
         Data = coordinates,
-        ValueX = Composer.ShowIndex(values.X),
-        ValueY = Composer.ShowValue(values.Y)
+        ValueX = Composer.ShowMarkerIndex(values.X),
+        ValueY = Composer.ShowMarkerValue(values.Y)
       };
     }
   }

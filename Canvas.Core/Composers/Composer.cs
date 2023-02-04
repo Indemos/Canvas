@@ -58,17 +58,37 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Format indices
     /// </summary>
-    Func<double, string> ShowIndex { get; set; }
+    Func<int, double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    Func<double, string> ShowValue { get; set; }
+    Func<int, double, string> ShowValue { get; set; }
+
+    /// <summary>
+    /// Format cell indices
+    /// </summary>
+    Func<int, double, string> ShowCellIndex { get; set; }
+
+    /// <summary>
+    /// Format cell values
+    /// </summary>
+    Func<int, double, string> ShowCellValue { get; set; }
+
+    /// <summary>
+    /// Format marker indices
+    /// </summary>
+    Func<double, string> ShowMarkerIndex { get; set; }
+
+    /// <summary>
+    /// Format marker values
+    /// </summary>
+    Func<double, string> ShowMarkerValue { get; set; }
 
     /// <summary>
     /// Format board
     /// </summary>
-    Func<string, IList<double>, string> ShowBoard { get; set; }
+    Func<double, string> ShowBoard { get; set; }
 
     /// <summary>
     /// Domain update event
@@ -180,17 +200,37 @@ namespace Canvas.Core.ComposerSpace
     /// <summary>
     /// Format indices
     /// </summary>
-    public virtual Func<double, string> ShowIndex { get; set; }
+    public virtual Func<int, double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    public virtual Func<double, string> ShowValue { get; set; }
+    public virtual Func<int, double, string> ShowValue { get; set; }
+
+    /// <summary>
+    /// Format cell indices
+    /// </summary>
+    public virtual Func<int, double, string> ShowCellIndex { get; set; }
+
+    /// <summary>
+    /// Format cell values
+    /// </summary>
+    public virtual Func<int, double, string> ShowCellValue { get; set; }
+
+    /// <summary>
+    /// Format marker indices
+    /// </summary>
+    public virtual Func<double, string> ShowMarkerIndex { get; set; }
+
+    /// <summary>
+    /// Format marker values
+    /// </summary>
+    public virtual Func<double, string> ShowMarkerValue { get; set; }
 
     /// <summary>
     /// Format board
     /// </summary>
-    public virtual Func<string, IList<double>, string> ShowBoard { get; set; }
+    public virtual Func<double, string> ShowBoard { get; set; }
 
     /// <summary>
     /// Domain update event
@@ -211,9 +251,11 @@ namespace Canvas.Core.ComposerSpace
       Views = new Dictionary<string, IView>();
       Components = new Dictionary<string, ComponentModel>();
 
-      ShowIndex = (input) => $"{input:0.00}";
-      ShowValue = (input) => $"{input:0.00}";
-      ShowBoard = (name, values) => $"{name}: {string.Join(", ", values.Select(o => $"{o:0.00}"))}";
+      ShowBoard = o => $"{o:0.00}";
+      ShowIndex = (i, o) => $"{o:0.00}";
+      ShowValue = (i, o) => $"{o:0.00}";
+      ShowMarkerIndex = o => $"{o:0.00}";
+      ShowMarkerValue = o => $"{o:0.00}";
 
       OnDomain = (message, source) => { };
 
