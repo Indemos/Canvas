@@ -41,45 +41,7 @@ At the moment, there are four built-in chart types.
 
 To add new chart types, e.g. `Error Bars` or `Bubbles`, implement `IShape` interface. 
 
-# Pan and Zoom 
-
-The chart is data-centric, thus in order to scale the chart you need to change the data source. 
-By default, the chart displays last 100 data points, as defined in `IndexCount` property. 
-
-```C#
-MinIndex = Items.Count - IndexCount
-MaxIndex = Items.Count
-```
-
-To pan the chart to the left, subtract arbitrary value from both `MinIndex` and `MaxIndex`. 
-
-```C#
-MinIndex -= 1
-MaxIndex -= 1
-```
-
-To pan the chart to the right, do the opposite. 
-
-```C#
-MinIndex += 1
-MaxIndex += 1
-```
-
-To zoom in, increase `MinIndex` and decrease `MaxIndex` to decrease number of visible points. 
-
-```C#
-MinIndex += 1
-MaxIndex -= 1
-```
-
-To zoom out, do the opposite. 
-
-```C#
-MinIndex -= 1
-MaxIndex += 1
-```
-
-# Data source structure
+# Sample
 
 The simplest format used by the library is a list of models with a single `Point` property. 
 
@@ -119,7 +81,19 @@ The simplest format used by the library is a list of models with a single `Point
 }
 ```
 
-In case when charts have to be synchronized or overlapped within the same viewport, data source should have format of a list where each entry point has a time stamp and a set of `Areas` and `Series` that will be rendered in the relevant viewport. 
+- **Area** is a viewport, an actual chart, each viewport can show several types of series, e.g. a mix of candles and lines.
+- **Series** is a single chart type to be displayed in the viewport, e.g. lines. 
+- **Shape** is a data point of `dynamic` type, can accept different type of inputs, e.g. double or OHLC box.
+
+At this moment, `Canvas` supports only horizontal orientation, so the axis X is used as an index scale that picks data points from the source list and axis Y is a value scale that represents the actual value of each data point. 
+
+# Preview 
+
+![](Screens/Preview.gif)
+
+# Synchronization 
+
+In the case when charts have to be synchronized or overlapped within the same viewport, data source should have format of a list where each entry point has a time stamp and a set of `Areas` and `Series` that will be rendered in the relevant viewport. 
 
 ```C#
 Item = new 
@@ -145,15 +119,43 @@ Item = new
 }
 ```
 
-- **Area** is a viewport, an actual chart, each viewport can show several types of series, e.g. a mix of candles and lines.
-- **Series** is a single chart type to be displayed in the viewport, e.g. lines. 
-- **Shape** is a data point of `dynamic` type, can accept different type of inputs, e.g. double or OHLC box.
+# Pan and Zoom 
 
-At this moment, `Canvas` supports only horizontal orientation, so the axis X is used as an index scale that picks data points from the source list and axis Y is a value scale that represents the actual value of each data point. 
+The chart is data-centric, thus in order to scale the chart you need to change the data source. 
+By default, the chart displays last 100 data points, as defined in `IndexCount` property. 
 
-# Preview 
+```C#
+MinIndex = Items.Count - IndexCount
+MaxIndex = Items.Count
+```
 
-![](Screens/Preview.gif)
+To pan the chart to the left, subtract arbitrary value from both `MinIndex` and `MaxIndex`. 
+
+```C#
+MinIndex -= 1
+MaxIndex -= 1
+```
+
+To pan the chart to the right, do the opposite. 
+
+```C#
+MinIndex += 1
+MaxIndex += 1
+```
+
+To zoom in, increase `MinIndex` and decrease `MaxIndex` to decrease number of visible points. 
+
+```C#
+MinIndex += 1
+MaxIndex -= 1
+```
+
+To zoom out, do the opposite. 
+
+```C#
+MinIndex -= 1
+MaxIndex += 1
+```
 
 # Roadmap 
 

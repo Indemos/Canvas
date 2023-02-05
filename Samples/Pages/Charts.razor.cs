@@ -1,3 +1,4 @@
+using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
 using Canvas.Core.ModelSpace;
 using Canvas.Core.ShapeSpace;
@@ -56,17 +57,11 @@ namespace Canvas.Client.Pages
           }
         };
 
-        var composers = await ViewControl.CreateViews<CanvasEngine>();
-
-        //composers.ForEach(o => o.ShowIndex = (i, v) =>
-        //{
-        //  var stamp = (long)(
-        //    o.Items.ElementAtOrDefault(i)?.X ??
-        //    o.Items.ElementAtOrDefault(0)?.X ??
-        //    DateTime.Now.Ticks);
-
-        //  return $"{new DateTime(stamp)}";
-        //});
+        (await ViewControl.CreateViews<CanvasEngine>()).ForEach(o =>
+        {
+          o.ShowIndex = (i, v) => GetDateByIndex(o.Items, (int)v);
+          o.ShowMarkerIndex = v => GetDateByIndex(o.Items, (int)v);
+        });
 
         Time = DateTime.Now;
         Price = Generator.Next(1000, 5000);
@@ -78,7 +73,20 @@ namespace Canvas.Client.Pages
       }
 
       await base.OnAfterRenderAsync(setup);
+    }
 
+    protected string GetDateByIndex(IList<IShape> items, int v)
+    {
+      var empty = v <= 0 ?
+        items.FirstOrDefault()?.X :
+        items.LastOrDefault()?.X;
+
+      var stamp = (long)(
+        items.ElementAtOrDefault(v)?.X ??
+        empty ??
+        DateTime.Now.Ticks);
+
+      return $"{new DateTime(stamp)}";
     }
 
     #region Generator

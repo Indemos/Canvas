@@ -45,6 +45,7 @@
 }
 
 .canvas-marker b {
+  white-space: nowrap;
   z-index: 20;
   padding: 5px 10px;
   background: #999;
