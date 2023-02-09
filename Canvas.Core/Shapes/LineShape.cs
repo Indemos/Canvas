@@ -15,7 +15,20 @@ namespace Canvas.Core.ModelSpace
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var current = Y;
+      Draw(index, name, items);
+      Draw(index - 1, name, items);
+    }
+
+    /// <summary>
+    /// Render the shape on top of the previous one
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="name"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    protected virtual void Draw(int index, string name, IList<IShape> items)
+    {
+      var current = GetItem(index, name, items)?.Y;
       var previous = GetItem(index - 1, name, items)?.Y;
 
       if (current is null)

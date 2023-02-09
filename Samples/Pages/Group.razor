@@ -1,0 +1,62 @@
+@page "/"
+@page "/group"
+
+@using Canvas.Core.ComposerSpace
+@using Canvas.Core.EngineSpace
+@using Canvas.Core.ModelSpace
+@using Canvas.Core.ShapeSpace
+@using Canvas.Views.Web.Views
+@using SkiaSharp;
+
+<CanvasView @ref="View"></CanvasView>
+
+@code
+{
+  public CanvasView View { get; set; }
+
+  protected override async Task OnAfterRenderAsync(bool setup)
+  {
+    if (setup)
+    {
+      //(await View.CreateViews<CanvasEngine>()).ForEach(o =>
+      //{
+      //  o.ShowIndex = (i, v) => GetDateByIndex(o.Items, (int)v);
+      //  o.ShowMarkerIndex = v => GetDateByIndex(o.Items, (int)v);
+      //});
+
+      var generator = new Random();
+      var comUp = new ComponentModel { Color = SKColors.DeepSkyBlue };
+      var comDown = new ComponentModel { Color = SKColors.OrangeRed };
+      var comAverage = new ComponentModel { Size = 1 };
+      var points = Enumerable
+        .Range(1, 100)
+        .Select(i => new GroupShape
+        {
+          X = i,
+          Groups = new Dictionary<string, IGroupShape>
+          {
+            ["Indicators"] = new GroupShape
+            {
+              Groups = new Dictionary<string, IGroupShape>
+              {
+                ["Ups"] = new BarShape { Y = generator.Next(0, 100), Component = comUp },
+                ["Downs"] = new BarShape { Y = generator.Next(-100, 0), Component = comDown },
+                ["Averages"] = new LineShape { Y = generator.Next(-50, 50) }
+              }
+            }
+          }
+        } as IShape).ToList();
+
+      var composer = new GroupComposer
+      {
+        Name = "Indicators",
+        Items = points
+      };
+
+      await View.Create<CanvasEngine>(() => composer);
+      await composer.Update();
+    }
+
+    await base.OnAfterRenderAsync(setup);
+  }
+}
