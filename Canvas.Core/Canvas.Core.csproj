@@ -8,8 +8,8 @@
     <Version>1.7.1-prerelease</Version>
     <Description>Internal package used in Canvas.Views.Web</Description>
     <Authors>artemiusgreat</Authors>
-    <Copyright>http://indemos.com</Copyright>
-    <PackageProjectUrl>https://github.com/Indemos/Canvas</PackageProjectUrl>
+    <Copyright>indemos.com</Copyright>
+    <PackageProjectUrl>http://indemos.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Indemos/Canvas</RepositoryUrl>
     <PackageTags>canvas chart</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
