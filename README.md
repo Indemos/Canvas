@@ -2,7 +2,9 @@
 
 The fastest charting web control targeting primarily Blazor, both Server Side and Web Assembly, and to some extent ASP.NET MVC. 
 This charting library was designed for Web, but it can also be used in Desktop apps via Web View. 
+
 The main purpose of this library is to be used as a real-time charting tool for financial applications that require frequent updates, e.g. backtesters for trading strategies. 
+
 Here is [the most comprehensive guide](https://github.com/swharden/Csharp-Data-Visualization) dedicated to charting in .NET that I have seen so far. 
 Nevertheless, trying various options from that guide I wasn't able to find anything fast and flexible enough for my needs, so created my own. 
 
