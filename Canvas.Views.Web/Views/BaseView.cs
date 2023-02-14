@@ -24,7 +24,7 @@ namespace Canvas.Views.Web.Views
     protected virtual string Route { get; set; }
     protected virtual EventService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
-    protected virtual IMessageScheduler ScheduleService { get; set; }
+    protected virtual BackgroundRunner ScheduleService { get; set; }
     protected virtual TaskCompletionSource<Task> Updater { get; set; }
     protected virtual ElementReference Container { get; set; }
 
@@ -84,7 +84,7 @@ namespace Canvas.Views.Web.Views
     {
       await DisposeAsync();
 
-      ScheduleService = new MessageScheduler();
+      ScheduleService = new BackgroundRunner();
       ViewService = new EventService { View = this };
       ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
       ScriptService.OnSize = async o => await setup();
