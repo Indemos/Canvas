@@ -7,7 +7,7 @@ using Canvas.Core.ServiceSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using ScheduleSpace;
+using Schedule.RunnerSpace;
 using ScriptContainer;
 using SkiaSharp;
 using System;
@@ -25,7 +25,6 @@ namespace Canvas.Views.Web.Views
     protected virtual EventService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
     protected virtual BackgroundRunner ScheduleService { get; set; }
-    protected virtual TaskCompletionSource<Task> Updater { get; set; }
     protected virtual ElementReference Container { get; set; }
 
     /// <summary>
@@ -52,12 +51,7 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual Task Update(DomainModel message, string source = null)
     {
-      if (Updater?.Task?.IsCompleted is false)
-      {
-        Updater?.TrySetCanceled();
-      }
-
-      Updater = ScheduleService?.Send(async () =>
+      var runner = ScheduleService?.Send(async () =>
       {
         if (Engine?.Instance is null)
         {
@@ -71,7 +65,7 @@ namespace Canvas.Views.Web.Views
         await InvokeAsync(StateHasChanged);
       });
 
-      return Updater?.Task ?? Task.CompletedTask;
+      return runner?.Task ?? Task.CompletedTask;
     }
 
     /// <summary>
@@ -84,8 +78,8 @@ namespace Canvas.Views.Web.Views
     {
       await DisposeAsync();
 
-      ScheduleService = new BackgroundRunner();
       ViewService = new EventService { View = this };
+      ScheduleService = new BackgroundRunner(1) { Count = 1 };
       ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
       ScriptService.OnSize = async o => await setup();
 
