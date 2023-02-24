@@ -86,7 +86,7 @@ namespace Canvas.Client.Pages
         empty ??
         DateTime.Now.Ticks);
 
-      return $"{new DateTime(stamp)}";
+      return $"{new DateTime(stamp):MM/dd/yyyy HH:mm}";
     }
 
     #region Generator

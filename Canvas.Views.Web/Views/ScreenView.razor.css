@@ -36,6 +36,7 @@
 .canvas-label {
   position: absolute;
   font: 10px arial, helvetica, sans-serif;
+  white-space: nowrap;
 }
 
 .canvas-label b {
