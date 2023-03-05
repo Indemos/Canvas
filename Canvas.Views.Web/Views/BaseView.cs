@@ -115,8 +115,12 @@ namespace Canvas.Views.Web.Views
         await ScheduleService.Send(() => Engine?.Dispose()).Task;
       }
 
+      if (ScriptService is not null)
+      {
+        await ScriptService.DisposeAsync();
+      }
+
       ScheduleService?.Dispose();
-      ScriptService?.Dispose();
     }
 
     /// <summary>
@@ -131,8 +135,8 @@ namespace Canvas.Views.Web.Views
       {
         Data = new DataModel
         {
-          X = bounds.X,
-          Y = bounds.Y
+          X = bounds.Value.X,
+          Y = bounds.Value.Y
         }
       };
     }
