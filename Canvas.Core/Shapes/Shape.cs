@@ -1,6 +1,5 @@
 using Canvas.Core.ComposerSpace;
 using Canvas.Core.EngineSpace;
-using Canvas.Core.EnumSpace;
 using Canvas.Core.ModelSpace;
 using System;
 using System.Collections.Generic;
@@ -89,17 +88,17 @@ namespace Canvas.Core.ShapeSpace
     /// <summary>
     /// X
     /// </summary>
-    public double? X { get; set; }
+    public virtual double? X { get; set; }
 
     /// <summary>
     /// Y
     /// </summary>
-    public double? Y { get; set; }
+    public virtual double? Y { get; set; }
 
     /// <summary>
     /// Z
     /// </summary>
-    public double? Z { get; set; }
+    public virtual double? Z { get; set; }
 
     /// <summary>
     /// Reference to panel

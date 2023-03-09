@@ -9,7 +9,7 @@ namespace Canvas.Core.ShapeSpace
     /// <summary>
     /// Direction
     /// </summary>
-    public int Direction { get; set; }
+    public virtual int Direction { get; set; }
 
     /// <summary>
     /// Render the shape

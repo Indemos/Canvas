@@ -10,22 +10,22 @@ namespace Canvas.Core.ShapeSpace
     /// <summary>
     /// Low
     /// </summary>
-    public double? L { get; set; }
+    public virtual double? L { get; set; }
 
     /// <summary>
     /// High
     /// </summary>
-    public double? H { get; set; }
+    public virtual double? H { get; set; }
 
     /// <summary>
     /// Open
     /// </summary>
-    public double? O { get; set; }
+    public virtual double? O { get; set; }
 
     /// <summary>
     /// Close
     /// </summary>
-    public double? C { get; set; }
+    public virtual double? C { get; set; }
 
     /// <summary>
     /// Options
