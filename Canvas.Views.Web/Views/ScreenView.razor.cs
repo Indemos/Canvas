@@ -153,11 +153,11 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="e"></param>
     /// <returns></returns>
-    protected PositionModel GetDelta(MouseEventArgs e)
+    protected PositionModel? GetDelta(MouseEventArgs e)
     {
       if (Engine?.Instance is null)
       {
-        return default;
+        return null;
       }
 
       var coordinates = new DataModel
