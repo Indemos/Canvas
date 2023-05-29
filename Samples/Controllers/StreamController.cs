@@ -1,13 +1,13 @@
 using Canvas.Views.Web;
-using Canvas.Core.EngineSpace;
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Engines;
+using Canvas.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
-using Canvas.Core.ShapeSpace;
+using Canvas.Core.Shapes;
 
 namespace Canvas.Client.Controllers
 {

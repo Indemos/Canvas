@@ -1,8 +1,8 @@
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ShapeSpace
+namespace Canvas.Core.Shapes
 {
   public interface IGroupShape : IShape
   {

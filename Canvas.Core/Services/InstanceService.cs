@@ -1,4 +1,4 @@
-namespace Canvas.Core.ServiceSpace
+namespace Canvas.Core.Services
 {
   /// <summary>
   /// Singleton service

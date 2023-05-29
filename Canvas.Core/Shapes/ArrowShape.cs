@@ -1,8 +1,8 @@
-using Canvas.Core.EnumSpace;
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Enums;
+using Canvas.Core.Models;
 using System.Collections.Generic;
 
-namespace Canvas.Core.ShapeSpace
+namespace Canvas.Core.Shapes
 {
   public class ArrowShape : GroupShape, IGroupShape
   {

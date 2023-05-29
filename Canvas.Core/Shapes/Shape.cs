@@ -1,11 +1,11 @@
-using Canvas.Core.ComposerSpace;
-using Canvas.Core.EngineSpace;
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Composers;
+using Canvas.Core.Engines;
+using Canvas.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ShapeSpace
+namespace Canvas.Core.Shapes
 {
   public interface IShape : ICloneable
   {

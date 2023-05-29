@@ -1,11 +1,11 @@
-using Canvas.Core.EngineSpace;
-using Canvas.Core.ModelSpace;
-using Canvas.Core.ShapeSpace;
+using Canvas.Core.Engines;
+using Canvas.Core.Models;
+using Canvas.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ComposerSpace
+namespace Canvas.Core.Composers
 {
   public class GroupComposer : Composer
   {

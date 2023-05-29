@@ -1,6 +1,6 @@
 using Canvas.Core;
-using Canvas.Core.ComposerSpace;
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Composers;
+using Canvas.Core.Models;
 using System;
 using System.Threading.Tasks;
 

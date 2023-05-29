@@ -1,8 +1,8 @@
-using Canvas.Core.ComposerSpace;
-using Canvas.Core.EngineSpace;
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Composers;
+using Canvas.Core.Engines;
+using Canvas.Core.Models;
 
-namespace Canvas.Core.ServiceSpace
+namespace Canvas.Core.Services
 {
   public class EventService
   {

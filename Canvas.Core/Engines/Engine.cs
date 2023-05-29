@@ -1,10 +1,10 @@
-using Canvas.Core.ModelSpace;
-using Canvas.Core.ShapeSpace;
+using Canvas.Core.Models;
+using Canvas.Core.Shapes;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 
-namespace Canvas.Core.EngineSpace
+namespace Canvas.Core.Engines
 {
   public interface IEngine : IDisposable
   {

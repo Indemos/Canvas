@@ -1,4 +1,4 @@
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.Models
 {
   public struct ViewModel
   {

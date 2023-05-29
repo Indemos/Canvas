@@ -1,11 +1,11 @@
-using Canvas.Core.EnumSpace;
-using Canvas.Core.ModelSpace;
+using Canvas.Core.Enums;
+using Canvas.Core.Models;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.EngineSpace
+namespace Canvas.Core.Engines
 {
   public class CanvasEngine : Engine, IEngine
   {

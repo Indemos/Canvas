@@ -1,7 +1,7 @@
-using Canvas.Core.EngineSpace;
-using Canvas.Core.EnumSpace;
-using Canvas.Core.ModelSpace;
-using Canvas.Core.ShapeSpace;
+using Canvas.Core.Engines;
+using Canvas.Core.Enums;
+using Canvas.Core.Models;
+using Canvas.Core.Shapes;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Canvas.Core.ComposerSpace
+namespace Canvas.Core.Composers
 {
   public interface IComposer
   {

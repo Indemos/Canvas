@@ -1,7 +1,7 @@
-using Canvas.Core.ComposerSpace;
-using Canvas.Core.EngineSpace;
-using Canvas.Core.ModelSpace;
-using Canvas.Core.ShapeSpace;
+using Canvas.Core.Composers;
+using Canvas.Core.Engines;
+using Canvas.Core.Models;
+using Canvas.Core.Shapes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

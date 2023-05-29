@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.Models
 {
   public struct DomainModel
   {

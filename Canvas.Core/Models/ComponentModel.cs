@@ -1,7 +1,7 @@
-using Canvas.Core.EnumSpace;
+using Canvas.Core.Enums;
 using SkiaSharp;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.Models
 {
   public struct ComponentModel
   {

@@ -1,10 +1,10 @@
-using Canvas.Core.EnumSpace;
+using Canvas.Core.Enums;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ServiceSpace
+namespace Canvas.Core.Services
 {
   public class ColorService
   {

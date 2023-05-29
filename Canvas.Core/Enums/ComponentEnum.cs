@@ -1,4 +1,4 @@
-namespace Canvas.Core.EnumSpace
+namespace Canvas.Core.Enums
 {
   public enum ComponentEnum : byte
   {

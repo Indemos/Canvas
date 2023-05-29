@@ -1,9 +1,9 @@
-using Canvas.Core.ShapeSpace;
+using Canvas.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Canvas.Core.ModelSpace
+namespace Canvas.Core.Shapes
 {
   public class ColorMapShape : GroupShape, IGroupShape
   {
