@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Schedule" Version="1.1.3" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="System.Interactive" Version="6.0.1" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
   </ItemGroup>
