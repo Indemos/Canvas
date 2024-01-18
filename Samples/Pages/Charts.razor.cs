@@ -1,4 +1,3 @@
-using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
@@ -113,12 +112,13 @@ namespace Canvas.Client.Pages
 
         groupCandle.L = point;
         groupCandle.H = point;
-        group.X = DateTime.Now.Ticks;
+        group.X = Time.Ticks;
 
-        Time = DateTime.Now;
         Price = groupCandle.C ?? point;
         Points.Add(group);
       }
+
+      Time = Time.AddSeconds(1);
 
       var current = Points.Last() as IGroupShape;
       var currentCandle = current.Groups["Assets"].Groups["Prices"] as CandleShape;
@@ -150,7 +150,7 @@ namespace Canvas.Client.Pages
     /// <returns></returns>
     protected bool IsNextFrame()
     {
-      return Points.Count == 0 || DateTime.Now.Ticks - Time.Ticks >= TimeSpan.FromMilliseconds(500).Ticks;
+      return Points.Count == 0 || Time.Ticks - Points.LastOrDefault().X >= TimeSpan.FromMinutes(1).Ticks;
     }
 
     /// <summary>
@@ -160,7 +160,6 @@ namespace Canvas.Client.Pages
     public void Dispose()
     {
       Interval.Dispose();
-      Interval = null;
     }
 
     /// <summary>
