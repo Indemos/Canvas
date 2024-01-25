@@ -10,6 +10,8 @@ namespace Canvas.Views.Web.Views
   {
     protected virtual PositionModel? Cursor { get; set; }
     protected virtual IDictionary<string, IList<double>> Series { get; set; }
+    protected virtual IList<double> Indices { get; set; } = new List<double>();
+    protected virtual IList<double> Values { get; set; } = new List<double>();
 
     /// <summary>
     /// Render
@@ -32,46 +34,45 @@ namespace Canvas.Views.Web.Views
     }
 
     /// <summary>
-    /// Get index step
-    /// </summary>
-    public virtual double IndexStep => (Engine?.X ?? 0) / (Composer?.IndexCount ?? 1);
-
-    /// <summary>
-    /// Get value step
-    /// </summary>
-    public virtual double ValueStep => (Engine?.Y ?? 0) / (Composer?.ValueCount ?? 1);
-
-    /// <summary>
     /// Enumerate indices
     /// </summary>
     public virtual IEnumerable<(double, string)> GetIndices()
     {
       if (Engine is not null)
       {
-        var count = (double)Composer.IndexCount;
-        var distance = (double)Engine.X / count;
-        var stepValue = (double)(Composer.Domain.MaxIndex - Composer.Domain.MinIndex) / count;
+        var minIndex = Composer.Domain.MinIndex;
+        var maxIndex = Composer.Domain.MaxIndex;
+        var distance = Engine.X / Composer.IndexCount;
+        var stepValue = Math.Round((maxIndex - minIndex) / Composer.IndexCount);
 
         if (Composer.ShowIndex is not null)
         {
-          for (var i = 1; i < count; i++)
+          Indices = new List<double>();
+
+          for (var i = minIndex; i <= maxIndex; i++)
           {
-            yield return
-            (
-              distance * i,
-              Composer.ShowIndex(i - 1, Composer.Domain.MinIndex + i * stepValue)
-            );
+            if (i % stepValue == 0)
+            {
+              var position = Composer.GetPixels(Engine, i, 0).X;
+
+              Indices.Add(position);
+
+              yield return (
+                position,
+                Composer.ShowIndex(i - 1, i)
+              );
+            }
           }
         }
 
         if (Composer.ShowCellIndex is not null)
         {
-          for (var i = 1; i <= count; i++)
+          for (var i = 1; i <= Composer.IndexCount; i++)
           {
             yield return
             (
               distance * i - distance / 2.0,
-              Composer.ShowCellIndex(i - 1, Composer.Domain.MinIndex + i * stepValue - stepValue / 2.0)
+              Composer.ShowCellIndex(i - 1, minIndex + i * stepValue - stepValue / 2.0)
             );
           }
         }
@@ -85,30 +86,35 @@ namespace Canvas.Views.Web.Views
     {
       if (Engine is not null)
       {
-        var count = (double)Composer.ValueCount;
-        var distance = (double)Engine.Y / count;
-        var stepValue = (double)(Composer.Domain.MaxValue - Composer.Domain.MinValue) / count;
+        var minValue = Composer.Domain.MinValue;
+        var maxValue = Composer.Domain.MaxValue;
+        var distance = Engine.Y / Composer.ValueCount;
+        var stepValue = (maxValue - minValue) / Composer.ValueCount;
 
         if (Composer.ShowValue is not null)
         {
-          for (var i = 1; i < count; i++)
+          Values = new List<double>();
+
+          for (var i = 1; i < Composer.ValueCount; i++)
           {
+            Values.Add(distance * i);
+
             yield return
             (
               distance * i,
-              Composer.ShowValue(i - 1, Composer.Domain.MinValue + (count - i) * stepValue)
+              Composer.ShowValue(i - 1, minValue + (Composer.ValueCount - i) * stepValue)
             );
           }
         }
 
         if (Composer.ShowCellValue is not null)
         {
-          for (var i = 1; i <= count; i++)
+          for (var i = 1; i <= Composer.ValueCount; i++)
           {
             yield return
             (
               distance * i - distance / 2.0,
-              Composer.ShowCellValue(i - 1, Composer.Domain.MinValue + (count - i) * stepValue - stepValue / 2.0)
+              Composer.ShowCellValue(i - 1, minValue + (Composer.ValueCount - i) * stepValue - stepValue / 2.0)
             );
           }
         }

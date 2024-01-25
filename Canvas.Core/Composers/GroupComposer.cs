@@ -17,7 +17,7 @@ namespace Canvas.Core.Composers
     /// <returns></returns>
     public override void UpdateItems(IEngine engine, DomainModel domain)
     {
-      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var group = Items.ElementAtOrDefault(i) as IGroupShape;
 

@@ -6,10 +6,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Canvas.Core.Composers
 {
@@ -28,12 +25,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Index ticks
     /// </summary>
-    int IndexCount { get; set; }
+    double IndexCount { get; set; }
 
     /// <summary>
     /// Value ticks
     /// </summary>
-    int ValueCount { get; set; }
+    double ValueCount { get; set; }
 
     /// <summary>
     /// Domain
@@ -58,22 +55,22 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Format indices
     /// </summary>
-    Func<int, double, string> ShowIndex { get; set; }
+    Func<double, double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    Func<int, double, string> ShowValue { get; set; }
+    Func<double, double, string> ShowValue { get; set; }
 
     /// <summary>
     /// Format cell indices
     /// </summary>
-    Func<int, double, string> ShowCellIndex { get; set; }
+    Func<double, double, string> ShowCellIndex { get; set; }
 
     /// <summary>
     /// Format cell values
     /// </summary>
-    Func<int, double, string> ShowCellValue { get; set; }
+    Func<double, double, string> ShowCellValue { get; set; }
 
     /// <summary>
     /// Format marker indices
@@ -145,14 +142,14 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<int> ZoomIndex(IEngine engine, int delta);
+    IList<double> ZoomIndex(IEngine engine, int delta);
 
     /// <summary>
     /// Index scale
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<int> PanIndex(IEngine engine, int delta);
+    IList<double> PanIndex(IEngine engine, int delta);
   }
 
   public class Composer : IComposer
@@ -170,12 +167,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Index ticks
     /// </summary>
-    public virtual int IndexCount { get; set; }
+    public virtual double IndexCount { get; set; }
 
     /// <summary>
     /// Value ticks
     /// </summary>
-    public virtual int ValueCount { get; set; }
+    public virtual double ValueCount { get; set; }
 
     /// <summary>
     /// Domain
@@ -200,22 +197,22 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Format indices
     /// </summary>
-    public virtual Func<int, double, string> ShowIndex { get; set; }
+    public virtual Func<double, double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    public virtual Func<int, double, string> ShowValue { get; set; }
+    public virtual Func<double, double, string> ShowValue { get; set; }
 
     /// <summary>
     /// Format cell indices
     /// </summary>
-    public virtual Func<int, double, string> ShowCellIndex { get; set; }
+    public virtual Func<double, double, string> ShowCellIndex { get; set; }
 
     /// <summary>
     /// Format cell values
     /// </summary>
-    public virtual Func<int, double, string> ShowCellValue { get; set; }
+    public virtual Func<double, double, string> ShowCellValue { get; set; }
 
     /// <summary>
     /// Format marker indices
@@ -321,7 +318,7 @@ namespace Canvas.Core.Composers
     /// <returns></returns>
     public virtual void UpdateItems(IEngine engine, DomainModel domain)
     {
-      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
         var itemDomain = item?.GetDomain(i, null, Items);
@@ -354,7 +351,7 @@ namespace Canvas.Core.Composers
       var rate = Math.Round(count / samplesCount);
       var index = 0;
 
-      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
         var itemDomain = item?.GetDomain(i, null, Items);
@@ -474,8 +471,8 @@ namespace Canvas.Core.Composers
         return domain;
       }
 
-      var increment = (maxY - minY) / 10;
-      var isInRange = maxY - minY > increment * 2;
+      var increment = delta;
+      var isInRange = maxY - minY > increment * 2.0;
 
       switch (true)
       {
@@ -498,19 +495,19 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<int> ZoomIndex(IEngine engine, int delta)
+    public virtual IList<double> ZoomIndex(IEngine engine, int delta)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var domain = new List<int> { minX, maxX };
+      var domain = new List<double> { minX, maxX };
 
       if (Equals(minX, maxX))
       {
         return domain;
       }
 
-      var increment = 100 / IndexCount / 2 * delta;
-      var isInRange = maxX - minX > increment * 2;
+      var increment = delta;
+      var isInRange = maxX - minX > IndexCount * increment * 2;
 
       if (isInRange)
       {
@@ -526,18 +523,18 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<int> PanIndex(IEngine engine, int delta)
+    public virtual IList<double> PanIndex(IEngine engine, int delta)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var domain = new List<int> { minX, maxX };
+      var domain = new List<double> { minX, maxX };
 
       if (Equals(minX, maxX))
       {
         return domain;
       }
 
-      var increment = IndexCount / 2 * delta;
+      var increment = delta;
 
       switch (true)
       {
@@ -575,7 +572,7 @@ namespace Canvas.Core.Composers
 
       for (var i = response.MinIndex; i < response.MaxIndex; i++)
       {
-        (min, max, average) = GetExtremes(i, min, max, average);
+        (min, max, average) = GetExtremes((int)i, min, max, average);
       }
 
       if (min > max)

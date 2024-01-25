@@ -139,7 +139,7 @@ namespace Canvas.Client.Pages
         Box = new ComponentModel { Color = color }
       };
 
-      var domain = new DomainModel { IndexDomain = new[] { Points.Count - 100, Points.Count } };
+      var domain = new DomainModel { IndexDomain = new double[] { Points.Count - 100, Points.Count } };
 
       ViewControl.Update(domain, Points);
     }

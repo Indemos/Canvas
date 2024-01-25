@@ -8,10 +8,10 @@ namespace Canvas.Core.Models
     /// <summary>
     /// Index axis
     /// </summary>
-    public IList<int> IndexDomain { get; set; }
-    public IList<int> AutoIndexDomain { get; set; }
-    public int MinIndex => IndexDomain?.ElementAtOrDefault(0) ?? AutoIndexDomain?.ElementAtOrDefault(0) ?? 0;
-    public int MaxIndex => IndexDomain?.ElementAtOrDefault(1) ?? AutoIndexDomain?.ElementAtOrDefault(1) ?? 0;
+    public IList<double> IndexDomain { get; set; }
+    public IList<double> AutoIndexDomain { get; set; }
+    public double MinIndex => IndexDomain?.ElementAtOrDefault(0) ?? AutoIndexDomain?.ElementAtOrDefault(0) ?? 0;
+    public double MaxIndex => IndexDomain?.ElementAtOrDefault(1) ?? AutoIndexDomain?.ElementAtOrDefault(1) ?? 0;
 
     /// <summary>
     /// Value axis

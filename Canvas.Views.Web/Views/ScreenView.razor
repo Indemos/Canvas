@@ -1,7 +1,5 @@
 @inherits BaseView
 
-@{ var steps = IndexStep + "px " + ValueStep + "px "; }
-
 <div class="canvas-container" space>
 
   <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleAction(e, 1)">
@@ -93,11 +91,19 @@
 
 </div>
 
+@{
+  var images = string.Join(",", Indices.Concat(Values).Select(o => "linear-gradient(#DDD, #DDD)"));
+  var sizes = string.Join(",", Indices.Select(o => "1px 100%").Concat(Values.Select(o => "100% 1px")));
+  var positions = string.Join(",", Indices.Select(o => $"{o}px 0").Concat(Values.Select(o => $"0 {o}px")));
+}
+
 <style type="text/css">
 
   .canvas-container[space] .canvas-view img {
-    background-image: conic-gradient(from 90deg at 1px 1px,#0000 90deg, #DDD 0);
-    background-size: @steps;
+      background-size: @sizes;
+      background-image: @images;
+      background-position: @positions;
+      background-repeat: no-repeat;
   }
 
 </style>

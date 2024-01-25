@@ -39,8 +39,8 @@ namespace Canvas.Core.Shapes
       var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
       var coordinates = new DataModel[]
       {
-        Composer.GetPixels(Engine, index, (previous ?? current).Value),
-        Composer.GetPixels(Engine, index + 1, current.Value)
+        Composer.GetPixels(Engine, index - 1, (previous ?? current).Value),
+        Composer.GetPixels(Engine, index, current.Value)
       };
 
       Engine.CreateLine(coordinates, Component ?? component);
