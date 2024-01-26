@@ -1,6 +1,6 @@
 @inherits BaseView
 
-<div class="canvas-container" space>
+<div class="canvas-container space@(Space)" space>
 
   <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleAction(e, 1)">
 
@@ -99,7 +99,7 @@
 
 <style type="text/css">
 
-  .canvas-container[space] .canvas-view img {
+  .canvas-container.space@(Space) .canvas-view img {
       background-size: @sizes;
       background-image: @images;
       background-position: @positions;

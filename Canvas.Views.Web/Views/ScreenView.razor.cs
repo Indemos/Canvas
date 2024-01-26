@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
 {
@@ -12,6 +13,7 @@ namespace Canvas.Views.Web.Views
     protected virtual IDictionary<string, IList<double>> Series { get; set; }
     protected virtual IList<double> Indices { get; set; } = new List<double>();
     protected virtual IList<double> Values { get; set; } = new List<double>();
+    protected virtual string Space { get; set; } = $"{Guid.NewGuid():N}";
 
     /// <summary>
     /// Render
