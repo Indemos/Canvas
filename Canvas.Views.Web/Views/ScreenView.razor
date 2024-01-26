@@ -4,7 +4,7 @@
 
   <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleAction(e, 1)">
 
-    @if (Cursor is not null)
+    @if (Cursor?.ValueX is not null)
     {
       <span class="canvas-label canvas-marker" style="left: @(Cursor?.Data.X)px"><b>@Cursor?.ValueX</b></span>
     }
@@ -46,7 +46,7 @@
 
   <div class="canvas-scale canvas-scale-e" @onmousemove="e => OnScaleAction(e, -1)">
 
-    @if (Cursor is not null)
+    @if (Cursor?.ValueY is not null)
     {
       <span class="canvas-label canvas-marker" style="top: @(Cursor?.Data.Y)px"><b>@Cursor?.ValueY</b></span>
     }
