@@ -11,16 +11,6 @@ namespace Canvas.Views.Web.Views
   public partial class CanvasGroupView
   {
     /// <summary>
-    /// Indices
-    /// </summary>
-    protected IDictionary<long, IShape> Indices { get; set; } = new Dictionary<long, IShape>();
-
-    /// <summary>
-    /// Series
-    /// </summary>
-    protected IDictionary<string, string> Series { get; set; } = new Dictionary<string, string>();
-
-    /// <summary>
     /// Item
     /// </summary>
     public IGroupShape Item { get; set; }
@@ -49,7 +39,8 @@ namespace Canvas.Views.Web.Views
         var source = new TaskCompletionSource();
         var composer = group.Composer = new GroupComposer
         {
-          Name = view.Key
+          Name = view.Key,
+          View = view.Value
         };
 
         sources.Add(source);
@@ -91,7 +82,7 @@ namespace Canvas.Views.Web.Views
           o.Value.Composer.Items = items;
         }
 
-        o.Value.Update(message);
+        o.Value.Composer.Update(message);
       });
     }
   }

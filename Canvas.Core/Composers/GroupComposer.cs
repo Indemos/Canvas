@@ -2,7 +2,6 @@ using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.Composers
@@ -15,8 +14,11 @@ namespace Canvas.Core.Composers
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public override void UpdateItems(IEngine engine, DomainModel domain)
+    public override void GetItems(IEngine engine, DomainModel domain)
     {
+      View.Values = GetValues();
+      View.Indices = GetIndices();
+
       for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var group = Items.ElementAtOrDefault(i) as IGroupShape;

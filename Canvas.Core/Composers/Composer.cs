@@ -25,12 +25,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Index ticks
     /// </summary>
-    double IndexCount { get; set; }
+    int IndexCount { get; set; }
 
     /// <summary>
     /// Value ticks
     /// </summary>
-    double ValueCount { get; set; }
+    int ValueCount { get; set; }
 
     /// <summary>
     /// Domain
@@ -43,9 +43,19 @@ namespace Canvas.Core.Composers
     IList<IShape> Items { get; set; }
 
     /// <summary>
+    /// Indices
+    /// </summary>
+    IList<(double, string)> Indices { get; set; }
+
+    /// <summary>
+    /// Values
+    /// </summary>
+    IList<(double, string)> Values { get; set; }
+
+    /// <summary>
     /// Views
     /// </summary>
-    IDictionary<string, IView> Views { get; set; }
+    IView View { get; set; }
 
     /// <summary>
     /// Options
@@ -61,16 +71,6 @@ namespace Canvas.Core.Composers
     /// Format values
     /// </summary>
     Func<double, double, string> ShowValue { get; set; }
-
-    /// <summary>
-    /// Format cell indices
-    /// </summary>
-    Func<double, double, string> ShowCellIndex { get; set; }
-
-    /// <summary>
-    /// Format cell values
-    /// </summary>
-    Func<double, double, string> ShowCellValue { get; set; }
 
     /// <summary>
     /// Format marker indices
@@ -93,6 +93,13 @@ namespace Canvas.Core.Composers
     Action<DomainModel, string> OnDomain { get; set; }
 
     /// <summary>
+    /// Create 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    Task Create<T>() where T : IEngine, new();
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="message"></param>
@@ -105,14 +112,14 @@ namespace Canvas.Core.Composers
     /// <param name="engine"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    void UpdateItems(IEngine engine, DomainModel message);
+    void GetItems(IEngine engine, DomainModel message);
 
     /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    DataModel GetPixels(IEngine engine, DataModel item);
+    DataModel GetItemPosition(IEngine engine, DataModel item);
 
     /// <summary>
     /// Transform coordinates
@@ -121,14 +128,14 @@ namespace Canvas.Core.Composers
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    DataModel GetPixels(IEngine engine, double index, double value);
+    DataModel GetItemPosition(IEngine engine, double index, double value);
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    DataModel GetValues(IEngine engine, DataModel item);
+    DataModel GetItemValue(IEngine engine, DataModel item);
 
     /// <summary>
     /// Value scale
@@ -142,14 +149,14 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<double> ZoomIndex(IEngine engine, int delta);
+    IList<int> ZoomIndex(IEngine engine, int delta);
 
     /// <summary>
     /// Index scale
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<double> PanIndex(IEngine engine, int delta);
+    IList<int> PanIndex(IEngine engine, int delta);
   }
 
   public class Composer : IComposer
@@ -167,17 +174,17 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Index ticks
     /// </summary>
-    public virtual double IndexCount { get; set; }
+    public virtual int IndexCount { get; set; }
 
     /// <summary>
     /// Value ticks
     /// </summary>
-    public virtual double ValueCount { get; set; }
+    public virtual int ValueCount { get; set; }
 
     /// <summary>
     /// Domain
     /// </summary>
-    public virtual DomainModel Domain { get; set; }
+    public virtual DomainModel Domain { get; protected set; }
 
     /// <summary>
     /// Items
@@ -187,7 +194,17 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Views
     /// </summary>
-    public virtual IDictionary<string, IView> Views { get; set; }
+    public virtual IView View { get; set; }
+
+    /// <summary>
+    /// Indices
+    /// </summary>
+    public virtual IList<(double, string)> Indices { get; set; }
+
+    /// <summary>
+    /// Values
+    /// </summary>
+    public virtual IList<(double, string)> Values { get; set; }
 
     /// <summary>
     /// Options
@@ -203,16 +220,6 @@ namespace Canvas.Core.Composers
     /// Format values
     /// </summary>
     public virtual Func<double, double, string> ShowValue { get; set; }
-
-    /// <summary>
-    /// Format cell indices
-    /// </summary>
-    public virtual Func<double, double, string> ShowCellIndex { get; set; }
-
-    /// <summary>
-    /// Format cell values
-    /// </summary>
-    public virtual Func<double, double, string> ShowCellValue { get; set; }
 
     /// <summary>
     /// Format marker indices
@@ -245,7 +252,8 @@ namespace Canvas.Core.Composers
 
       Domain = new DomainModel();
       Items = new List<IShape>();
-      Views = new Dictionary<string, IView>();
+      Values = new List<(double, string)>();
+      Indices = new List<(double, string)>();
       Components = new Dictionary<string, ComponentModel>();
 
       ShowBoard = o => $"{o:0.00}";
@@ -296,6 +304,14 @@ namespace Canvas.Core.Composers
     }
 
     /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public virtual Task Create<T>() where T : IEngine, new() => View.Create<T>(() => this);
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="message"></param>
@@ -303,11 +319,9 @@ namespace Canvas.Core.Composers
     /// <returns></returns>
     public virtual Task Update(DomainModel? message = null, string source = null)
     {
-      Domain = ComposeDomain(message ?? Domain);
+      OnDomain(Domain = ComposeDomain(message ?? Domain), source);
 
-      OnDomain(Domain, source);
-
-      return Task.WhenAll(Views.Values.Select(o => o.Update(Domain, source)));
+      return View.Update(Domain, source);
     }
 
     /// <summary>
@@ -316,9 +330,12 @@ namespace Canvas.Core.Composers
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public virtual void UpdateItems(IEngine engine, DomainModel domain)
+    public virtual void GetItems(IEngine engine, DomainModel domain)
     {
-      for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
+      View.Values = GetValues();
+      View.Indices = GetIndices();
+
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
         var itemDomain = item?.GetDomain(i, null, Items);
@@ -340,7 +357,7 @@ namespace Canvas.Core.Composers
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public virtual void UpdateSamples(IEngine engine, DomainModel domain)
+    public virtual void GetSamples(IEngine engine, DomainModel domain)
     {
       var min = double.MaxValue;
       var max = double.MinValue;
@@ -351,7 +368,7 @@ namespace Canvas.Core.Composers
       var rate = Math.Round(count / samplesCount);
       var index = 0;
 
-      for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
         var itemDomain = item?.GetDomain(i, null, Items);
@@ -398,7 +415,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    public virtual DataModel GetPixels(IEngine engine, DataModel item)
+    public virtual DataModel GetItemPosition(IEngine engine, DataModel item)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
@@ -425,9 +442,9 @@ namespace Canvas.Core.Composers
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public virtual DataModel GetPixels(IEngine engine, double index, double value)
+    public virtual DataModel GetItemPosition(IEngine engine, double index, double value)
     {
-      return GetPixels(engine, new DataModel { X = index, Y = value });
+      return GetItemPosition(engine, new DataModel { X = index, Y = value });
     }
 
     /// <summary>
@@ -435,7 +452,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="item"></param>
-    public virtual DataModel GetValues(IEngine engine, DataModel item)
+    public virtual DataModel GetItemValue(IEngine engine, DataModel item)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
@@ -471,7 +488,7 @@ namespace Canvas.Core.Composers
         return domain;
       }
 
-      var increment = delta;
+      var increment = (maxY - minY) / 100;
       var isInRange = maxY - minY > increment * 2.0;
 
       switch (true)
@@ -495,18 +512,18 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<double> ZoomIndex(IEngine engine, int delta)
+    public virtual IList<int> ZoomIndex(IEngine engine, int delta)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var domain = new List<double> { minX, maxX };
+      var domain = new List<int> { minX, maxX };
 
       if (Equals(minX, maxX))
       {
         return domain;
       }
 
-      var increment = delta;
+      var increment = Math.Sign(delta);
       var isInRange = maxX - minX > IndexCount * increment * 2;
 
       if (isInRange)
@@ -523,18 +540,18 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<double> PanIndex(IEngine engine, int delta)
+    public virtual IList<int> PanIndex(IEngine engine, int delta)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var domain = new List<double> { minX, maxX };
+      var domain = new List<int> { minX, maxX };
 
       if (Equals(minX, maxX))
       {
         return domain;
       }
 
-      var increment = delta;
+      var increment = Math.Sign(delta);
 
       switch (true)
       {
@@ -550,6 +567,60 @@ namespace Canvas.Core.Composers
       }
 
       return domain;
+    }
+
+    /// <summary>
+    /// Enumerate indices
+    /// </summary>
+    protected virtual IList<MarkerModel> GetIndices()
+    {
+      var minIndex = Domain.MinIndex;
+      var maxIndex = Domain.MaxIndex;
+      var stepDistance = View.Engine.X / IndexCount;
+      var stepValue = (maxIndex - minIndex) / IndexCount;
+      var items = new List<MarkerModel>();
+
+      for (var i = minIndex - (minIndex % stepValue); i <= maxIndex; i += stepValue)
+      {
+        var position = GetItemPosition(View.Engine, i, 0).X;
+
+        if (position >= 0)
+        {
+          items.Add(new MarkerModel
+          {
+            Line = position,
+            Marker = position,
+            Caption = ShowIndex(i - 1, i)
+          });
+        }
+      }
+
+      return items;
+    }
+
+    /// <summary>
+    /// Enumerate values
+    /// </summary>
+    protected virtual IList<MarkerModel> GetValues()
+    {
+      double count = ValueCount;
+      var minValue = Domain.MinValue;
+      var maxValue = Domain.MaxValue;
+      var distance = View.Engine.Y / count;
+      var stepValue = (maxValue - minValue) / count;
+      var items = new List<MarkerModel>();
+
+      for (var i = 1; i < count; i++)
+      {
+        items.Add(new MarkerModel
+        {
+          Line = distance * i,
+          Marker = distance * i,
+          Caption = ShowValue(i - 1, minValue + (count - i) * stepValue)
+        });
+      }
+
+      return items;
     }
 
     /// <summary>
@@ -572,7 +643,7 @@ namespace Canvas.Core.Composers
 
       for (var i = response.MinIndex; i < response.MaxIndex; i++)
       {
-        (min, max, average) = GetExtremes((int)i, min, max, average);
+        (min, max, average) = GetExtremes(i, min, max, average);
       }
 
       if (min > max)

@@ -28,10 +28,11 @@
       var composer = new Composer
       {
         Name = "Demo",
-        Items = points
+        Items = points,
+        View = View
       };
 
-      await View.Create<CanvasEngine>(() => composer);
+      await composer.Create<CanvasEngine>();
       await composer.Update();
     }
 

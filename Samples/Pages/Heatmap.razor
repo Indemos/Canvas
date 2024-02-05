@@ -11,7 +11,7 @@
 @using SkiaSharp;
 
 <div class="demo">
-  <CanvasView @ref="ViewControl"></CanvasView>
+  <CanvasView @ref="View"></CanvasView>
 </div>
 
 <style type="text/css">
@@ -24,7 +24,7 @@
 
 @code
 {
-  public CanvasView ViewControl { get; set; }
+  public CanvasView View { get; set; }
 
   protected override async Task OnAfterRenderAsync(bool setup)
   {
@@ -46,20 +46,19 @@
 
       } as IShape).ToList();
 
-      var composer = new Composer
+      var composer = new MapComposer
       {
         Name = "Correlation",
         Items = points,
+        View = View,
         ValueCount = valueLabels.Length,
-        ShowIndex = null,
-        ShowValue = null,
-        ShowCellIndex = (i, o) => indexLabels.ElementAtOrDefault((int)i),
-        ShowCellValue = (i, o) => valueLabels.ElementAtOrDefault((int)i),
+        ShowIndex = (i, o) => indexLabels.ElementAtOrDefault((int)i),
+        ShowValue = (i, o) => valueLabels.ElementAtOrDefault((int)i),
         ShowMarkerIndex = (i) => indexLabels.ElementAtOrDefault((int)i),
         ShowMarkerValue = (i) => valueLabels.ElementAtOrDefault((int)(valueLabels.Length - i))
       };
 
-      await ViewControl.Create<CanvasEngine>(() => composer);
+      await composer.Create<CanvasEngine>();
       await composer.Update();
     }
 

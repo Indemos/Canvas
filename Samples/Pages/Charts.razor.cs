@@ -13,13 +13,13 @@ namespace Canvas.Client.Pages
 {
   public partial class Charts : IDisposable, IAsyncDisposable
   {
-    protected CanvasGroupView ViewControl { get; set; }
+    protected CanvasGroupView View { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool setup)
     {
       if (setup)
       {
-        ViewControl.Item = new GroupShape
+        View.Item = new GroupShape
         {
           Groups = new Dictionary<string, IGroupShape>
           {
@@ -56,7 +56,7 @@ namespace Canvas.Client.Pages
           }
         };
 
-        (await ViewControl.CreateViews<CanvasEngine>()).ForEach(o =>
+        (await View.CreateViews<CanvasEngine>()).ForEach(o =>
         {
           o.ShowIndex = (i, v) => GetDateByIndex(o.Items, (int)v);
           o.ShowMarkerIndex = v => GetDateByIndex(o.Items, (int)v);
@@ -107,7 +107,7 @@ namespace Canvas.Client.Pages
 
       if (IsNextFrame())
       {
-        var group = (Points.LastOrDefault() ?? ViewControl.Item).Clone() as IGroupShape;
+        var group = (Points.LastOrDefault() ?? View.Item).Clone() as IGroupShape;
         var groupCandle = group.Groups["Assets"].Groups["Prices"] as CandleShape;
 
         groupCandle.L = point;
@@ -139,9 +139,9 @@ namespace Canvas.Client.Pages
         Box = new ComponentModel { Color = color }
       };
 
-      var domain = new DomainModel { IndexDomain = new double[] { Points.Count - 100, Points.Count } };
+      var domain = new DomainModel { IndexDomain = new int[] { Points.Count - 100, Points.Count } };
 
-      ViewControl.Update(domain, Points);
+      View.Update(domain, Points);
     }
 
     /// <summary>

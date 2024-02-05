@@ -96,14 +96,14 @@ namespace Canvas.Core.Shapes
       var upSide = Math.Max(open, close);
       var coordinates = new DataModel[]
       {
-        Composer.GetPixels(Engine, index - size, upSide),
-        Composer.GetPixels(Engine, index + size, downSide)
+        Composer.GetItemPosition(Engine, index - size, upSide),
+        Composer.GetItemPosition(Engine, index + size, downSide)
       };
 
       var rangeCoordinates = new DataModel[]
       {
-        Composer.GetPixels(Engine, index, L ?? 0),
-        Composer.GetPixels(Engine, index, H ?? 0),
+        Composer.GetItemPosition(Engine, index, L ?? 0),
+        Composer.GetItemPosition(Engine, index, H ?? 0),
       };
 
       Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);

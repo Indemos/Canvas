@@ -60,8 +60,8 @@ namespace Canvas.Core.Shapes
 
       for (var i = 0; i < Points.Count; i++)
       {
-        var open = Composer.GetPixels(Engine, index, i);
-        var close = Composer.GetPixels(Engine, index + 1, i + step);
+        var open = Composer.GetItemPosition(Engine, index, i);
+        var close = Composer.GetItemPosition(Engine, index + 1, i + step);
         var points = new DataModel[] { open, close };
 
         Engine.CreateBox(points, Points[i]);

@@ -30,9 +30,9 @@ namespace Canvas.Core.Shapes
       var size = Composer.Size;
       var coordinates = new DataModel[]
       {
-        Composer.GetPixels(Engine, index, current.Value),
-        Composer.GetPixels(Engine, index + size, current.Value),
-        Composer.GetPixels(Engine, index - size, current.Value)
+        Composer.GetItemPosition(Engine, index, current.Value),
+        Composer.GetItemPosition(Engine, index + size, current.Value),
+        Composer.GetItemPosition(Engine, index - size, current.Value)
       };
 
       coordinates[0].Y -= (coordinates[1].X - coordinates[2].X) * Direction / 2;

@@ -123,10 +123,10 @@ namespace Canvas.Core.Engines
         IsDither = false
       };
 
-      X = index;
-      Y = value;
+      X = Math.Max(index, 1) - 1;
+      Y = Math.Max(value, 1) - 1;
 
-      Map = new SKBitmap((int)index, (int)value);
+      Map = new SKBitmap((int)X, (int)Y);
       Canvas = new SKCanvas(Map);
 
       return this;

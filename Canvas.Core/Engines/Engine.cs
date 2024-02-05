@@ -1,5 +1,4 @@
 using Canvas.Core.Models;
-using Canvas.Core.Shapes;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;

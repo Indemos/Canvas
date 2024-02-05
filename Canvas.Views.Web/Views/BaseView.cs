@@ -11,6 +11,7 @@ using Schedule.Runners;
 using ScriptContainer;
 using SkiaSharp;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
@@ -38,6 +39,12 @@ namespace Canvas.Views.Web.Views
     public virtual IComposer Composer { get; protected set; }
 
     /// <summary>
+    /// Labels
+    /// </summary>
+    public virtual IList<MarkerModel> Values { get; set; } = new List<MarkerModel>();
+    public virtual IList<MarkerModel> Indices { get; set; } = new List<MarkerModel>();
+
+    /// <summary>
     /// Events
     /// </summary>
     public virtual Action<ViewModel> OnMouseMove { get; set; } = o => { };
@@ -59,7 +66,7 @@ namespace Canvas.Views.Web.Views
         }
 
         Engine.Clear();
-        Render();
+        Composer.GetItems(Engine, Composer.Domain);
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
         await InvokeAsync(StateHasChanged);
@@ -83,7 +90,7 @@ namespace Canvas.Views.Web.Views
       ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
       ScriptService.OnSize = async o => await setup();
 
-      async Task setup()
+      async Task<IView> setup()
       {
         await ScheduleService.Send(async () =>
         {
@@ -98,11 +105,11 @@ namespace Canvas.Views.Web.Views
           await Update(Composer.Domain);
 
         }).Task;
+
+        return this;
       }
 
-      await setup();
-
-      return this;
+      return await setup();
     }
 
     /// <summary>
@@ -140,11 +147,6 @@ namespace Canvas.Views.Web.Views
         }
       };
     }
-
-    /// <summary>
-    /// Update to override
-    /// </summary>
-    protected virtual void Render() { }
 
     /// <summary>
     /// Mouse wheel event

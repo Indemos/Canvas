@@ -2,12 +2,23 @@ using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Canvas.Core
 {
   public interface IView : IAsyncDisposable
   {
+    /// <summary>
+    /// Indices
+    /// </summary>
+    IList<MarkerModel> Indices { get; set; }
+
+    /// <summary>
+    /// Values
+    /// </summary>
+    IList<MarkerModel> Values { get; set; }
+
     /// <summary>
     /// Engine
     /// </summary>
