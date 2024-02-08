@@ -98,8 +98,8 @@ namespace Canvas.Views.Web.Views
       return new PositionModel
       {
         Data = coordinates,
-        X = Composer.ShowMarkerIndex(values.X),
-        Y = Composer.ShowMarkerValue(values.Y)
+        X = Composer.ShowIndex(values.X),
+        Y = Composer.ShowValue(values.Y)
       };
     }
   }

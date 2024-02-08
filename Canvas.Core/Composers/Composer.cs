@@ -6,6 +6,7 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Canvas.Core.Composers
@@ -43,16 +44,6 @@ namespace Canvas.Core.Composers
     IList<IShape> Items { get; set; }
 
     /// <summary>
-    /// Indices
-    /// </summary>
-    IList<(double, string)> Indices { get; set; }
-
-    /// <summary>
-    /// Values
-    /// </summary>
-    IList<(double, string)> Values { get; set; }
-
-    /// <summary>
     /// Views
     /// </summary>
     IView View { get; set; }
@@ -65,22 +56,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Format indices
     /// </summary>
-    Func<double, double, string> ShowIndex { get; set; }
+    Func<double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    Func<double, double, string> ShowValue { get; set; }
-
-    /// <summary>
-    /// Format marker indices
-    /// </summary>
-    Func<double, string> ShowMarkerIndex { get; set; }
-
-    /// <summary>
-    /// Format marker values
-    /// </summary>
-    Func<double, string> ShowMarkerValue { get; set; }
+    Func<double, string> ShowValue { get; set; }
 
     /// <summary>
     /// Format board
@@ -197,16 +178,6 @@ namespace Canvas.Core.Composers
     public virtual IView View { get; set; }
 
     /// <summary>
-    /// Indices
-    /// </summary>
-    public virtual IList<(double, string)> Indices { get; set; }
-
-    /// <summary>
-    /// Values
-    /// </summary>
-    public virtual IList<(double, string)> Values { get; set; }
-
-    /// <summary>
     /// Options
     /// </summary>
     public virtual IDictionary<string, ComponentModel> Components { get; set; }
@@ -214,22 +185,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Format indices
     /// </summary>
-    public virtual Func<double, double, string> ShowIndex { get; set; }
+    public virtual Func<double, string> ShowIndex { get; set; }
 
     /// <summary>
     /// Format values
     /// </summary>
-    public virtual Func<double, double, string> ShowValue { get; set; }
-
-    /// <summary>
-    /// Format marker indices
-    /// </summary>
-    public virtual Func<double, string> ShowMarkerIndex { get; set; }
-
-    /// <summary>
-    /// Format marker values
-    /// </summary>
-    public virtual Func<double, string> ShowMarkerValue { get; set; }
+    public virtual Func<double, string> ShowValue { get; set; }
 
     /// <summary>
     /// Format board
@@ -247,20 +208,16 @@ namespace Canvas.Core.Composers
     public Composer()
     {
       Size = 0.5;
-      ValueCount = 4;
+      ValueCount = 3;
       IndexCount = 10;
 
       Domain = new DomainModel();
       Items = new List<IShape>();
-      Values = new List<(double, string)>();
-      Indices = new List<(double, string)>();
       Components = new Dictionary<string, ComponentModel>();
 
       ShowBoard = o => $"{o:0.00}";
-      ShowIndex = (i, o) => $"{o:0.00}";
-      ShowValue = (i, o) => $"{o:0.00}";
-      ShowMarkerIndex = o => $"{o:0.00}";
-      ShowMarkerValue = o => $"{o:0.00}";
+      ShowIndex = o => $"{o:0.00}";
+      ShowValue = o => $"{o:0.00}";
 
       OnDomain = (message, source) => { };
 
@@ -429,8 +386,8 @@ namespace Canvas.Core.Composers
 
       // Percentage to pixels, Y is inverted
 
-      item.X = Math.Round(engine.X * index);
-      item.Y = Math.Round(engine.Y - engine.Y * value);
+      item.X = engine.X * index;
+      item.Y = engine.Y - engine.Y * value;
 
       return item;
     }
@@ -576,23 +533,30 @@ namespace Canvas.Core.Composers
     {
       var minIndex = Domain.MinIndex;
       var maxIndex = Domain.MaxIndex;
-      var stepDistance = View.Engine.X / IndexCount;
-      var stepValue = (maxIndex - minIndex) / IndexCount;
+      var center = minIndex + Math.Round((maxIndex - minIndex) / 2.0);
+      var stepSize = View.Engine.X / Items.Count;
+      var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount);
       var items = new List<MarkerModel>();
 
-      for (var i = minIndex - (minIndex % stepValue); i <= maxIndex; i += stepValue)
+      void createItem(double i)
       {
         var position = GetItemPosition(View.Engine, i, 0).X;
 
-        if (position >= 0)
+        if (i > minIndex && i < maxIndex)
         {
           items.Add(new MarkerModel
           {
             Line = position,
             Marker = position,
-            Caption = ShowIndex(i - 1, i)
+            Caption = ShowIndex(i)
           });
         }
+      }
+
+      for (var i = 0; i < IndexCount; i++)
+      {
+        createItem(center - i * step);
+        createItem(center + i * step);
       }
 
       return items;
@@ -603,21 +567,31 @@ namespace Canvas.Core.Composers
     /// </summary>
     protected virtual IList<MarkerModel> GetValues()
     {
-      double count = ValueCount;
       var minValue = Domain.MinValue;
       var maxValue = Domain.MaxValue;
-      var distance = View.Engine.Y / count;
-      var stepValue = (maxValue - minValue) / count;
+      var center = minValue + (maxValue - minValue) / 2.0;
+      var step = (maxValue - minValue) / ValueCount;
       var items = new List<MarkerModel>();
 
-      for (var i = 1; i < count; i++)
+      void createItem(double i)
       {
-        items.Add(new MarkerModel
+        var position = GetItemPosition(View.Engine, 0, i).Y;
+
+        if (i > minValue && i < maxValue)
         {
-          Line = distance * i,
-          Marker = distance * i,
-          Caption = ShowValue(i - 1, minValue + (count - i) * stepValue)
-        });
+          items.Add(new MarkerModel
+          {
+            Line = position,
+            Marker = position,
+            Caption = ShowValue(i)
+          });
+        }
+      }
+
+      for (var i = 0; i < ValueCount; i++)
+      {
+        createItem(center - i * step);
+        createItem(center + i * step);
       }
 
       return items;
@@ -631,7 +605,7 @@ namespace Canvas.Core.Composers
     protected virtual DomainModel ComposeDomain(DomainModel domain)
     {
       var autoMin = 0;
-      var autoMax = Math.Max(Items.Count, IndexCount);
+      var autoMax = Items.Count;
       var response = domain;
 
       response.AutoValueDomain = new[] { 0.0, 0.0 };

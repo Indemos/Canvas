@@ -58,8 +58,7 @@ namespace Canvas.Client.Pages
 
         (await View.CreateViews<CanvasEngine>()).ForEach(o =>
         {
-          o.ShowIndex = (i, v) => GetDateByIndex(o.Items, (int)v);
-          o.ShowMarkerIndex = v => GetDateByIndex(o.Items, (int)v);
+          o.ShowIndex = v => GetDateByIndex(o.Items, (int)v);
         });
 
         Time = DateTime.Now;
