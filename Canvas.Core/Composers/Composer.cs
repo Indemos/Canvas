@@ -386,8 +386,8 @@ namespace Canvas.Core.Composers
 
       // Percentage to pixels, Y is inverted
 
-      item.X = engine.X * index;
-      item.Y = engine.Y - engine.Y * value;
+      item.X = Math.Round(engine.X * index);
+      item.Y = Math.Round(engine.Y - engine.Y * value);
 
       return item;
     }
