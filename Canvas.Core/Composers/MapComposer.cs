@@ -16,8 +16,8 @@ namespace Canvas.Core.Composers
     {
       var minIndex = Domain.MinIndex;
       var maxIndex = Domain.MaxIndex;
-      var center = minIndex + Math.Round((maxIndex - minIndex) / 2.0);
       var stepSize = View.Engine.X / Items.Count;
+      var center = Math.Round(minIndex + (maxIndex - minIndex) / 2.0, MidpointRounding.ToZero);
       var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount, MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
@@ -54,7 +54,7 @@ namespace Canvas.Core.Composers
       var maxValue = Domain.MaxValue;
       var pointsCount = Items.Max(o => (o as ColorMapShape).Points.Count);
       var stepSize = View.Engine.Y / pointsCount;
-      var center = minValue + (maxValue - minValue) / 2.0;
+      var center = Math.Round(minValue + (maxValue - minValue) / 2.0, MidpointRounding.ToZero);
       var step = Math.Round((maxValue - minValue) / ValueCount, MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
