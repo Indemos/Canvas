@@ -88,7 +88,13 @@ namespace Canvas.Views.Web.Views
       ViewService = new EventService { View = this };
       ScheduleService = new BackgroundRunner(1) { Count = 1 };
       ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
-      ScriptService.OnSize = async o => await setup();
+      ScriptService.OnChange = async (o, i, eventName) =>
+      {
+        if (i is 0)
+        {
+          await setup();
+        }
+      };
 
       async Task<IView> setup()
       {
