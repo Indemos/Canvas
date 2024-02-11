@@ -92,7 +92,7 @@ By default, the axis X is used as an index that picks data points from the sourc
 # Synchronization 
 
 To simplify synchronization, you can use `IGroupShape` model instead of simple `IShape`. 
-This model allows groupping series for each chart by single timestamp, so you could display candles, lines, and other series on the same chart. 
+This model allows grouping series for each chart by single timestamp, so you could display candles, lines, and other series on the same chart. 
 
 ```C#
 Item = new 
