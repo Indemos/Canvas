@@ -166,10 +166,10 @@ namespace Canvas.Core.Engines
       _penCircle.Color = shape.Color;
 
       Canvas.DrawCircle(
-      (float)coordinate.X,
-      (float)coordinate.Y,
-      (float)shape.Size,
-      _penCircle);
+        (float)coordinate.X,
+        (float)coordinate.Y,
+        (float)shape.Size,
+        _penCircle);
     }
 
     /// <summary>
@@ -301,7 +301,7 @@ namespace Canvas.Core.Engines
     {
       using (var image = Map.Encode(imageType, quality))
       {
-        return image.ToArray();
+        return image is null ? Array.Empty<byte>() : image.ToArray();
       }
     }
 

@@ -1,6 +1,6 @@
 @inherits BaseView
 
-<div class="canvas-container space@(Name)" space>
+<div @ref="ChartContainer" class="canvas-container space@(Name)" space>
 
   <div class="canvas-scale canvas-scale-n" @onmousemove="e => OnScaleAction(e, 1)">
 

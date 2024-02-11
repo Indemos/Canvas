@@ -81,41 +81,9 @@ namespace Canvas.Views.Web.Views
     /// <typeparam name="T"></typeparam>
     /// <param name="action"></param>
     /// <returns></returns>
-    public virtual async Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
+    public virtual Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
     {
-      await DisposeAsync();
-
-      ViewService = new EventService { View = this };
-      ScheduleService = new BackgroundRunner(1) { Count = 1 };
-      ScriptService = await (new ScriptService(RuntimeService)).CreateModule();
-      ScriptService.OnChange = async (o, i, eventName) =>
-      {
-        if (i is 0)
-        {
-          await setup();
-        }
-      };
-
-      async Task<IView> setup()
-      {
-        await ScheduleService.Send(async () =>
-        {
-          Engine?.Dispose();
-
-          var engine = new T();
-          var message = await CreateViewMessage();
-
-          Engine = engine.Create(message.Data.X, message.Data.Y);
-          Composer = action();
-
-          await Update(Composer.Domain);
-
-        }).Task;
-
-        return this;
-      }
-
-      return await setup();
+      return Task.FromResult<IView>(default);
     }
 
     /// <summary>
