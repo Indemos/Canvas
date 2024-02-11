@@ -1,6 +1,8 @@
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Canvas.Core.Shapes
 {

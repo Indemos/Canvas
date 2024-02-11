@@ -19,16 +19,13 @@
     <Description>Generic real-time charts for Web and Desktop apps with built-in pan and zoom support.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ScriptContainer" Version="1.2.1" />
-  </ItemGroup>
   
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Script-Container\Libs\ScriptContainer.csproj" />
     <ProjectReference Include="..\Canvas.Core\Canvas.Core.csproj" />
   </ItemGroup>
 
