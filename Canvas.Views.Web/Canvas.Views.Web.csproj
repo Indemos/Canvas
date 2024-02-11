@@ -10,7 +10,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.9.2</Version>
+    <Version>1.9.3</Version>
     <PackageTags>finance chart opengl canvas trading gdi stock direct2d</PackageTags>
     <Authors>artemiusgreat</Authors>
     <Copyright>indemos.com</Copyright>
@@ -19,13 +19,16 @@
     <Description>Generic real-time charts for Web and Desktop apps with built-in pan and zoom support.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ScriptContainer" Version="1.2.2" />
+  </ItemGroup>
   
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Script-Container\Libs\ScriptContainer.csproj" />
     <ProjectReference Include="..\Canvas.Core\Canvas.Core.csproj" />
   </ItemGroup>
 
