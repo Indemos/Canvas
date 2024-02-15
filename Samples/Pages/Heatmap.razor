@@ -31,8 +31,8 @@
     if (setup)
     {
       var generator = new Random();
-      var indexLabels = new[] { "USD", "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD", "SGD", "UAH", "NOK", "JPY", "CNY", "INR", "SEK" };
-      var valueLabels = new[] { "USD", "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD" };
+      var indexLabels = new[] { "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD", "SGD", "UAH", "NOK", "JPY", "CNY", "INR", "SEK" };
+      var valueLabels = new[] { "USD", "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD", "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD", "SGD", "UAH", "NOK", "JPY", "CNY", "INR", "SEK" };
       var max = valueLabels.Length;
       var min = 0;
       var colorService = new ColorService { Min = min, Max = max, Mode = ShadeEnum.Intensity };
@@ -51,8 +51,8 @@
         Name = "Correlation",
         Items = points,
         View = View,
-        IndexCount = indexLabels.Length,
-        ValueCount = valueLabels.Length,
+        IndexCount = 4,
+        ValueCount = 4,
         ShowIndex = i => indexLabels.ElementAtOrDefault((int)i),
         ShowValue = i => valueLabels.ElementAtOrDefault((int)i)
       };

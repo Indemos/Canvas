@@ -21,25 +21,26 @@ namespace Canvas.Core.Composers
       var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount, MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
-      void createItem(double i)
+      void createItem(double i, double correction)
       {
         var position = GetItemPosition(View.Engine, i, 0).X;
 
-        if (i >= minIndex && i < maxIndex)
+        items.Add(new MarkerModel
         {
-          items.Add(new MarkerModel
-          {
-            Line = 0,
-            Marker = position + stepSize / 2.0,
-            Caption = ShowIndex(i)
-          });
-        }
+          Line = 0,
+          Marker = position + correction,
+          Caption = ShowIndex(i)
+        });
       }
 
-      for (var i = 0; i < IndexCount; i++)
+      var isEven = IndexCount % 2 is 0;
+
+      createItem(center, 0);
+
+      for (var i = 1.0; i <= IndexCount / 2.0; i++)
       {
-        createItem(center - i * step);
-        createItem(center + i * step);
+        createItem(center - i * step, stepSize / 2.0);
+        createItem(center + i * step - (isEven ? 1 : 0), stepSize / 2.0);
       }
 
       return items;
@@ -58,25 +59,26 @@ namespace Canvas.Core.Composers
       var step = Math.Round((maxValue - minValue) / ValueCount, MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
-      void createItem(double i)
+      void createItem(double i, double correction)
       {
         var position = GetItemPosition(View.Engine, 0, i).Y;
 
-        if (i >= minValue && i < maxValue)
+        items.Add(new MarkerModel
         {
-          items.Add(new MarkerModel
-          {
-            Line = 0,
-            Marker = position - stepSize / 2.0,
-            Caption = ShowValue(i)
-          });
-        }
+          Line = 0,
+          Marker = position - correction,
+          Caption = ShowValue(i)
+        });
       }
 
-      for (var i = 0; i < ValueCount; i++)
+      var isEven = ValueCount % 2 is 0;
+
+      createItem(center, 0);
+
+      for (var i = 1.0; i <= ValueCount / 2.0; i++)
       {
-        createItem(center - i * step);
-        createItem(center + i * step);
+        createItem(center - i * step, stepSize / 2.0);
+        createItem(center + i * step - (isEven ? 1 : 0), stepSize / 2.0);
       }
 
       return items;
