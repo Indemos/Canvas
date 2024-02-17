@@ -532,8 +532,8 @@ namespace Canvas.Core.Composers
     {
       var minIndex = Domain.MinIndex;
       var maxIndex = Domain.MaxIndex;
-      var center = Math.Round(minIndex + (maxIndex - minIndex) / 2.0, MidpointRounding.ToZero);
-      var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount, MidpointRounding.ToZero);
+      var center = Math.Round(minIndex + (maxIndex - minIndex) / 2.0, MidpointRounding.ToEven);
+      var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount, MidpointRounding.ToEven);
       var items = new List<MarkerModel>();
 
       void createItem(double i)
