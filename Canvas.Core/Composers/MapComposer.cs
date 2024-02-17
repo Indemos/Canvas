@@ -16,31 +16,30 @@ namespace Canvas.Core.Composers
     {
       var minIndex = Domain.MinIndex;
       var maxIndex = Domain.MaxIndex;
+      var range = maxIndex - minIndex + 0.0;
       var stepSize = View.Engine.X / Items.Count;
-      var center = Math.Round(minIndex + (maxIndex - minIndex) / 2.0, MidpointRounding.ToZero);
-      var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount, MidpointRounding.ToZero);
+      var step = Math.Round(range / Math.Min(IndexCount, range), MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
-      void createItem(double i, double correction)
+      void createItem(double i)
       {
-        var position = GetItemPosition(View.Engine, i, 0).X;
-
-        items.Add(new MarkerModel
+        if (i >= minIndex && i < maxIndex)
         {
-          Line = 0,
-          Marker = position + correction,
-          Caption = ShowIndex(i)
-        });
+          var position = GetItemPosition(View.Engine, i, 0).X;
+
+          items.Add(new MarkerModel
+          {
+            Line = 0,
+            Marker = position + stepSize / 2.0,
+            Caption = ShowIndex(Math.Round(i, MidpointRounding.ToZero))
+          });
+        }
       }
 
-      var isEven = IndexCount % 2 is 0;
-
-      createItem(center, 0);
-
-      for (var i = 1.0; i <= IndexCount / 2.0; i++)
+      for (var i = 0.0; i < IndexCount / 2.0; i++)
       {
-        createItem(center - i * step, stepSize / 2.0);
-        createItem(center + i * step - (isEven ? 1 : 0), stepSize / 2.0);
+        createItem(minIndex + i * step);
+        createItem(maxIndex - i * step - 1.0);
       }
 
       return items;
@@ -53,32 +52,30 @@ namespace Canvas.Core.Composers
     {
       var minValue = Domain.MinValue;
       var maxValue = Domain.MaxValue;
-      var pointsCount = Items.Max(o => (o as ColorMapShape).Points.Count);
+      var pointsCount = Items.Max(o => (o as ColorMapShape).Points.Count + 0.0);
       var stepSize = View.Engine.Y / pointsCount;
-      var center = Math.Round(minValue + (maxValue - minValue) / 2.0, MidpointRounding.ToZero);
-      var step = Math.Round((maxValue - minValue) / ValueCount, MidpointRounding.ToZero);
+      var step = Math.Round(pointsCount / Math.Min(ValueCount, pointsCount), MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
-      void createItem(double i, double correction)
+      void createItem(double i)
       {
-        var position = GetItemPosition(View.Engine, 0, i).Y;
-
-        items.Add(new MarkerModel
+        if (i >= minValue && i < maxValue)
         {
-          Line = 0,
-          Marker = position - correction,
-          Caption = ShowValue(i)
-        });
+          var position = GetItemPosition(View.Engine, 0, i).Y;
+
+          items.Add(new MarkerModel
+          {
+            Line = 0,
+            Marker = position - stepSize / 2.0,
+            Caption = ShowValue(Math.Round(i, MidpointRounding.ToZero))
+          });
+        }
       }
 
-      var isEven = ValueCount % 2 is 0;
-
-      createItem(center, 0);
-
-      for (var i = 1.0; i <= ValueCount / 2.0; i++)
+      for (var i = 0.0; i < ValueCount / 2.0; i++)
       {
-        createItem(center - i * step, stepSize / 2.0);
-        createItem(center + i * step - (isEven ? 1 : 0), stepSize / 2.0);
+        createItem(minValue + i * step);
+        createItem(maxValue - i * step - 1.0);
       }
 
       return items;

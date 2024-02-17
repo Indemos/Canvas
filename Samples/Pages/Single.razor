@@ -22,7 +22,7 @@
         .Select(i => new BarShape
         {
           X = i,
-          Y = generator.Next(-5000, 5000) * 1.000003
+          Y = generator.Next(0, 5000) * 1.000003
         } as IShape).ToList();
 
       var composer = new Composer
