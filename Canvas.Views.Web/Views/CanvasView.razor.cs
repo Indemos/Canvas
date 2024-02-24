@@ -1,17 +1,16 @@
 using Canvas.Core;
 using Canvas.Core.Composers;
-using Canvas.Core.Engines;
+using Canvas.Core.Enums;
 using Canvas.Core.Models;
 using Canvas.Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Schedule.Runners;
 using ScriptContainer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Canvas.Views.Web.Views
 {
@@ -120,17 +119,17 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public override async Task<IView> Create<T>(Func<IComposer> action)
     {
-      await DisposeAsync();
+      Dispose();
 
       ViewService = new EventService { View = this };
-      ScheduleService = new BackgroundRunner(1) { Count = 1 };
       ScriptService = await(new ScriptService(RuntimeService)).CreateModule();
       ScriptService.Actions["OnChange"] = async message => await setup();
+
       await ScriptService.SubscribeToSize(ChartContainer, "OnChange");
 
       async Task<IView> setup()
       {
-        await ScheduleService.Send(async () =>
+        await Schedule(async () =>
         {
           Engine?.Dispose();
 
@@ -141,8 +140,7 @@ namespace Canvas.Views.Web.Views
           Composer = action();
 
           await Update(Composer.Domain);
-
-        }).Task;
+        });
 
         return this;
       }

@@ -7,25 +7,26 @@ using Canvas.Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Schedule.Runners;
 using ScriptContainer;
 using SkiaSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Canvas.Views.Web.Views
 {
   public class BaseView : ComponentBase, IView
   {
-    [Parameter] public virtual PositionEnum Position { get; set; }
-
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     protected virtual string Route { get; set; }
     protected virtual EventService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
-    protected virtual BackgroundRunner ScheduleService { get; set; }
+    protected virtual ScheduleService ScheduleService { get; set; }
     protected virtual ElementReference Container { get; set; }
 
     /// <summary>
@@ -58,7 +59,7 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual Task Update(DomainModel message, string source = null)
     {
-      var runner = ScheduleService?.Send(async () =>
+      return Schedule(async () =>
       {
         if (Engine?.Instance is null)
         {
@@ -71,8 +72,6 @@ namespace Canvas.Views.Web.Views
 
         await InvokeAsync(StateHasChanged);
       });
-
-      return runner?.Task ?? Task.CompletedTask;
     }
 
     /// <summary>
@@ -89,19 +88,10 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Dispose
     /// </summary>
-    public virtual async ValueTask DisposeAsync()
+    public virtual void Dispose()
     {
-      if (ScheduleService is not null)
-      {
-        await ScheduleService.Send(() => Engine?.Dispose()).Task;
-      }
-
-      if (ScriptService is not null)
-      {
-        await ScriptService.DisposeAsync();
-      }
-
       ScheduleService?.Dispose();
+      ScriptService?.Dispose();
     }
 
     /// <summary>
@@ -189,5 +179,12 @@ namespace Canvas.Views.Web.Views
     {
       IsControl = e.CtrlKey
     });
+
+    /// <summary>
+    /// Dedicated process
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    protected virtual Task Schedule(Action action) => (ScheduleService ??= new ScheduleService()).Schedule(action);
   }
 }

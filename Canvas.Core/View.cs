@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Canvas.Core
 {
-  public interface IView : IAsyncDisposable
+  public interface IView : IDisposable
   {
     /// <summary>
     /// Indices
