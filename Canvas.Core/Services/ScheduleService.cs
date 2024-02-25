@@ -7,29 +7,18 @@ namespace Canvas.Core.Services
 {
   public class ScheduleService : IDisposable
   {
-    protected virtual Task Consumer { get; set; }
-    protected virtual BlockingCollection<(Action, TaskCompletionSource)> Queue { get; set; }
     protected virtual CancellationTokenSource Cancellation { get; set; }
+    protected virtual BlockingCollection<(Action, TaskCompletionSource)> Queue { get; set; }
 
     /// <summary>
-    /// Dispose
+    /// Constructor
     /// </summary>
-    public virtual void Dispose()
+    public ScheduleService()
     {
-      Queue?.Dispose();
-      Cancellation?.Cancel();
-    }
+      Queue = new();
+      Cancellation = new CancellationTokenSource();
 
-    /// <summary>
-    /// Schedule
-    /// </summary>
-    /// <param name="action"></param>
-    /// <returns></returns>
-    public virtual Task Schedule(Action action)
-    {
-      Queue ??= new();
-      Cancellation ??= new CancellationTokenSource();
-      Consumer ??= Task.Factory.StartNew(() =>
+      Task.Factory.StartNew(() =>
       {
         foreach (var (o, com) in Queue.GetConsumingEnumerable())
         {
@@ -39,14 +28,27 @@ namespace Canvas.Core.Services
       },
       Cancellation.Token,
       TaskCreationOptions.LongRunning,
-      TaskScheduler.Current).ContinueWith(o => Consumer.Dispose());
+      TaskScheduler.Current).ContinueWith(o => Queue.Dispose());
+    }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public virtual void Dispose() => Cancellation?.Cancel();
+
+    /// <summary>
+    /// Schedule
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public virtual Task Schedule(Action action)
+    {
+      var completion = new TaskCompletionSource();
 
       if (Queue.Count > 1)
       {
         Queue.TryTake(out var o);
       }
-
-      var completion = new TaskCompletionSource();
 
       Queue.TryAdd((action, completion));
 
