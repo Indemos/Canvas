@@ -4,6 +4,7 @@ using Canvas.Core.Engines;
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
 using Canvas.Core.Services;
+using Distribution.ServiceSpace;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -185,6 +186,6 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    protected virtual Task Schedule(Action action) => (ScheduleService ??= new ScheduleService()).Schedule(action);
+    protected virtual Task Schedule(Action action) => (ScheduleService ??= new ScheduleService()).Send(action).Task;
   }
 }
