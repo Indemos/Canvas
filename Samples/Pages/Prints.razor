@@ -1,0 +1,69 @@
+@page "/prints"
+
+@using Canvas.Core.Composers
+@using Canvas.Core.Engines
+@using Canvas.Core.Models
+@using Canvas.Core.Shapes
+@using Canvas.Views.Web.Views
+@using SkiaSharp;
+
+<CanvasView @ref="View"></CanvasView>
+
+@code
+{
+  public CanvasView View { get; set; }
+
+  protected override async Task OnAfterRenderAsync(bool setup)
+  {
+    if (setup)
+    {
+      var generator = new Random();
+      var points = Enumerable
+        .Range(0, 50)
+        .Select((o, i) =>
+          {
+            var count = 5;
+            var open = generator.Next(50, 100);
+            var close = generator.Next(50, 100);
+            var min = Math.Min(open, close);
+            var max = Math.Max(open, close);
+            var step = (max - min) / count;
+
+            var longs = Enumerable
+              .Range(0, count)
+              .Select((o, i) => KeyValuePair.Create<double, double>(min + i * step, generator.Next(0, 1000)))
+              .OrderBy(o => o.Key)
+              .ToList();
+
+            var shorts = Enumerable
+              .Range(0, count)
+              .Select((o, i) => KeyValuePair.Create<double, double>(min + i * step, generator.Next(0, 1000)))
+              .OrderBy(o => o.Key)
+              .ToList();
+
+            return new FootPrintShape
+              {
+                O = open,
+                C = close,
+                L = Math.Max(0, min - Math.Abs(open)),
+                H = Math.Max(0, max + Math.Abs(open)),
+                Box = new ComponentModel { Color = (close > open ? SKColors.DeepSkyBlue : SKColors.OrangeRed) },
+                Ls = longs,
+                Rs = shorts
+              } as IShape;
+          }).ToList();
+
+      var composer = new Composer
+        {
+          Name = "Demo",
+          Items = points,
+          View = View
+        };
+
+      await composer.Create<CanvasEngine>();
+      await composer.Update();
+    }
+
+    await base.OnAfterRenderAsync(setup);
+  }
+}
