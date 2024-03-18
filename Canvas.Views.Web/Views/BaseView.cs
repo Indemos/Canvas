@@ -1,7 +1,6 @@
 using Canvas.Core;
 using Canvas.Core.Composers;
 using Canvas.Core.Engines;
-using Canvas.Core.Enums;
 using Canvas.Core.Models;
 using Canvas.Core.Services;
 using Distribution.ServiceSpace;
@@ -11,12 +10,8 @@ using Microsoft.JSInterop;
 using ScriptContainer;
 using SkiaSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace Canvas.Views.Web.Views
 {
@@ -91,15 +86,22 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     public virtual void Dispose()
     {
-      ScheduleService?.Dispose();
+      Values?.Clear();
+      Indices?.Clear();
+
+      OnMouseMove = o => { };
+      OnMouseLeave = o => { };
+
+      Engine?.Dispose();
       ScriptService?.Dispose();
+      ScheduleService?.Dispose();
     }
 
     /// <summary>
     /// Get information about event
     /// </summary>
     /// <returns></returns>
-    protected virtual async Task<ViewModel> CreateViewMessage()
+    protected virtual async Task<ViewModel> GetBounds()
     {
       var bounds = await ScriptService.GetElementBounds(Container);
 

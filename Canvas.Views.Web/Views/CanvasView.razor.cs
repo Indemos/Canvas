@@ -1,6 +1,5 @@
 using Canvas.Core;
 using Canvas.Core.Composers;
-using Canvas.Core.Enums;
 using Canvas.Core.Models;
 using Canvas.Core.Services;
 using Microsoft.AspNetCore.Components;
@@ -9,12 +8,11 @@ using ScriptContainer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
 {
-  public partial class CanvasView
+  public partial class CanvasView : IDisposable
   {
     protected virtual string Name { get; set; } = $"{Guid.NewGuid():N}";
     protected virtual PositionModel? Cursor { get; set; }
@@ -122,30 +120,25 @@ namespace Canvas.Views.Web.Views
       Dispose();
 
       ViewService = new EventService { View = this };
-      ScriptService = await(new ScriptService(RuntimeService)).CreateModule();
-      ScriptService.Actions["OnChange"] = async message => await setup();
+      ScriptService = await new ScriptService(RuntimeService).CreateModule();
+      ScriptService.Actions["OnChange"] = o => Setup();
 
       await ScriptService.SubscribeToSize(ChartContainer, "OnChange");
 
-      async Task<IView> setup()
+      Task Setup() => Schedule(async () =>
       {
-        await Schedule(async () =>
-        {
-          Engine?.Dispose();
+        Engine?.Dispose();
 
-          var engine = new T();
-          var message = await CreateViewMessage();
+        var engine = new T();
+        var bounds = await GetBounds();
 
-          Engine = engine.Create(message.Data.X, message.Data.Y);
-          Composer = action();
+        Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
+        Composer = action();
 
-          await Update(Composer.Domain);
-        });
+        await Update(Composer.Domain);
+      });
 
-        return this;
-      }
-
-      return await setup();
+      return this;
     }
   }
 }

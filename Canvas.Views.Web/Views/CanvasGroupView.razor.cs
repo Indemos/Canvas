@@ -2,13 +2,14 @@ using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
 {
-  public partial class CanvasGroupView
+  public partial class CanvasGroupView : IDisposable
   {
     /// <summary>
     /// Item
@@ -84,6 +85,15 @@ namespace Canvas.Views.Web.Views
 
         o.Value.Composer.Update(message);
       });
+    }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public override void Dispose()
+    {
+      base.Dispose();
+      Views?.ForEach(o => o.Value?.Dispose());
     }
   }
 }
