@@ -53,9 +53,9 @@ namespace Canvas.Views.Web.Views
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual Task Update(DomainModel message, string source = null)
+    public virtual async Task Update(DomainModel message, string source = null)
     {
-      return Schedule(async () =>
+      await Schedule(() =>
       {
         if (Engine?.Instance is null)
         {
@@ -65,9 +65,9 @@ namespace Canvas.Views.Web.Views
         Engine.Clear();
         Composer.GetItems(Engine, Composer.Domain);
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
-
-        await InvokeAsync(StateHasChanged);
       });
+
+      await InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
@@ -92,7 +92,6 @@ namespace Canvas.Views.Web.Views
       OnMouseMove = o => { };
       OnMouseLeave = o => { };
 
-      Engine?.Dispose();
       ScriptService?.Dispose();
       ScheduleService?.Dispose();
     }
