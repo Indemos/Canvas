@@ -3,7 +3,7 @@ using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Services;
-using Distribution.ServiceSpace;
+using Distribution.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
