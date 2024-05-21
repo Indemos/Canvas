@@ -179,10 +179,27 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public virtual IDictionary<string, IList<double>> GetSeries(DataModel view, DataModel coordinates)
     {
-      return new Dictionary<string, IList<double>>
+      var group = this;
+      var groups = new Dictionary<string, IList<double>>();
+
+      if (group?.Groups?.Count <= 0)
       {
-        [Composer.Name] = GetSeriesValues(view, coordinates)
-      };
+        return new Dictionary<string, IList<double>>
+        {
+          [Composer.Name] = GetSeriesValues(view, coordinates)
+        };
+      }
+
+      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IShape series);
+
+      if (series?.Groups is null)
+      {
+        return null;
+      }
+
+      series.Groups.ForEach(o => groups[o.Key] = o.Value?.GetSeriesValues(view, coordinates));
+
+      return groups;
     }
 
     /// <summary>

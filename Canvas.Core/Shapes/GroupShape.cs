@@ -8,34 +8,6 @@ namespace Canvas.Core.Shapes
   public class GroupShape : Shape
   {
     /// <summary>
-    /// Get series
-    /// </summary>
-    /// <param name="view"></param>
-    /// <param name="coordinates"></param>
-    /// <returns></returns>
-    public override IDictionary<string, IList<double>> GetSeries(DataModel view, DataModel coordinates)
-    {
-      var group = this;
-      var groups = new Dictionary<string, IList<double>>();
-
-      if (group?.Groups?.Count <= 0)
-      {
-        return base.GetSeries(view, coordinates);
-      }
-
-      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IShape series);
-
-      if (series?.Groups is null)
-      {
-        return null;
-      }
-
-      series.Groups.ForEach(o => groups[o.Key] = o.Value?.GetSeriesValues(view, coordinates));
-
-      return groups;
-    }
-
-    /// <summary>
     /// Grouping implementation
     /// </summary>
     /// <param name="currentGroup"></param>
