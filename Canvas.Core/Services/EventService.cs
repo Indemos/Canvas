@@ -10,8 +10,8 @@ namespace Canvas.Core.Services
 
     protected virtual ViewModel? Position { get; set; }
     protected virtual ViewModel? ScreenPosition { get; set; }
-    protected virtual IEngine Engine => View?.Engine;
     protected virtual IComposer Composer => View?.Composer;
+    protected virtual IEngine Engine => View?.Engine;
 
     /// <summary>
     /// Mouse wheel event
@@ -20,15 +20,15 @@ namespace Canvas.Core.Services
     public virtual void OnWheel(ViewModel e)
     {
       var isZoom = e.IsShape;
-      var message = Composer.Domain;
+      var domain = Composer.Domain;
 
       switch (true)
       {
-        case true when e.Data.Y > 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
-        case true when e.Data.Y < 0: message.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
+        case true when e.Data.Y > 0: domain.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, -1) : Composer.PanIndex(Engine, 1); break;
+        case true when e.Data.Y < 0: domain.IndexDomain = isZoom ? Composer.ZoomIndex(Engine, 1) : Composer.PanIndex(Engine, -1); break;
       }
 
-      Composer.Update(message, Composer.Name);
+      Composer.Update(domain, Composer.Name);
     }
 
     /// <summary>
@@ -43,15 +43,15 @@ namespace Canvas.Core.Services
       {
         var deltaX = ScreenPosition?.Data.X - e.Data.X;
         var deltaY = ScreenPosition?.Data.Y - e.Data.Y;
-        var message = Composer.Domain;
+        var domain = Composer.Domain;
 
         switch (true)
         {
-          case true when deltaX > 0: message.IndexDomain = Composer.PanIndex(Engine, 1); break;
-          case true when deltaX < 0: message.IndexDomain = Composer.PanIndex(Engine, -1); break;
+          case true when deltaX > 0: domain.IndexDomain = Composer.PanIndex(Engine, 1); break;
+          case true when deltaX < 0: domain.IndexDomain = Composer.PanIndex(Engine, -1); break;
         }
 
-        Composer.Update(message, Composer.Name);
+        Composer.Update(domain, Composer.Name);
       }
 
       ScreenPosition = e;
@@ -70,22 +70,22 @@ namespace Canvas.Core.Services
       {
         var deltaX = Position?.Data.X - e.Data.X;
         var deltaY = Position?.Data.Y - e.Data.Y;
-        var message = Composer.Domain;
+        var domain = Composer.Domain;
         var source = Composer.Name;
 
         switch (orientation > 0)
         {
-          case true when deltaX > 0: message.IndexDomain = Composer.ZoomIndex(Engine, -1); break;
-          case true when deltaX < 0: message.IndexDomain = Composer.ZoomIndex(Engine, 1); break;
+          case true when deltaX > 0: domain.IndexDomain = Composer.ZoomIndex(Engine, -1); break;
+          case true when deltaX < 0: domain.IndexDomain = Composer.ZoomIndex(Engine, 1); break;
         }
 
         switch (orientation < 0)
         {
-          case true when deltaY > 0: message.ValueDomain = Composer.ZoomValue(Engine, -1); source = null; break;
-          case true when deltaY < 0: message.ValueDomain = Composer.ZoomValue(Engine, 1); source = null; break;
+          case true when deltaY > 0: domain.ValueDomain = Composer.ZoomValue(Engine, -1); source = null; break;
+          case true when deltaY < 0: domain.ValueDomain = Composer.ZoomValue(Engine, 1); source = null; break;
         }
 
-        Composer.Update(message, source);
+        Composer.Update(domain, source);
       }
 
       Position = e;
@@ -99,11 +99,11 @@ namespace Canvas.Core.Services
     {
       if (e.IsControl)
       {
-        var message = Composer.Domain;
+        var domain = Composer.Domain;
 
-        message.ValueDomain = null;
+        domain.ValueDomain = null;
 
-        Composer.Update(message);
+        Composer.Update(domain);
       }
     }
 

@@ -1,13 +1,14 @@
 using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
+using Distribution.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.Shapes
 {
-  public interface IShape : ICloneable
+  public interface IShape : ICloneable, IGroup
   {
     /// <summary>
     /// X
@@ -25,6 +26,11 @@ namespace Canvas.Core.Shapes
     double? Z { get; set; }
 
     /// <summary>
+    /// Name
+    /// </summary>
+    string Name { get; set; }
+
+    /// <summary>
     /// Reference to panel
     /// </summary>
     IEngine Engine { get; set; }
@@ -38,6 +44,11 @@ namespace Canvas.Core.Shapes
     /// Options
     /// </summary>
     ComponentModel? Component { get; set; }
+
+    /// <summary>
+    /// Shape groups
+    /// </summary>
+    IDictionary<string, IShape> Groups { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -83,7 +94,7 @@ namespace Canvas.Core.Shapes
     IShape GetItem(int index, string name, IList<IShape> items);
   }
 
-  public class Shape : IShape
+  public abstract class Shape : IShape
   {
     /// <summary>
     /// X
@@ -101,6 +112,11 @@ namespace Canvas.Core.Shapes
     public virtual double? Z { get; set; }
 
     /// <summary>
+    /// Name
+    /// </summary>
+    public virtual string Name { get; set; }
+
+    /// <summary>
     /// Reference to panel
     /// </summary>
     public virtual IEngine Engine { get; set; }
@@ -116,6 +132,19 @@ namespace Canvas.Core.Shapes
     public virtual ComponentModel? Component { get; set; }
 
     /// <summary>
+    /// Shape groups
+    /// </summary>
+    public virtual IDictionary<string, IShape> Groups { get; set; }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public Shape()
+    {
+      Groups = new Dictionary<string, IShape>();
+    }
+
+    /// <summary>
     /// Get Min and Max for the current point
     /// </summary>
     /// <param name="index"></param>
@@ -124,17 +153,10 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public virtual double[] GetDomain(int index, string name, IList<IShape> items)
     {
-      var current = GetItem(index, name, items);
-
-      if (current?.Y is null)
+      return new[]
       {
-        return null;
-      }
-
-      return new double[]
-      {
-        current.Y.Value,
-        current.Y.Value
+        Y.Value,
+        Y.Value
       };
     }
 
@@ -171,7 +193,7 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public virtual IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
     {
-      return new double[] { Y ?? 0 };
+      return new[] { Y ?? 0.0 };
     }
 
     /// <summary>
@@ -181,15 +203,79 @@ namespace Canvas.Core.Shapes
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
+    /// <summary>
+    /// Get specific group by position and name
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="name"></param>
+    /// <param name="items"></param>
+    /// <returns></returns>
     public virtual IShape GetItem(int index, string name, IList<IShape> items)
     {
-      return items.ElementAtOrDefault(index);
+      if (name is null)
+      {
+        return items.ElementAtOrDefault(index);
+      }
+
+      var group = items.ElementAtOrDefault(index);
+
+      if (group?.Groups is null)
+      {
+        return null;
+      }
+
+      group.Groups.TryGetValue(Composer.Name, out IShape series);
+
+      if (series?.Groups is null)
+      {
+        return null;
+      }
+
+      series.Groups.TryGetValue(name, out IShape shape);
+
+      return shape;
     }
 
     /// <summary>
     /// Clone
     /// </summary>
     /// <returns></returns>
-    public virtual object Clone() => MemberwiseClone();
+    /// <summary>
+    /// Clone
+    /// </summary>
+    /// <returns></returns>
+    public virtual object Clone()
+    {
+      var clone = MemberwiseClone() as IShape;
+
+      clone.Groups = Groups.ToDictionary(o => o.Key, o => o.Value.Clone() as IShape);
+
+      return clone;
+    }
+
+    /// <summary>
+    /// Grouping index
+    /// </summary>
+    /// <returns></returns>
+    public virtual long GetIndex() => (long)X;
+
+    /// <summary>
+    /// Grouping implementation
+    /// </summary>
+    /// <param name="current"></param>
+    /// <returns></returns>
+    public virtual IGroup Combine(IGroup current)
+    {
+      if (current is not null)
+      {
+        var group = (current as Shape).Clone() as Shape;
+
+        group.Y = Y ?? group.Y;
+
+        return group;
+      }
+
+      return Clone() as IShape;
+    }
   }
 }

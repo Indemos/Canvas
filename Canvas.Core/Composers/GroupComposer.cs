@@ -19,11 +19,11 @@ namespace Canvas.Core.Composers
       View.Values = GetValues();
       View.Indices = GetIndices();
 
-      for (var i = (int)domain.MinIndex; i < domain.MaxIndex; i++)
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
-        var group = Items.ElementAtOrDefault(i) as IGroupShape;
+        var group = Items.ElementAtOrDefault(i);
 
-        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupShape seriesGroup) is false)
+        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IShape seriesGroup) is false)
         {
           continue;
         }
@@ -47,9 +47,9 @@ namespace Canvas.Core.Composers
     /// <returns></returns>
     protected override (double, double, double) GetExtremes(int i, double min, double max, double average)
     {
-      var group = Items.ElementAtOrDefault(i) as IGroupShape;
+      var group = Items.ElementAtOrDefault(i);
 
-      if (group?.Groups is null || group.Groups.TryGetValue(Name, out IGroupShape series) is false)
+      if (group?.Groups is null || group.Groups.TryGetValue(Name, out IShape series) is false)
       {
         return (min, max, average);
       }

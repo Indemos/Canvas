@@ -2,6 +2,7 @@ using Canvas.Core.Engines;
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
+using Distribution.Collections;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -211,7 +212,7 @@ namespace Canvas.Core.Composers
       IndexCount = 9;
 
       Domain = new DomainModel();
-      Items = new List<IShape>();
+      Items = new ObservableGroupCollection<IShape>();
       Components = new Dictionary<string, ComponentModel>();
 
       ShowBoard = o => $"{o:0.00}";
@@ -270,14 +271,15 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Update
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="domain"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual Task Update(DomainModel? message = null, string source = null)
+    public virtual Task Update(DomainModel? domain = null, string source = null)
     {
-      OnDomain(Domain = ComposeDomain(message ?? Domain), source);
+      Domain = ComposeDomain(domain ?? Domain);
+      OnDomain(Domain, source);
 
-      return View.Update(Domain, source);
+      return View.Update(Domain);
     }
 
     /// <summary>
@@ -304,65 +306,6 @@ namespace Canvas.Core.Composers
         item.Engine = engine;
         item.Composer = this;
         item.CreateShape(i, null, Items);
-      }
-    }
-
-    /// <summary>
-    /// Update items
-    /// </summary>
-    /// <param name="engine"></param>
-    /// <param name="domain"></param>
-    /// <returns></returns>
-    public virtual void GetSamples(IEngine engine, DomainModel domain)
-    {
-      var min = double.MaxValue;
-      var max = double.MinValue;
-      var minItem = null as IShape;
-      var maxItem = null as IShape;
-      var count = domain.MaxIndex - domain.MinIndex;
-      var samplesCount = engine.X;
-      var rate = Math.Round(count / samplesCount);
-      var index = 0;
-
-      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
-      {
-        var item = Items.ElementAtOrDefault(i);
-        var itemDomain = item?.GetDomain(i, null, Items);
-
-        if (itemDomain is null)
-        {
-          continue;
-        }
-
-        if (itemDomain[0] < min)
-        {
-          min = itemDomain[0];
-          minItem = item;
-        }
-
-        if (itemDomain[1] > max)
-        {
-          max = itemDomain[1];
-          maxItem = item;
-        }
-
-        if (i % rate == 0)
-        {
-          switch (true)
-          {
-            case true when Math.Abs(min) > Math.Abs(max): item = minItem; break;
-            case true when Math.Abs(min) < Math.Abs(max): item = maxItem; break;
-          }
-
-          item.Engine = engine;
-          item.Composer = this;
-          item.CreateShape(index++, null, Items);
-
-          minItem = null;
-          maxItem = null;
-          min = double.MaxValue;
-          max = double.MinValue;
-        }
       }
     }
 
@@ -551,7 +494,7 @@ namespace Canvas.Core.Composers
         }
       }
 
-      for (var i = 0.0; i <= IndexCount; i++)
+      for (var i = 0; i <= IndexCount; i++)
       {
         createItem(center - i * step);
         createItem(center + i * step);
@@ -586,7 +529,7 @@ namespace Canvas.Core.Composers
         }
       }
 
-      for (var i = 0.0; i <= ValueCount; i++)
+      for (var i = 0; i <= ValueCount; i++)
       {
         createItem(center - i * step);
         createItem(center + i * step);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.Shapes
 {
-  public class ArrowShape : GroupShape, IGroupShape
+  public class ArrowShape : Shape
   {
     /// <summary>
     /// Direction

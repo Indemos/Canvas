@@ -51,9 +51,8 @@ namespace Canvas.Views.Web.Views
     /// Update
     /// </summary>
     /// <param name="message"></param>
-    /// <param name="source"></param>
     /// <returns></returns>
-    public virtual async Task Update(DomainModel message, string source = null)
+    public virtual async Task Update(DomainModel message)
     {
       await Schedule(() =>
       {

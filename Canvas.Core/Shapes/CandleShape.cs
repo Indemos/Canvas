@@ -1,11 +1,12 @@
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
+using Distribution.Collections;
 using System;
 using System.Collections.Generic;
 
 namespace Canvas.Core.Shapes
 {
-  public class CandleShape : GroupShape, IGroupShape
+  public class CandleShape : Shape
   {
     /// <summary>
     /// Low
@@ -108,6 +109,30 @@ namespace Canvas.Core.Shapes
 
       Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
       Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+    }
+
+    /// <summary>
+    /// Grouping implementation
+    /// </summary>
+    /// <param name="current"></param>
+    /// <returns></returns>
+    public override IGroup Combine(IGroup current)
+    {
+      if (current is not null)
+      {
+        var group = (current as CandleShape).Clone() as CandleShape;
+        var price = Y ?? group.Y.Value;
+
+        group.Y = price;
+        group.O ??= O ?? price;
+        group.L = Math.Min(group.L ?? price, L ?? price);
+        group.H = Math.Max(group.H ?? price, H ?? price);
+        group.C = C ?? price;
+
+        return group;
+      }
+
+      return this;
     }
   }
 }

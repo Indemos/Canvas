@@ -27,11 +27,11 @@
         .Select(i => new GroupShape
         {
           X = i,
-          Groups = new Dictionary<string, IGroupShape>
+          Groups = new Dictionary<string, IShape>
           {
             ["Indicators"] = new GroupShape
             {
-              Groups = new Dictionary<string, IGroupShape>
+              Groups = new Dictionary<string, IShape>
               {
                 ["Ups"] = new BarShape { Y = generator.Next(0, 111), Component = comUp },
                 ["Downs"] = new BarShape { Y = generator.Next(-133, 0), Component = comDown },

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Canvas.Core.Shapes
 {
-  public class LineShape : GroupShape, IGroupShape
+  public class LineShape : Shape
   {
     /// <summary>
     /// Render the shape

@@ -1,12 +1,10 @@
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Canvas.Core.Shapes
 {
-  public class BarShape : GroupShape, IGroupShape
+  public class BarShape : Shape
   {
     /// <summary>
     /// Render the shape

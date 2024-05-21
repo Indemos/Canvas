@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Canvas.Core.Shapes
 {
-  public class ColorMapShape : GroupShape, IGroupShape
+  public class ColorMapShape : Shape
   {
     /// <summary>
     /// Points

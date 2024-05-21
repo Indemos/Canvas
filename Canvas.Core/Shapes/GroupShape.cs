@@ -1,32 +1,12 @@
 using Canvas.Core.Models;
+using Distribution.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.Shapes
 {
-  public interface IGroupShape : IShape
+  public class GroupShape : Shape
   {
-    /// <summary>
-    /// Shape groups
-    /// </summary>
-    IDictionary<string, IGroupShape> Groups { get; set; }
-  }
-
-  public class GroupShape : Shape, IGroupShape
-  {
-    /// <summary>
-    /// Shape groups
-    /// </summary>
-    public virtual IDictionary<string, IGroupShape> Groups { get; set; }
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public GroupShape()
-    {
-      Groups = new Dictionary<string, IGroupShape>(); 
-    }
-
     /// <summary>
     /// Get series
     /// </summary>
@@ -43,7 +23,7 @@ namespace Canvas.Core.Shapes
         return base.GetSeries(view, coordinates);
       }
 
-      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IGroupShape series);
+      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IShape series);
 
       if (series?.Groups is null)
       {
@@ -56,49 +36,31 @@ namespace Canvas.Core.Shapes
     }
 
     /// <summary>
-    /// Get specific group by position and name
+    /// Grouping implementation
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="name"></param>
-    /// <param name="items"></param>
+    /// <param name="currentGroup"></param>
     /// <returns></returns>
-    public override IShape GetItem(int index, string name, IList<IShape> items)
+    public override IGroup Combine(IGroup currentGroup)
     {
-      if (name is null)
+      var group = ((currentGroup ?? this) as IShape).Clone() as IShape;
+
+      foreach (var sourceArea in Groups)
       {
-        return base.GetItem(index, null, items);
+        group.Groups[sourceArea.Key] = group.Groups.TryGetValue(sourceArea.Key, out IShape _) ?
+          group.Groups[sourceArea.Key] :
+          new GroupShape();
+
+        foreach (var sourceSeries in sourceArea.Value.Groups)
+        {
+          var area = sourceArea.Key;
+          var series = sourceSeries.Key;
+          var shape = sourceSeries.Value;
+
+          group.Groups[area].Groups[series] = shape.Combine(group.Groups[area].Groups[series]) as IShape;
+        }
       }
 
-      var group = items.ElementAtOrDefault(index) as IGroupShape;
-
-      if (group?.Groups is null)
-      {
-        return null;
-      }
-
-      group.Groups.TryGetValue(Composer.Name, out IGroupShape series);
-
-      if (series?.Groups is null)
-      {
-        return null;
-      }
-
-      series.Groups.TryGetValue(name, out IGroupShape shape);
-
-      return shape;
-    }
-
-    /// <summary>
-    /// Clone
-    /// </summary>
-    /// <returns></returns>
-    public override object Clone()
-    {
-      var clone = base.Clone() as IGroupShape;
-
-      clone.Groups = Groups.ToDictionary(o => o.Key, o => o.Value.Clone() as IGroupShape);
-
-      return clone;
+      return group;
     }
   }
 }

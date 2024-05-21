@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Canvas.Core.Shapes
 {
-  public class FootPrintShape : CandleShape, IGroupShape
+  public class FootPrintShape : CandleShape
   {
     /// <summary>
     /// Price levels on the left side of the bar

@@ -14,7 +14,7 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Item
     /// </summary>
-    public IGroupShape Item { get; set; }
+    public GroupShape Item { get; set; }
 
     /// <summary>
     /// Views
@@ -53,12 +53,12 @@ namespace Canvas.Views.Web.Views
           return composer;
         });
 
-        composer.OnDomain += (message, source) => Views.ForEach(o =>
+        composer.OnDomain += (domain, source) => Views.ForEach(o =>
         {
           if (source is not null && Equals(composer.Name, o.Value.Composer.Name) is false)
           {
-            message.ValueDomain = o.Value.Composer.Domain.ValueDomain;
-            o.Value.Composer.Update(message);
+            domain.ValueDomain = o.Value.Composer.Domain.ValueDomain;
+            o.Value.Composer.Update(domain);
           }
         });
       }

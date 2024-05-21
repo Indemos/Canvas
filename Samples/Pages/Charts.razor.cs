@@ -2,6 +2,7 @@ using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
 using Canvas.Views.Web.Views;
+using Distribution.Collections;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -11,166 +12,94 @@ using System.Timers;
 
 namespace Canvas.Client.Pages
 {
-  public partial class Charts : IDisposable, IAsyncDisposable
+  public partial class Charts
   {
     protected CanvasGroupView View { get; set; }
+    protected DateTime Time { get; set; } = DateTime.Now;
+    protected DateTime TimeGroup { get; set; } = DateTime.Now;
+    protected ObservableGroupCollection<IShape> Points { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool setup)
     {
       if (setup)
       {
-        View.Item = new GroupShape
-        {
-          Groups = new Dictionary<string, IGroupShape>
-          {
-            ["Assets"] = new GroupShape
-            {
-              Groups = new Dictionary<string, IGroupShape>
-              {
-                ["Prices"] = new CandleShape(),
-                ["Arrows"] = new ArrowShape()
-              }
-            },
-            ["Indicators"] = new GroupShape
-            {
-              Groups = new Dictionary<string, IGroupShape>
-              {
-                ["Bars"] = new BarShape()
-              }
-            },
-            ["Lines"] = new GroupShape
-            {
-              Groups = new Dictionary<string, IGroupShape>
-              {
-                ["X"] = new LineShape(),
-                ["Y"] = new LineShape()
-              }
-            },
-            ["Performance"] = new GroupShape
-            {
-              Groups = new Dictionary<string, IGroupShape>
-              {
-                ["Balance"] = new AreaShape()
-              }
-            }
-          }
-        };
+        View.Item = GetSample();
 
-        (await View.CreateViews<CanvasEngine>()).ForEach(o =>
-        {
-          o.ShowIndex = v => GetDateByIndex(o.Items, (int)v);
-        });
+        var interval = new Timer(TimeSpan.FromMicroseconds(1));
+        var views = await View.CreateViews<CanvasEngine>();
 
-        Time = DateTime.Now;
-        Price = Generator.Next(1000, 5000);
-        Interval.Enabled = true;
-        Interval.Elapsed += (o, e) =>
-        {
-          if (Points.Count < 100) Counter(true);
-        };
+        views.ForEach(o => o.ShowIndex = v => GetDateByIndex(o.Items, (int)v));
+
+        interval.Elapsed += (o, e) => OnData();
+        interval.Start();
       }
 
       await base.OnAfterRenderAsync(setup);
     }
 
-    protected string GetDateByIndex(IList<IShape> items, int v)
+    protected GroupShape GetSample()
     {
-      var empty = v <= 0 ?
-        items.FirstOrDefault()?.X :
-        items.LastOrDefault()?.X;
+      static GroupShape GetGroup() => new() { Groups = new Dictionary<string, IShape>() };
 
-      var stamp = (long)(
-        items.ElementAtOrDefault(v)?.X ??
-        empty ??
-        DateTime.Now.Ticks);
+      var group = GetGroup();
+
+      group.Groups["Assets"] = GetGroup();
+      group.Groups["Assets"].Groups["Prices"] = new CandleShape();
+      group.Groups["Assets"].Groups["Arrows"] = new ArrowShape();
+
+      group.Groups["Indicators"] = GetGroup();
+      group.Groups["Indicators"].Groups["Bars"] = new BarShape();
+
+      group.Groups["Lines"] = GetGroup();
+      group.Groups["Lines"].Groups["X"] = new LineShape();
+      group.Groups["Lines"].Groups["Y"] = new LineShape();
+
+      group.Groups["Performance"] = GetGroup();
+      group.Groups["Performance"].Groups["Balance"] = new AreaShape();
+
+      return group;
+    }
+
+    protected string GetDateByIndex(IList<IShape> items, int index)
+    {
+      var empty = index <= 0 ? items.FirstOrDefault()?.X : items.LastOrDefault()?.X;
+      var stamp = (long)(items.ElementAtOrDefault(index)?.X ?? empty ?? DateTime.Now.Ticks);
 
       return $"{new DateTime(stamp):MM/dd/yyyy HH:mm}";
     }
 
-    #region Generator
-
-    protected double Price { get; set; }
-    protected DateTime Time { get; set; }
-    protected Timer Interval { get; set; } = new(1);
-    protected Random Generator { get; set; } = new();
-    protected List<IShape> Points { get; set; } = new();
-
     /// <summary>
     /// On timer event
     /// </summary>
-    protected void Counter(bool active)
+    protected void OnData()
     {
-      var min = Generator.Next(1000, 2000);
-      var max = Generator.Next(3000, 5000);
-      var point = Generator.Next(min, max);
+      var sample = GetSample();
+      var generator = new Random();
+      var min = generator.Next(1000, 2000);
+      var max = generator.Next(3000, 5000);
+      var point = generator.Next(min, max);
+      var duration = TimeSpan.FromSeconds(5);
+      var candleColor = point % 2 is 0 ? SKColors.LimeGreen : SKColors.OrangeRed;
+      var barColor = point % 2 is 0 ? SKColors.DeepSkyBlue : SKColors.OrangeRed;
+      var color = SKColors.DeepSkyBlue;
+      var direction = point % 2 is 0 ? 1 : -1;
 
-      if (IsNextFrame())
-      {
-        var group = (Points.LastOrDefault() ?? View.Item).Clone() as IGroupShape;
-        var groupCandle = group.Groups["Assets"].Groups["Prices"] as CandleShape;
+      Time += TimeSpan.FromMinutes(1);
+      TimeGroup = Time - TimeGroup > TimeSpan.FromMinutes(10) ? Time : TimeGroup;
 
-        groupCandle.L = point;
-        groupCandle.H = point;
-        group.X = Time.Ticks;
+      sample.X = TimeGroup.Ticks;
+      sample.Groups["Lines"].Groups["X"] = new LineShape { Y = point };
+      sample.Groups["Lines"].Groups["Y"] = new LineShape { Y = point };
+      sample.Groups["Indicators"].Groups["Bars"] = new BarShape { Y = point, Component = new ComponentModel { Color = barColor } };
+      sample.Groups["Performance"].Groups["Balance"] = new AreaShape { Y = point, Component = new ComponentModel { Color = SKColors.DeepSkyBlue } };
+      sample.Groups["Assets"].Groups["Arrows"] = new ArrowShape { Y = point, Direction = direction };
+      sample.Groups["Assets"].Groups["Prices"] = new CandleShape { Y = point, Component = new ComponentModel { Color = candleColor } };
 
-        Price = groupCandle.C ?? point;
-        Points.Add(group);
-      }
-
-      Time = Time.AddSeconds(1);
-
-      var current = Points.Last() as IGroupShape;
-      var currentCandle = current.Groups["Assets"].Groups["Prices"] as CandleShape;
-      var color = point > Price ? SKColors.LimeGreen : SKColors.OrangeRed;
-      var direction = point > Price ? 1 : -1;
-
-      current.Groups["Lines"].Groups["X"] = new LineShape { Y = point };
-      current.Groups["Lines"].Groups["Y"] = new LineShape { Y = point };
-      current.Groups["Indicators"].Groups["Bars"] = new BarShape { Y = point };
-      current.Groups["Performance"].Groups["Balance"] = new AreaShape { Y = point };
-      current.Groups["Assets"].Groups["Arrows"] = new ArrowShape { Y = (point + Price) / 2, Direction = direction };
-      current.Groups["Assets"].Groups["Prices"] = new CandleShape
-      {
-        O = Price,
-        C = point,
-        L = Math.Min(currentCandle?.L ?? point, point),
-        H = Math.Max(currentCandle?.H ?? point, point),
-        Box = new ComponentModel { Color = color }
-      };
+      Points.Add(sample, true);
 
       var domain = new DomainModel { IndexDomain = new int[] { Points.Count - 100, Points.Count } };
 
       View.Update(domain, Points);
     }
-
-    /// <summary>
-    /// Create new bar when it's time
-    /// </summary>
-    /// <returns></returns>
-    protected bool IsNextFrame()
-    {
-      return Points.Count == 0 || Time.Ticks - Points.LastOrDefault().X >= TimeSpan.FromMinutes(1).Ticks;
-    }
-
-    /// <summary>
-    /// Dispose
-    /// </summary>
-    /// <returns></returns>
-    public void Dispose()
-    {
-      Interval.Dispose();
-    }
-
-    /// <summary>
-    /// Dispose
-    /// </summary>
-    /// <returns></returns>
-    public ValueTask DisposeAsync()
-    {
-      Dispose();
-      return new ValueTask(Task.CompletedTask);
-    }
   }
-
-  #endregion
 }
