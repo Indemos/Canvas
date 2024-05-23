@@ -15,6 +15,7 @@ namespace Canvas.Client.Pages
   public partial class Charts
   {
     protected CanvasGroupView View { get; set; }
+    protected Random Generator { get; set; } = new();
     protected DateTime Time { get; set; } = DateTime.Now;
     protected DateTime TimeGroup { get; set; } = DateTime.Now;
     protected ObservableGroupCollection<IShape> Points { get; set; } = new();
@@ -30,8 +31,16 @@ namespace Canvas.Client.Pages
 
         views.ForEach(o => o.ShowIndex = v => GetDateByIndex(o.Items, (int)v));
 
-        interval.Elapsed += (o, e) => OnData();
-        interval.Start();
+        interval.Enabled = true;
+        interval.Elapsed += (o, e) =>
+        {
+          if (Points.Count >= 100)
+          {
+            interval.Stop();
+          }
+
+          OnData();
+        };
       }
 
       await base.OnAfterRenderAsync(setup);
@@ -74,10 +83,9 @@ namespace Canvas.Client.Pages
     protected void OnData()
     {
       var sample = GetSample();
-      var generator = new Random();
-      var min = generator.Next(1000, 2000);
-      var max = generator.Next(3000, 5000);
-      var point = generator.Next(min, max);
+      var min = Generator.Next(1000, 2000);
+      var max = Generator.Next(3000, 5000);
+      var point = Generator.Next(min, max);
       var duration = TimeSpan.FromSeconds(5);
       var candleColor = point % 2 is 0 ? SKColors.LimeGreen : SKColors.OrangeRed;
       var barColor = point % 2 is 0 ? SKColors.DeepSkyBlue : SKColors.OrangeRed;
@@ -88,8 +96,8 @@ namespace Canvas.Client.Pages
       TimeGroup = Time - TimeGroup > TimeSpan.FromMinutes(10) ? Time : TimeGroup;
 
       sample.X = TimeGroup.Ticks;
-      sample.Groups["Lines"].Groups["X"] = new LineShape { Y = point };
-      sample.Groups["Lines"].Groups["Y"] = new LineShape { Y = point };
+      sample.Groups["Lines"].Groups["X"] = new LineShape { Y = point + max };
+      sample.Groups["Lines"].Groups["Y"] = new LineShape { Y = point - min };
       sample.Groups["Indicators"].Groups["Bars"] = new BarShape { Y = point, Component = new ComponentModel { Color = barColor } };
       sample.Groups["Performance"].Groups["Balance"] = new AreaShape { Y = point, Component = new ComponentModel { Color = SKColors.DeepSkyBlue } };
       sample.Groups["Assets"].Groups["Arrows"] = new ArrowShape { Y = point, Direction = direction };

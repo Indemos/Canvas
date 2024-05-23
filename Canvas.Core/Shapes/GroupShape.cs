@@ -1,7 +1,5 @@
-using Canvas.Core.Models;
 using Distribution.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Canvas.Core.Shapes
 {
@@ -10,29 +8,43 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Grouping implementation
     /// </summary>
-    /// <param name="currentGroup"></param>
+    /// <param name="previous"></param>
+    /// <param name="current"></param>
     /// <returns></returns>
-    public override IGroup Combine(IGroup currentGroup)
+    public override IGroup Combine(IGroup previous, IGroup current)
     {
-      var group = ((currentGroup ?? this) as IShape).Clone() as IShape;
+      var group = ((current ?? this) as IShape).Clone() as IShape;
 
       foreach (var sourceArea in Groups)
       {
-        group.Groups[sourceArea.Key] = group.Groups.TryGetValue(sourceArea.Key, out IShape _) ?
-          group.Groups[sourceArea.Key] :
-          new GroupShape();
-
         foreach (var sourceSeries in sourceArea.Value.Groups)
         {
-          var area = sourceArea.Key;
-          var series = sourceSeries.Key;
-          var shape = sourceSeries.Value;
+          var previousArea = Map((previous as IShape)?.Groups, sourceArea.Key);
+          var previousSeries = Map(previousArea?.Groups, sourceSeries.Key);
+          var currentArea = group.Groups[sourceArea.Key] = Map(
+            group.Groups,
+            sourceArea.Key,
+            previousArea?.Clone() as IShape);
 
-          group.Groups[area].Groups[series] = shape.Combine(group.Groups[area].Groups[series]) as IShape;
+          currentArea.Groups[sourceSeries.Key] = sourceSeries
+            .Value
+            .Combine(previousSeries, Map(currentArea.Groups, sourceSeries.Key)) as IShape;
         }
       }
 
       return group;
+    }
+
+    /// <summary>
+    /// Get dictionary value
+    /// </summary>
+    /// <param name="map"></param>
+    /// <param name="index"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    protected virtual IShape Map(IDictionary<string, IShape> map, string index, IShape value = null)
+    {
+      return map is not null && index is not null && map.TryGetValue(index, out var o) ? o : value;
     }
   }
 }

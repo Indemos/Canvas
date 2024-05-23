@@ -279,20 +279,26 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Grouping implementation
     /// </summary>
+    /// <param name="previous"></param>
     /// <param name="current"></param>
     /// <returns></returns>
-    public virtual IGroup Combine(IGroup current)
+    public virtual IGroup Combine(IGroup previous, IGroup current)
     {
       if (current is not null)
       {
-        var group = (current as Shape).Clone() as Shape;
+        var currentItem = (current as IShape).Clone() as IShape;
+        
+        currentItem.Y = Y ?? currentItem.Y;
 
-        group.Y = Y ?? group.Y;
-
-        return group;
+        return currentItem;
       }
 
-      return Clone() as IShape;
+      if (previous is not null)
+      {
+        return (previous as IShape).Clone() as IShape;
+      }
+
+      return this;
     }
   }
 }

@@ -114,13 +114,14 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Grouping implementation
     /// </summary>
+    /// <param name="previous"></param>
     /// <param name="current"></param>
     /// <returns></returns>
-    public override IGroup Combine(IGroup current)
+    public override IGroup Combine(IGroup previous, IGroup current)
     {
       if (current is not null)
       {
-        var group = (current as CandleShape).Clone() as CandleShape;
+        var group = (current as IShape).Clone() as CandleShape;
         var price = Y ?? group.Y.Value;
 
         group.Y = price;
@@ -130,6 +131,11 @@ namespace Canvas.Core.Shapes
         group.C = C ?? price;
 
         return group;
+      }
+
+      if (previous is not null)
+      {
+        return (previous as IShape).Clone() as IShape;
       }
 
       return this;

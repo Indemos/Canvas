@@ -1,6 +1,5 @@
 using Canvas.Core.Shapes;
 using Distribution.Collections;
-using System.Diagnostics;
 
 namespace Tests
 {
@@ -227,7 +226,6 @@ namespace Tests
       Assert.Equal(updateCandle.L, price + 6);
       Assert.Equal(updateCandle.C, priceUpdate + 6);
 
-
       Assert.Equal(sample.X, stamp.AddMinutes(1).Ticks);
       Assert.Equal(sample.Groups["Lines"].Groups["X"].Y, priceSample + 1);
       Assert.Equal(sample.Groups["Lines"].Groups["Y"].Y, priceSample + 2);
@@ -283,6 +281,48 @@ namespace Tests
       Assert.Equal(updateCandle.H, sourceCandle.H);
       Assert.Equal(updateCandle.L, sourceCandle.L);
       Assert.Equal(updateCandle.C, sourceCandle.C);
+    }
+
+    [Fact]
+    public void ImmutableUpdate()
+    {
+      var price = 5.5;
+      var priceUpdate = 10.5;
+      var stamp = DateTime.Now;
+      var collection = Steps([KeyValuePair.Create(stamp.AddMinutes(-10), price), KeyValuePair.Create(stamp, priceUpdate)]);
+      var update = GetSample();
+      var sourceCandle = new CandleShape { O = 5, H = 20, L = 5, C = 10, Y = 55 };
+      var immutableCandle = collection.First().Groups["Assets"].Groups["Prices"].Clone() as CandleShape;
+
+      update.X = stamp.Ticks;
+      update.Groups["Assets"].Groups["Prices"] = sourceCandle;
+
+      collection.Add(update, true);
+
+      var group = collection.First();
+
+      Assert.Equal(2, collection.Count);
+
+      Assert.Equal(4, group.Groups.Count);
+      Assert.Equal(2, group.Groups["Lines"].Groups.Count);
+      Assert.Equal(2, group.Groups["Assets"].Groups.Count);
+      Assert.Single(group.Groups["Indicators"].Groups);
+      Assert.Single(group.Groups["Performance"].Groups);
+
+      Assert.Equal(group.X, stamp.AddMinutes(-10).Ticks);
+      Assert.Equal(group.Groups["Lines"].Groups["X"].Y, price + 1);
+      Assert.Equal(group.Groups["Lines"].Groups["Y"].Y, price + 2);
+      Assert.Equal(group.Groups["Indicators"].Groups["Bars"].Y, price + 3);
+      Assert.Equal(group.Groups["Performance"].Groups["Balance"].Y, price + 4);
+      Assert.Equal(group.Groups["Assets"].Groups["Arrows"].Y, price + 5);
+      Assert.Equal(group.Groups["Assets"].Groups["Prices"].Y, price + 6);
+
+      var updateCandle = group.Groups["Assets"].Groups["Prices"] as CandleShape;
+
+      Assert.Equal(updateCandle.O, price + 6);
+      Assert.Equal(updateCandle.H, immutableCandle.H);
+      Assert.Equal(updateCandle.L, immutableCandle.L);
+      Assert.Equal(updateCandle.C, immutableCandle.C);
     }
   }
 }
