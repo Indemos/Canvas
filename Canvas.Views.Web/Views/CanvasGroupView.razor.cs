@@ -14,7 +14,7 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Item
     /// </summary>
-    public GroupShape Item { get; set; }
+    public IShape Item { get; set; }
 
     /// <summary>
     /// Views

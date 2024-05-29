@@ -2,7 +2,6 @@ using Canvas.Core.Engines;
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
-using Distribution.Collections;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -212,7 +211,7 @@ namespace Canvas.Core.Composers
       IndexCount = 9;
 
       Domain = new DomainModel();
-      Items = new ObservableGroupCollection<IShape>();
+      Items = new List<IShape>();
       Components = new Dictionary<string, ComponentModel>();
 
       ShowBoard = o => $"{o:0.00}";

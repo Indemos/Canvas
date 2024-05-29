@@ -24,12 +24,12 @@
       var comAverage = new ComponentModel { Size = 1 };
       var points = Enumerable
         .Range(1, 117)
-        .Select(i => new GroupShape
+        .Select(i => new Shape
         {
           X = i,
           Groups = new Dictionary<string, IShape>
           {
-            ["Indicators"] = new GroupShape
+            ["Indicators"] = new Shape
             {
               Groups = new Dictionary<string, IShape>
               {

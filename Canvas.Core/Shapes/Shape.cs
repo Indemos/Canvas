@@ -1,14 +1,14 @@
 using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
-using Distribution.Collections;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.Shapes
 {
-  public interface IShape : ICloneable, IGroup
+  public interface IShape : ICloneable
   {
     /// <summary>
     /// X
@@ -94,7 +94,7 @@ namespace Canvas.Core.Shapes
     IShape GetItem(int index, string name, IList<IShape> items);
   }
 
-  public abstract class Shape : IShape
+  public class Shape : IShape
   {
     /// <summary>
     /// X
@@ -153,6 +153,11 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public virtual double[] GetDomain(int index, string name, IList<IShape> items)
     {
+      if (Y is null)
+      {
+        return null;
+      }
+
       return new[]
       {
         Y.Value,
@@ -220,13 +225,6 @@ namespace Canvas.Core.Shapes
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    /// <summary>
-    /// Get specific group by position and name
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="name"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
     public virtual IShape GetItem(int index, string name, IList<IShape> items)
     {
       if (name is null)
@@ -271,34 +269,10 @@ namespace Canvas.Core.Shapes
     }
 
     /// <summary>
-    /// Grouping index
-    /// </summary>
-    /// <returns></returns>
-    public virtual long GetIndex() => (long)X;
-
-    /// <summary>
     /// Grouping implementation
     /// </summary>
-    /// <param name="previous"></param>
-    /// <param name="current"></param>
+    /// <param name="shape"></param>
     /// <returns></returns>
-    public virtual IGroup Combine(IGroup previous, IGroup current)
-    {
-      if (current is not null)
-      {
-        var currentItem = (current as IShape).Clone() as IShape;
-        
-        currentItem.Y = Y ?? currentItem.Y;
-
-        return currentItem;
-      }
-
-      if (previous is not null)
-      {
-        return (previous as IShape).Clone() as IShape;
-      }
-
-      return this;
-    }
+    public virtual IShape Update(IShape shape) => this;
   }
 }

@@ -1,6 +1,5 @@
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
-using Distribution.Collections;
 using System;
 using System.Collections.Generic;
 
@@ -115,28 +114,16 @@ namespace Canvas.Core.Shapes
     /// Grouping implementation
     /// </summary>
     /// <param name="previous"></param>
-    /// <param name="current"></param>
     /// <returns></returns>
-    public override IGroup Combine(IGroup previous, IGroup current)
+    public override IShape Update(IShape previous)
     {
-      if (current is not null)
-      {
-        var group = (current as IShape).Clone() as CandleShape;
-        var price = Y ?? group.Y.Value;
+      var bar = previous as CandleShape;
+      var price = Y ?? C ?? bar.Y ?? bar.C.Value;
 
-        group.Y = price;
-        group.O ??= O ?? price;
-        group.L = Math.Min(group.L ?? price, L ?? price);
-        group.H = Math.Max(group.H ?? price, H ?? price);
-        group.C = C ?? price;
-
-        return group;
-      }
-
-      if (previous is not null)
-      {
-        return (previous as IShape).Clone() as IShape;
-      }
+      Y = C = price;
+      O = bar.O ?? O ?? price;
+      L = Math.Min(bar.L ?? price, L ?? price);
+      H = Math.Max(bar.H ?? price, H ?? price);
 
       return this;
     }
