@@ -93,6 +93,9 @@ namespace Canvas.Views.Web.Views
 
       ScriptService?.Dispose();
       ScheduleService?.Dispose();
+
+      ScriptService = null;
+      ScheduleService = null;
     }
 
     /// <summary>
