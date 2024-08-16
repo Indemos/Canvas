@@ -28,18 +28,18 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Engine
     /// </summary>
-    public virtual IEngine Engine { get; protected set; }
+    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Composer
     /// </summary>
-    public virtual IComposer Composer { get; protected set; }
+    public virtual IComposer Composer { get; set; }
 
     /// <summary>
     /// Labels
     /// </summary>
-    public virtual IList<MarkerModel> Values { get; set; } = new List<MarkerModel>();
-    public virtual IList<MarkerModel> Indices { get; set; } = new List<MarkerModel>();
+    public virtual IList<MarkerModel> Values { get; set; } = [];
+    public virtual IList<MarkerModel> Indices { get; set; } = [];
 
     /// <summary>
     /// Events

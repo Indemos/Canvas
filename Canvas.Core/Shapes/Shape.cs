@@ -2,7 +2,6 @@ using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -215,7 +214,7 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public virtual IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
     {
-      return new[] { Y ?? 0.0 };
+      return [Y ?? 0.0];
     }
 
     /// <summary>

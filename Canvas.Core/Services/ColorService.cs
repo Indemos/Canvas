@@ -26,10 +26,10 @@ namespace Canvas.Core.Services
     /// <summary>
     /// Color map
     /// </summary>
-    public virtual IList<SKColor> Map { get; set; } = new SKColor[] {
+    public virtual IList<SKColor> Map { get; set; } = [
       SKColors.Blue,
       SKColors.Red
-    };
+    ];
 
     /// <summary>
     /// Create color for value

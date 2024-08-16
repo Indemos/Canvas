@@ -211,8 +211,8 @@ namespace Canvas.Core.Composers
       IndexCount = 9;
 
       Domain = new DomainModel();
-      Items = new List<IShape>();
       Components = new Dictionary<string, ComponentModel>();
+      Items = [];
 
       ShowBoard = o => $"{o:0.00}";
       ShowIndex = o => $"{o:0.00}";
@@ -548,8 +548,8 @@ namespace Canvas.Core.Composers
       var autoMax = Items.Count;
       var response = domain;
 
-      response.AutoValueDomain = new[] { 0.0, 0.0 };
-      response.AutoIndexDomain = new[] { autoMin, autoMax };
+      response.AutoValueDomain = [0.0, 0.0];
+      response.AutoIndexDomain = [autoMin, autoMax];
 
       var average = 0.0;
       var min = double.MaxValue;

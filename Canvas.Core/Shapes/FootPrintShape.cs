@@ -11,12 +11,12 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Price levels on the left side of the bar
     /// </summary>
-    public virtual IList<KeyValuePair<double, double>> Ls { get; set; } = new List<KeyValuePair<double, double>>();
+    public virtual IList<KeyValuePair<double, double>> Ls { get; set; } = [];
 
     /// <summary>
     /// Price levels on the right side of the bar
     /// </summary>
-    public virtual IList<KeyValuePair<double, double>> Rs { get; set; } = new List<KeyValuePair<double, double>>();
+    public virtual IList<KeyValuePair<double, double>> Rs { get; set; } = [];
 
     /// <summary>
     /// Render the shape

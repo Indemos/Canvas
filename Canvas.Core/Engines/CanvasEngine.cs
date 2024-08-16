@@ -57,8 +57,8 @@ namespace Canvas.Core.Engines
       Dispose();
 
       _curve = new SKPath();
-      _dotLine = SKPathEffect.CreateDash(new float[] { 1, 3 }, 0);
-      _dashLine = SKPathEffect.CreateDash(new float[] { 3, 3 }, 0);
+      _dotLine = SKPathEffect.CreateDash([1, 3], 0);
+      _dashLine = SKPathEffect.CreateDash([3, 3], 0);
 
       _penLine = new SKPaint
       {
@@ -301,7 +301,7 @@ namespace Canvas.Core.Engines
     {
       using (var image = Map.Encode(imageType, quality))
       {
-        return image is null ? Array.Empty<byte>() : image.ToArray();
+        return image is null ? [] : image.ToArray();
       }
     }
 
