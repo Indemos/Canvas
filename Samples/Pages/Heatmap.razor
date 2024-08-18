@@ -31,15 +31,14 @@
     if (setup)
     {
       var generator = new Random();
-      var indexLabels = new[] { "USD", "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD", "SGD", "UAH", "JPY", "CNY", "INR", "SEK", "AUD" };
-      var valueLabels = new[] { "USD", "EUR", "CHF", "AUD", "GBP", "USD", "EUR", "CHF", "AUD" };
-      var max = valueLabels.Length;
-      var min = 0;
-      var colorService = new ColorService { Min = min, Max = max, Mode = ShadeEnum.Intensity };
-      var points = Enumerable.Range(0, indexLabels.Length).Select(i => new ColorMapShape
+      var labels = new[] { "USD", "EUR", "CHF", "AUD", "GBP", "CAD", "DKK", "NZD", "SGD", "UAH", "JPY", "CNY", "INR", "SEK", "AUD" };
+      var max = labels.Length;
+      var min = -labels.Length / 2;
+      var colorService = new ColorService { Min = min, Max = max, Mode = ShadeEnum.Mirror };
+      var range = Enumerable.Range(min, max);
+      var points = Enumerable.Range(0, labels.Length).Select(i => new ColorMapShape
       {
-        Points = Enumerable
-          .Range(min, max)
+        Points = range
           .Select(o => new ComponentModel { Size = o, Color = colorService.GetColor(o) })
           .OrderBy(o => generator.Next())
           .ToList()
@@ -51,10 +50,10 @@
         Name = "Correlation",
         Items = points,
         View = View,
-        IndexCount = indexLabels.Length,
-        ValueCount = 6,
-        ShowIndex = i => indexLabels.ElementAtOrDefault((int)i),
-        ShowValue = i => valueLabels.ElementAtOrDefault((int)i)
+        IndexCount = labels.Length,
+        ValueCount = 5,
+        ShowIndex = i => labels.ElementAtOrDefault((int)i),
+        ShowValue = i => labels.ElementAtOrDefault((int)i)
       };
 
       await composer.Create<CanvasEngine>();

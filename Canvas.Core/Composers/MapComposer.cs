@@ -16,30 +16,30 @@ namespace Canvas.Core.Composers
     {
       var minIndex = Domain.MinIndex;
       var maxIndex = Domain.MaxIndex;
-      var range = maxIndex - minIndex + 0.0;
-      var stepSize = View.Engine.X / Items.Count;
-      var step = Math.Round(range / Math.Min(IndexCount, range), MidpointRounding.ToEven);
+      var range = 0.0 + maxIndex - minIndex;
+      var count = Math.Min(IndexCount, range);
+      var step = Math.Round(range / count, MidpointRounding.ToEven);
       var items = new List<MarkerModel>();
 
       void createItem(double i)
       {
-        if (i >= minIndex && i < maxIndex)
+        if (i >= minIndex && i <= maxIndex)
         {
           var position = GetItemPosition(View.Engine, i, 0).X;
 
           items.Add(new MarkerModel
           {
             Line = 0,
-            Marker = position + stepSize / 2.0,
+            Marker = position,
             Caption = ShowIndex(Math.Round(i, MidpointRounding.ToZero))
           });
         }
       }
 
-      for (var i = 0.0; i < IndexCount / 2.0; i++)
+      for (var i = 0; i < count / 2; i++)
       {
-        createItem(minIndex + i * step);
-        createItem(maxIndex - i * step - 1.0);
+        createItem(maxIndex - i * step - 0.5);
+        createItem(minIndex + i * step + 0.5);
       }
 
       return items;
@@ -52,30 +52,30 @@ namespace Canvas.Core.Composers
     {
       var minValue = Domain.MinValue;
       var maxValue = Domain.MaxValue;
-      var pointsCount = Items.Max(o => (o as ColorMapShape).Points.Count + 0.0);
-      var stepSize = View.Engine.Y / pointsCount;
-      var step = Math.Round(pointsCount / Math.Min(ValueCount, pointsCount), MidpointRounding.ToEven);
+      var range = 0.0 + maxValue - minValue;
+      var count = Math.Min(ValueCount, range);
+      var step = Math.Round(range / count, MidpointRounding.ToEven);
       var items = new List<MarkerModel>();
 
       void createItem(double i)
       {
-        if (i >= minValue && i < maxValue)
+        if (i >= minValue && i <= maxValue)
         {
           var position = GetItemPosition(View.Engine, 0, i).Y;
 
           items.Add(new MarkerModel
           {
             Line = 0,
-            Marker = position - stepSize / 2.0,
+            Marker = position,
             Caption = ShowValue(Math.Round(i, MidpointRounding.ToZero))
           });
         }
       }
 
-      for (var i = 0.0; i < ValueCount / 2.0; i++)
+      for (var i = 0; i < count / 2; i++)
       {
-        createItem(minValue + i * step);
-        createItem(maxValue - i * step - 1.0);
+        createItem(maxValue - i * step - 0.5);
+        createItem(minValue + i * step + 0.5);
       }
 
       return items;

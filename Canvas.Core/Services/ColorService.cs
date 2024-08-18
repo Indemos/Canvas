@@ -50,7 +50,7 @@ namespace Canvas.Core.Services
       if (Equals(Mode, ShadeEnum.Mirror))
       {
         opacityRatio = 0.0;
-        color = Map[(int)Math.Round(percentage)];
+        color = Map[(int)Math.Round(percentage, MidpointRounding.ToEven)];
 
         switch (true)
         {

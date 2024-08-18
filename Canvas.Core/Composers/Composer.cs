@@ -414,7 +414,7 @@ namespace Canvas.Core.Composers
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var domain = new List<int> { minX, maxX };
+      var domain = new[] { minX, maxX };
 
       if (Equals(minX, maxX))
       {
@@ -474,8 +474,9 @@ namespace Canvas.Core.Composers
     {
       var minIndex = Domain.MinIndex;
       var maxIndex = Domain.MaxIndex;
-      var center = Math.Round(minIndex + (maxIndex - minIndex) / 2.0, MidpointRounding.ToEven);
-      var step = Math.Round((0.0 + maxIndex - minIndex) / IndexCount, MidpointRounding.ToEven);
+      var range = 0.0 + maxIndex - minIndex;
+      var center = Math.Round(minIndex + range / 2.0, MidpointRounding.ToEven);
+      var step = Math.Round(range / IndexCount, MidpointRounding.ToZero);
       var items = new List<MarkerModel>();
 
       void createItem(double i)
@@ -493,7 +494,7 @@ namespace Canvas.Core.Composers
         }
       }
 
-      for (var i = 0; i <= IndexCount; i++)
+      for (var i = 0; i <= Math.Min(IndexCount, range); i++)
       {
         createItem(center - i * step);
         createItem(center + i * step);
@@ -509,8 +510,9 @@ namespace Canvas.Core.Composers
     {
       var minValue = Domain.MinValue;
       var maxValue = Domain.MaxValue;
-      var center = minValue + (maxValue - minValue) / 2.0;
-      var step = (maxValue - minValue) / ValueCount;
+      var range = maxValue - minValue;
+      var center = minValue + range / 2.0;
+      var step = range / ValueCount;
       var items = new List<MarkerModel>();
 
       void createItem(double i)
@@ -528,7 +530,7 @@ namespace Canvas.Core.Composers
         }
       }
 
-      for (var i = 0; i <= ValueCount; i++)
+      for (var i = 0; i <= Math.Min(ValueCount, range); i++)
       {
         createItem(center - i * step);
         createItem(center + i * step);
