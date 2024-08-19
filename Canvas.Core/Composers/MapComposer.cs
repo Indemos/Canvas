@@ -1,14 +1,17 @@
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
-using Canvas.Core.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Canvas.Core.Composers
 {
   public class MapComposer : Composer
   {
+    /// <summary>
+    /// Max number of points on Y axis
+    /// </summary>
+    public int Dimension { get; set; }
+
     /// <summary>
     /// Enumerate indices
     /// </summary>

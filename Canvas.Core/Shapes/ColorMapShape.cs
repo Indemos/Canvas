@@ -1,3 +1,4 @@
+using Canvas.Core.Composers;
 using Canvas.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Points
     /// </summary>
-    public virtual IList<ComponentModel> Points { get; set; }
+    public virtual IList<ComponentModel?> Points { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -19,7 +20,7 @@ namespace Canvas.Core.Shapes
     /// <param name="name"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public override double[] GetDomain(int index, string name, IList<IShape> items) => new double[] { 0, Points.Count };
+    public override double[] GetDomain(int index, string name, IList<IShape> items) => [0, Points.Count];
 
     /// <summary>
     /// Get series values
@@ -35,9 +36,9 @@ namespace Canvas.Core.Shapes
 
       var valueRatio = Math.Max(coordinates.Y / view.Y, 0.0);
       var valuePosition = (int)Math.Round(item.Points.Count * valueRatio, MidpointRounding.ToZero);
-      var value = item.Points.ElementAtOrDefault(item.Points.Count - valuePosition - 1).Size;
+      var value = item.Points.ElementAtOrDefault(item.Points.Count - valuePosition - 1)?.Size ?? 0;
 
-      return new double[] { value };
+      return [value];
     }
 
     /// <summary>
@@ -49,22 +50,20 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var pointsCount = Points?.Count ?? 0;
+      var dimension = (Composer as MapComposer).Dimension;
+      var range = Composer.Domain.MaxValue - Composer.Domain.MinValue;
+      var previous = Points.FirstOrDefault();
+      var step = range / dimension;
 
-      if (Equals(pointsCount, 0))
-      {
-        return;
-      }
-
-      var step = (Composer.Domain.MaxValue - Composer.Domain.MinValue) / pointsCount;
-
-      for (var i = 0; i < Points.Count; i++)
+      for (var i = 0; i < dimension; i++)
       {
         var open = Composer.GetItemPosition(Engine, index, i);
         var close = Composer.GetItemPosition(Engine, index + 1, i + step);
         var points = new DataModel[] { open, close };
 
-        Engine.CreateBox(points, Points[i]);
+        previous = Points.ElementAtOrDefault(i) ?? previous;
+
+        Engine.CreateBox(points, previous.Value);
       }
     }
   }

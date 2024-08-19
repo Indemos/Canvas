@@ -39,7 +39,7 @@
       var points = Enumerable.Range(0, labels.Length).Select(i => new ColorMapShape
       {
         Points = range
-          .Select(o => new ComponentModel { Size = o, Color = colorService.GetColor(o) })
+          .Select(o => new ComponentModel { Size = o, Color = colorService.GetColor(o) } as ComponentModel?)
           .OrderBy(o => generator.Next())
           .ToList()
 
@@ -48,6 +48,7 @@
       var composer = new MapComposer
       {
         Name = "Correlation",
+        Dimension = points.Max(shape => (shape as ColorMapShape).Points.Count),
         Items = points,
         View = View,
         IndexCount = labels.Length,
