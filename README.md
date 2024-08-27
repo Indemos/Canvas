@@ -38,7 +38,7 @@ At the moment, the library supports the following chart types.
 * Bar - polygon
 * Area - polygon
 * Arrow - polygon
-* Candle - OHLC box, a mix of a line and a box
+* Candle - OHLC box
 * HeatMap - box 
 
 To add new chart types, e.g. `Error Bars` or `Bubbles`, implement `IShape` interface. 
