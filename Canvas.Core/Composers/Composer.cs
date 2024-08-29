@@ -295,9 +295,8 @@ namespace Canvas.Core.Composers
       for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
-        var itemDomain = item?.GetDomain(i, null, Items);
 
-        if (itemDomain is null)
+        if (item is null)
         {
           continue;
         }
