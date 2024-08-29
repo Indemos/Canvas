@@ -6,7 +6,9 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Canvas.Core.Composers
 {
@@ -95,6 +97,14 @@ namespace Canvas.Core.Composers
     void GetItems(IEngine engine, DomainModel message);
 
     /// <summary>
+    /// Resample items
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    void GetSamples(IEngine engine, DomainModel message);
+
+    /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
     /// <param name="engine"></param>
@@ -152,6 +162,11 @@ namespace Canvas.Core.Composers
     public virtual double Size { get; set; }
 
     /// <summary>
+    /// Sampling rate
+    /// </summary>
+    public virtual double Rate { get; set; }
+
+    /// <summary>
     /// Index ticks
     /// </summary>
     public virtual int IndexCount { get; set; }
@@ -206,6 +221,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     public Composer()
     {
+      Rate = 1;
       Size = 0.5;
       ValueCount = 3;
       IndexCount = 9;
@@ -295,9 +311,8 @@ namespace Canvas.Core.Composers
       for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
-        var itemDomain = item?.GetDomain(i, null, Items);
 
-        if (itemDomain is null)
+        if (item is null)
         {
           continue;
         }
@@ -305,6 +320,70 @@ namespace Canvas.Core.Composers
         item.Engine = engine;
         item.Composer = this;
         item.CreateShape(i, null, Items);
+      }
+    }
+
+    /// <summary>
+    /// Update items
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="domain"></param>
+    /// <returns></returns>
+    public virtual void GetSamples(IEngine engine, DomainModel domain)
+    {
+      if (Rate is 0)
+      {
+        GetItems(engine, domain);
+        return;
+      }
+
+      var min = double.MaxValue;
+      var max = double.MinValue;
+      var minItem = null as IShape;
+      var maxItem = null as IShape;
+      var range = domain.MaxIndex - domain.MinIndex;
+      var sampleRate = Math.Max(Math.Round(range / engine.X, MidpointRounding.ToZero), Rate);
+
+      View.Values = GetValues();
+      View.Indices = GetIndices();
+
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      {
+        var item = Items.ElementAtOrDefault(i);
+        var itemDomain = item?.GetDomain(i, null, Items);
+
+        if (itemDomain is null)
+        {
+          continue;
+        }
+
+        if (itemDomain[0] <= min)
+        {
+          min = itemDomain[0];
+          minItem = item;
+        }
+
+        if (itemDomain[1] >= max)
+        {
+          max = itemDomain[1];
+          maxItem = item;
+        }
+
+        if (Equals(i, domain.MinIndex) || Equals(i, domain.MaxIndex) || (i % sampleRate is 0))
+        {
+          switch (true)
+          {
+            case true when Math.Abs(min) > Math.Abs(max): item = minItem; break;
+            case true when Math.Abs(min) < Math.Abs(max): item = maxItem; break;
+          }
+
+          item.Engine = engine;
+          item.Composer = this;
+          item.CreateShape(i, null, Items);
+
+          min = double.MaxValue;
+          max = double.MinValue;
+        }
       }
     }
 

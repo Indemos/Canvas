@@ -62,7 +62,7 @@ namespace Canvas.Views.Web.Views
         }
 
         Engine.Clear();
-        Composer.GetItems(Engine, Composer.Domain);
+        Composer.GetSamples(Engine, Composer.Domain);
         Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
       });
 

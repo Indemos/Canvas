@@ -2,6 +2,7 @@ using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Canvas.Core.Composers
@@ -33,6 +34,76 @@ namespace Canvas.Core.Composers
           series.Value.Engine = engine;
           series.Value.Composer = this;
           series.Value.CreateShape(i, series.Key, Items);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Update items
+    /// </summary>
+    /// <param name="engine"></param>
+    /// <param name="domain"></param>
+    /// <returns></returns>
+    public override void GetSamples(IEngine engine, DomainModel domain)
+    {
+      if (Rate is 0)
+      {
+        GetItems(engine, domain);
+        return;
+      }
+
+      var min = new Dictionary<string, double>();
+      var max = new Dictionary<string, double>();
+      var minItem = new Dictionary<string, IShape>();
+      var maxItem = new Dictionary<string, IShape>();
+      var range = domain.MaxIndex - domain.MinIndex;
+      var sampleRate = Math.Max(Math.Round(range / engine.X, MidpointRounding.ToZero), Rate);
+
+      View.Values = GetValues();
+      View.Indices = GetIndices();
+
+      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      {
+        var group = Items.ElementAtOrDefault(i);
+
+        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IShape seriesGroup) is false)
+        {
+          continue;
+        }
+
+        foreach (var series in seriesGroup.Groups)
+        {
+          var name = series.Key;
+          var item = series.Value;
+          var itemDomain = item.GetDomain(i, name, Items);
+
+          if (min.ContainsKey(name) is false || itemDomain[0] <= min[name])
+          {
+            min[name] = itemDomain[0];
+            minItem[name] = item;
+          }
+
+          if (max.ContainsKey(name) is false || itemDomain[1] >= max[name])
+          {
+            max[name] = itemDomain[1];
+            maxItem[name] = item;
+          }
+
+          if (Equals(i, domain.MinIndex) || Equals(i, domain.MaxIndex) || (i % sampleRate is 0))
+          {
+            switch (true)
+            {
+              case true when Math.Abs(min[name]) > Math.Abs(max[name]): item = minItem[name]; break;
+              case true when Math.Abs(min[name]) < Math.Abs(max[name]): item = maxItem[name]; break;
+            }
+
+            item.Engine = engine;
+            item.Composer = this;
+            item.CreateShape(i, name, Items);
+
+            min.Remove(name);
+            max.Remove(name);
+          }
         }
       }
     }
