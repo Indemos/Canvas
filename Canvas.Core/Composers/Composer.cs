@@ -206,7 +206,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     public Composer()
     {
-      Size = 0.5;
+      Size = 0.4;
       ValueCount = 3;
       IndexCount = 9;
 
@@ -326,8 +326,8 @@ namespace Canvas.Core.Composers
 
       // Percentage to pixels, Y is inverted
 
-      item.X = Math.Round(engine.X * index, MidpointRounding.ToZero);
-      item.Y = Math.Round(engine.Y - engine.Y * value, MidpointRounding.ToZero);
+      item.X = engine.X * index;
+      item.Y = engine.Y - engine.Y * value;
 
       return item;
     }

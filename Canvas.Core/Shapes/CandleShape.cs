@@ -51,11 +51,11 @@ namespace Canvas.Core.Shapes
         return null;
       }
 
-      return new double[]
-      {
+      return
+      [
         L.Value,
         H.Value
-      };
+      ];
     }
 
     /// <summary>
@@ -66,13 +66,13 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public override IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
     {
-      return new double[]
-      {
+      return
+      [
         O ?? 0,
         H ?? 0,
         L ?? 0,
         C ?? 0
-      };
+      ];
     }
 
     /// <summary>

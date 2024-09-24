@@ -74,17 +74,19 @@ namespace Canvas.Views.Web.Views
     /// <param name="message"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual void Update(DomainModel message, IList<IShape> items = null)
+    public virtual Task Update(DomainModel message, IList<IShape> items = null)
     {
-      Views.ForEach(o =>
+      var processes = Views.Select(o =>
       {
         if (items is not null)
         {
           o.Value.Composer.Items = items;
         }
 
-        o.Value.Composer.Update(message);
+        return o.Value.Composer.Update(message);
       });
+
+      return Task.WhenAll(processes);
     }
 
     /// <summary>
