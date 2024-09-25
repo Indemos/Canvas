@@ -206,7 +206,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     public Composer()
     {
-      Size = 0.4;
+      Size = 0.5;
       ValueCount = 3;
       IndexCount = 9;
 
