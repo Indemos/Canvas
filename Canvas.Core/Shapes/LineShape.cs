@@ -15,20 +15,7 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      Draw(index, name, items);
-      Draw(index - 1, name, items);
-    }
-
-    /// <summary>
-    /// Render the shape on top of the previous one
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="name"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
-    protected virtual void Draw(int index, string name, IList<IShape> items)
-    {
-      var current = GetItem(index, name, items)?.Y;
+      var current = Y;
       var previous = GetItem(index - 1, name, items)?.Y;
 
       if (current is null)
@@ -39,8 +26,8 @@ namespace Canvas.Core.Shapes
       var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
       var coordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index, (previous ?? current).Value),
-        Composer.GetItemPosition(Engine, index + 1, current.Value)
+        Composer.GetItemPosition(Engine, index - 1, (previous ?? current).Value),
+        Composer.GetItemPosition(Engine, index, current.Value)
       };
 
       Engine.CreateLine(coordinates, Component ?? component);
