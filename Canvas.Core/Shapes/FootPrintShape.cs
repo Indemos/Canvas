@@ -44,18 +44,18 @@ namespace Canvas.Core.Shapes
       var upSide = Math.Max(open, close);
       var coordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index - size, upSide),
-        Composer.GetItemPosition(Engine, index + size, downSide)
+        Composer.GetItemPosition(index - size, upSide),
+        Composer.GetItemPosition(index + size, downSide)
       };
 
       var rangeCoordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index, L ?? 0),
-        Composer.GetItemPosition(Engine, index, H ?? 0),
+        Composer.GetItemPosition(index, L ?? 0),
+        Composer.GetItemPosition(index, H ?? 0),
       };
 
-      Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
-      Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
 
       var lastL = double.MaxValue;
       var lastR = double.MaxValue;
@@ -77,23 +77,23 @@ namespace Canvas.Core.Shapes
 
       Ls.ForEach(o =>
       {
-        var coordinate = Composer.GetItemPosition(Engine, index - size - 0.1, o.Key);
+        var coordinate = Composer.GetItemPosition(index - size - 0.1, o.Key);
 
         if (lastL - coordinate.Y > textSize)
         {
           lastL = coordinate.Y;
-          Engine.CreateCaption(coordinate, comLs, $"{o.Value}");
+          Composer.Engine.CreateCaption(coordinate, comLs, $"{o.Value}");
         }
       });
 
       Rs.ForEach(o =>
       {
-        var coordinate = Composer.GetItemPosition(Engine, index + size + 0.1, o.Key);
+        var coordinate = Composer.GetItemPosition(index + size + 0.1, o.Key);
 
         if (lastR - coordinate.Y > textSize)
         {
           lastR = coordinate.Y;
-          Engine.CreateCaption(coordinate, comRs, $"{o.Value}");
+          Composer.Engine.CreateCaption(coordinate, comRs, $"{o.Value}");
         }
       });
     }

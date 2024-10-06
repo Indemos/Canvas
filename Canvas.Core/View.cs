@@ -20,11 +20,6 @@ namespace Canvas.Core
     IList<MarkerModel> Values { get; set; }
 
     /// <summary>
-    /// Engine
-    /// </summary>
-    IEngine Engine { get; }
-
-    /// <summary>
     /// Composer
     /// </summary>
     IComposer Composer { get; }

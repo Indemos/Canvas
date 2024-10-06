@@ -2,7 +2,6 @@ using Canvas.Core;
 using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
-using Canvas.Core.Services;
 using Distribution.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,15 +19,9 @@ namespace Canvas.Views.Web.Views
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
     protected virtual string Route { get; set; }
-    protected virtual EventService ViewService { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
     protected virtual ScheduleService ScheduleService { get; set; }
     protected virtual ElementReference Container { get; set; }
-
-    /// <summary>
-    /// Engine
-    /// </summary>
-    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Composer
@@ -56,14 +49,14 @@ namespace Canvas.Views.Web.Views
     {
       await Schedule(() =>
       {
-        if (Engine?.Instance is null)
+        if (Composer?.Engine?.Instance is null)
         {
           return;
         }
 
-        Engine.Clear();
-        Composer.GetItems(Engine, Composer.Domain);
-        Route = "data:image/webp;base64," + Convert.ToBase64String(Engine.Encode(SKEncodedImageFormat.Webp, 100));
+        Composer.Engine.Clear();
+        Composer.Render(Composer.Domain);
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
       });
 
       await InvokeAsync(StateHasChanged);
@@ -120,7 +113,7 @@ namespace Canvas.Views.Web.Views
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnWheelAction(WheelEventArgs e) => ViewService?.OnWheel(new ViewModel
+    protected virtual void OnWheelAction(WheelEventArgs e) => Composer?.OnWheel(new ViewModel
     {
       IsShape = e.ShiftKey,
       Data = new DataModel
@@ -146,7 +139,7 @@ namespace Canvas.Views.Web.Views
         }
       };
 
-      ViewService?.OnMouseMove(message);
+      Composer?.OnMouseMove(message);
       OnMouseMove(message);
     }
 
@@ -156,7 +149,7 @@ namespace Canvas.Views.Web.Views
     /// <param name="e"></param>
     protected virtual void OnMouseLeaveAction(MouseEventArgs e)
     {
-      ViewService?.OnMouseLeave(default);
+      Composer?.OnMouseLeave(default);
       OnMouseLeave(default);
     }
 
@@ -165,7 +158,7 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="e"></param>
     /// <param name="orientation"></param>
-    protected virtual void OnScaleAction(MouseEventArgs e, int orientation = 0) => ViewService?.OnScale(new ViewModel
+    protected virtual void OnScaleAction(MouseEventArgs e, int orientation = 0) => Composer?.OnScale(new ViewModel
     {
       IsMove = e.Buttons == 1,
       Data = new DataModel
@@ -179,7 +172,7 @@ namespace Canvas.Views.Web.Views
     /// Double clck event in the view area
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseDownAction(MouseEventArgs e) => ViewService?.OnMouseDown(new ViewModel
+    protected virtual void OnMouseDownAction(MouseEventArgs e) => Composer?.OnMouseDown(new ViewModel
     {
       IsControl = e.CtrlKey
     });

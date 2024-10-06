@@ -25,11 +25,11 @@ namespace Canvas.Core.Shapes
       var size = Composer.Size / 2.0;
       var coordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index - size, 0.0),
-        Composer.GetItemPosition(Engine, index + size, current.Value)
+        Composer.GetItemPosition(index - size, 0.0),
+        Composer.GetItemPosition(index + size, current.Value)
       };
 
-      Engine.CreateBox(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateBox(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
   }
 }

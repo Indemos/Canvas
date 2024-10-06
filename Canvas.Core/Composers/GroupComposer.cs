@@ -1,4 +1,3 @@
-using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
 using System;
@@ -14,8 +13,10 @@ namespace Canvas.Core.Composers
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public override void GetItems(IEngine engine, DomainModel domain)
+    public override void Render(DomainModel domain)
     {
+      Engine.Clear();
+
       View.Values = GetValues();
       View.Indices = GetIndices();
 
@@ -30,7 +31,6 @@ namespace Canvas.Core.Composers
 
         foreach (var series in seriesGroup.Groups)
         {
-          series.Value.Engine = engine;
           series.Value.Composer = this;
           series.Value.CreateShape(i, series.Key, Items);
         }

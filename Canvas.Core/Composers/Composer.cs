@@ -23,6 +23,11 @@ namespace Canvas.Core.Composers
     double Size { get; set; }
 
     /// <summary>
+    /// Spacing in percentage
+    /// </summary>
+    double Space { get; set; }
+
+    /// <summary>
     /// Index ticks
     /// </summary>
     int IndexCount { get; set; }
@@ -35,7 +40,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain
     /// </summary>
-    DomainModel Domain { get; }
+    DomainModel Domain { get; set; }
+
+    /// <summary>
+    /// Engine
+    /// </summary>
+    IEngine Engine { get; set; }
 
     /// <summary>
     /// Items
@@ -70,7 +80,38 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain update event
     /// </summary>
-    Action<DomainModel, string> OnDomain { get; set; }
+    Action<DomainModel, string> OnRender { get; set; }
+
+    /// <summary>
+    /// Mouse wheel event
+    /// </summary>
+    /// <param name="e"></param>
+    void OnWheel(ViewModel e);
+
+    /// <summary>
+    /// Horizontal drag and resize event
+    /// </summary>
+    /// <param name="e"></param>
+    void OnMouseMove(ViewModel e);
+
+    /// <summary>
+    /// Resize event
+    /// </summary>
+    /// <param name="e"></param>
+    /// <param name="orientation"></param>
+    void OnScale(ViewModel e, int orientation = 0);
+
+    /// <summary>
+    /// Click event in the view area
+    /// </summary>
+    /// <param name="e"></param>
+    void OnMouseDown(ViewModel e);
+
+    /// <summary>
+    /// Mouse leave event
+    /// </summary>
+    /// <param name="e"></param>
+    void OnMouseLeave(ViewModel e);
 
     /// <summary>
     /// Create 
@@ -89,58 +130,54 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Update items
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    void GetItems(IEngine engine, DomainModel message);
+    void Render(DomainModel message);
 
     /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="item"></param>
-    DataModel GetItemPosition(IEngine engine, DataModel item);
+    DataModel GetItemPosition(DataModel item);
 
     /// <summary>
     /// Transform coordinates
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    DataModel GetItemPosition(IEngine engine, double index, double value);
+    DataModel GetItemPosition(double index, double value);
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="item"></param>
-    DataModel GetItemValue(IEngine engine, DataModel item);
+    DataModel GetItemValue(DataModel item);
 
     /// <summary>
     /// Value scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<double> ZoomValue(IEngine engine, int delta);
+    IList<double> ZoomValue(int delta);
 
     /// <summary>
     /// Index scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<int> ZoomIndex(IEngine engine, int delta);
+    IList<int> ZoomIndex(int delta);
 
     /// <summary>
     /// Index scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    IList<int> PanIndex(IEngine engine, int delta);
+    IList<int> PanIndex(int delta);
   }
 
-  public class Composer : IComposer
+  public partial class Composer : IComposer
   {
+    protected virtual ViewModel? MoveEvent { get; set; }
+    protected virtual ViewModel? ScaleEvent { get; set; }
+
     /// <summary>
     /// Name
     /// </summary>
@@ -150,6 +187,11 @@ namespace Canvas.Core.Composers
     /// Item size
     /// </summary>
     public virtual double Size { get; set; }
+
+    /// <summary>
+    /// Spacing in percentage
+    /// </summary>
+    public virtual double Space { get; set; }
 
     /// <summary>
     /// Index ticks
@@ -164,7 +206,12 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain
     /// </summary>
-    public virtual DomainModel Domain { get; protected set; }
+    public virtual DomainModel Domain { get; set; }
+
+    /// <summary>
+    /// Engine
+    /// </summary>
+    public virtual IEngine Engine { get; set; }
 
     /// <summary>
     /// Items
@@ -199,7 +246,7 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain update event
     /// </summary>
-    public virtual Action<DomainModel, string> OnDomain { get; set; }
+    public virtual Action<DomainModel, string> OnRender { get; set; }
 
     /// <summary>
     /// Constructor
@@ -207,6 +254,7 @@ namespace Canvas.Core.Composers
     public Composer()
     {
       Size = 0.5;
+      Space = 0;
       ValueCount = 3;
       IndexCount = 9;
 
@@ -218,7 +266,7 @@ namespace Canvas.Core.Composers
       ShowIndex = o => $"{o:0.00}";
       ShowValue = o => $"{o:0.00}";
 
-      OnDomain = (message, source) => { };
+      OnRender = (message, source) => { };
 
       Components[nameof(ComponentEnum.Shape)] = new ComponentModel
       {
@@ -275,20 +323,19 @@ namespace Canvas.Core.Composers
     /// <returns></returns>
     public virtual Task Update(DomainModel? domain = null, string source = null)
     {
-      Domain = ComposeDomain(domain ?? Domain);
-      OnDomain(Domain, source);
-
+      OnRender(Domain = ComposeDomain(domain ?? Domain), source);
       return View.Update(Domain);
     }
 
     /// <summary>
     /// Update items
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public virtual void GetItems(IEngine engine, DomainModel domain)
+    public virtual void Render(DomainModel domain)
     {
+      Engine.Clear();
+
       View.Values = GetValues();
       View.Indices = GetIndices();
 
@@ -301,7 +348,6 @@ namespace Canvas.Core.Composers
           continue;
         }
 
-        item.Engine = engine;
         item.Composer = this;
         item.CreateShape(i, null, Items);
       }
@@ -310,14 +356,14 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="item"></param>
-    public virtual DataModel GetItemPosition(IEngine engine, DataModel item)
+    public virtual DataModel GetItemPosition(DataModel item)
     {
+      var valueRange = Domain.MaxValue - Domain.MinValue;
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var minY = Domain.MinValue;
-      var maxY = Domain.MaxValue;
+      var minY = Domain.MinValue - valueRange * Space;
+      var maxY = Domain.MaxValue + valueRange * Space;
 
       // Convert to device pixels
 
@@ -326,8 +372,8 @@ namespace Canvas.Core.Composers
 
       // Percentage to pixels, Y is inverted
 
-      item.X = engine.X * index;
-      item.Y = engine.Y - engine.Y * value;
+      item.X = Engine.X * index;
+      item.Y = Engine.Y - Engine.Y * value;
 
       return item;
     }
@@ -335,31 +381,30 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Transform coordinates
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public virtual DataModel GetItemPosition(IEngine engine, double index, double value)
+    public virtual DataModel GetItemPosition(double index, double value)
     {
-      return GetItemPosition(engine, new DataModel { X = index, Y = value });
+      return GetItemPosition(new DataModel { X = index, Y = value });
     }
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="item"></param>
-    public virtual DataModel GetItemValue(IEngine engine, DataModel item)
+    public virtual DataModel GetItemValue(DataModel item)
     {
+      var valueRange = Domain.MaxValue - Domain.MinValue;
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
-      var minY = Domain.MinValue;
-      var maxY = Domain.MaxValue;
+      var minY = Domain.MinValue - valueRange * Space;
+      var maxY = Domain.MaxValue + valueRange * Space;
 
       // Convert to values
 
-      var index = item.X / engine.X;
-      var value = item.Y / engine.Y;
+      var index = item.X / Engine.X;
+      var value = item.Y / Engine.Y;
 
       // Percentage to values, Y is inverted
 
@@ -372,9 +417,8 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Value scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<double> ZoomValue(IEngine engine, int delta)
+    public virtual IList<double> ZoomValue(int delta)
     {
       var minY = Domain.MinValue;
       var maxY = Domain.MaxValue;
@@ -407,9 +451,8 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Index scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<int> ZoomIndex(IEngine engine, int delta)
+    public virtual IList<int> ZoomIndex(int delta)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
@@ -437,7 +480,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public virtual IList<int> PanIndex(IEngine engine, int delta)
+    public virtual IList<int> PanIndex(int delta)
     {
       var minX = Domain.MinIndex;
       var maxX = Domain.MaxIndex;
@@ -467,6 +510,109 @@ namespace Canvas.Core.Composers
     }
 
     /// <summary>
+    /// Mouse wheel event
+    /// </summary>
+    /// <param name="e"></param>
+    public virtual void OnWheel(ViewModel e)
+    {
+      var isZoom = e.IsShape;
+      var domain = Domain;
+
+      switch (true)
+      {
+        case true when e.Data.Y > 0: domain.IndexDomain = isZoom ? ZoomIndex(-1) : PanIndex(1); break;
+        case true when e.Data.Y < 0: domain.IndexDomain = isZoom ? ZoomIndex(1) : PanIndex(-1); break;
+      }
+
+      Update(domain, Name);
+    }
+
+    /// <summary>
+    /// Horizontal drag and resize event
+    /// </summary>
+    /// <param name="e"></param>
+    public virtual void OnMouseMove(ViewModel e)
+    {
+      MoveEvent ??= e;
+
+      if (e.IsMove)
+      {
+        var deltaX = MoveEvent?.Data.X - e.Data.X;
+        var deltaY = MoveEvent?.Data.Y - e.Data.Y;
+        var domain = Domain;
+
+        switch (true)
+        {
+          case true when deltaX > 0: domain.IndexDomain = PanIndex(1); break;
+          case true when deltaX < 0: domain.IndexDomain = PanIndex(-1); break;
+        }
+
+        Update(domain, Name);
+      }
+
+      MoveEvent = e;
+    }
+
+    /// <summary>
+    /// Resize event
+    /// </summary>
+    /// <param name="e"></param>
+    /// <param name="orientation"></param>
+    public virtual void OnScale(ViewModel e, int orientation = 0)
+    {
+      ScaleEvent ??= e;
+
+      if (e.IsMove)
+      {
+        var deltaX = ScaleEvent?.Data.X - e.Data.X;
+        var deltaY = ScaleEvent?.Data.Y - e.Data.Y;
+        var domain = Domain;
+        var source = Name;
+
+        switch (orientation > 0)
+        {
+          case true when deltaX > 0: domain.IndexDomain = ZoomIndex(-1); break;
+          case true when deltaX < 0: domain.IndexDomain = ZoomIndex(1); break;
+        }
+
+        switch (orientation < 0)
+        {
+          case true when deltaY > 0: domain.ValueDomain = ZoomValue(-1); source = null; break;
+          case true when deltaY < 0: domain.ValueDomain = ZoomValue(1); source = null; break;
+        }
+
+        Update(domain, source);
+      }
+
+      ScaleEvent = e;
+    }
+
+    /// <summary>
+    /// Click event in the view area
+    /// </summary>
+    /// <param name="e"></param>
+    public virtual void OnMouseDown(ViewModel e)
+    {
+      if (e.IsControl)
+      {
+        var domain = Domain;
+
+        domain.ValueDomain = null;
+
+        Update(domain);
+      }
+    }
+
+    /// <summary>
+    /// Mouse leave event
+    /// </summary>
+    /// <param name="e"></param>
+    public virtual void OnMouseLeave(ViewModel e)
+    {
+      MoveEvent = null;
+    }
+
+    /// <summary>
     /// Enumerate indices
     /// </summary>
     protected virtual IList<MarkerModel> GetIndices()
@@ -482,7 +628,7 @@ namespace Canvas.Core.Composers
       {
         if (i > minIndex && i < maxIndex)
         {
-          var position = GetItemPosition(View.Engine, i, 0).X;
+          var position = GetItemPosition(i, 0).X;
 
           items.Add(new MarkerModel
           {
@@ -518,7 +664,7 @@ namespace Canvas.Core.Composers
       {
         if (i > minValue && i < maxValue)
         {
-          var position = GetItemPosition(View.Engine, 0, i).Y;
+          var position = GetItemPosition(0, i).Y;
 
           items.Add(new MarkerModel
           {

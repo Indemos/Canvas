@@ -53,7 +53,7 @@ namespace Canvas.Views.Web.Views
           return composer;
         });
 
-        composer.OnDomain += (domain, source) => Views.ForEach(o =>
+        composer.OnRender += (domain, source) => Views.ForEach(o =>
         {
           if (source is not null && Equals(composer.Name, o.Value.Composer.Name) is false)
           {

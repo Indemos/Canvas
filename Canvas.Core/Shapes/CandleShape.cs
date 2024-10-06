@@ -96,18 +96,18 @@ namespace Canvas.Core.Shapes
       var upSide = Math.Max(open, close);
       var coordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index - size, upSide),
-        Composer.GetItemPosition(Engine, index + size, downSide)
+        Composer.GetItemPosition(index - size, upSide),
+        Composer.GetItemPosition(index + size, downSide)
       };
 
       var rangeCoordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index, L ?? 0),
-        Composer.GetItemPosition(Engine, index, H ?? 0),
+        Composer.GetItemPosition(index, L ?? 0),
+        Composer.GetItemPosition(index, H ?? 0),
       };
 
-      Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
-      Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
 
     /// <summary>

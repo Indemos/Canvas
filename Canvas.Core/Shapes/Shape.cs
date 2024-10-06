@@ -30,11 +30,6 @@ namespace Canvas.Core.Shapes
     string Name { get; set; }
 
     /// <summary>
-    /// Reference to panel
-    /// </summary>
-    IEngine Engine { get; set; }
-
-    /// <summary>
     /// Reference to composer
     /// </summary>
     IComposer Composer { get; set; }
@@ -116,11 +111,6 @@ namespace Canvas.Core.Shapes
     public virtual string Name { get; set; }
 
     /// <summary>
-    /// Reference to panel
-    /// </summary>
-    public virtual IEngine Engine { get; set; }
-
-    /// <summary>
     /// Reference to composer
     /// </summary>
     public virtual IComposer Composer { get; set; }
@@ -157,11 +147,11 @@ namespace Canvas.Core.Shapes
         return null;
       }
 
-      return new[]
-      {
+      return
+      [
         Y.Value,
         Y.Value
-      };
+      ];
     }
 
     /// <summary>

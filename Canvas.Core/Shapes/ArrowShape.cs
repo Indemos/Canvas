@@ -30,14 +30,14 @@ namespace Canvas.Core.Shapes
       var size = Composer.Size;
       var coordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index, current.Value),
-        Composer.GetItemPosition(Engine, index + size, current.Value),
-        Composer.GetItemPosition(Engine, index - size, current.Value)
+        Composer.GetItemPosition(index, current.Value),
+        Composer.GetItemPosition(index + size, current.Value),
+        Composer.GetItemPosition(index - size, current.Value)
       };
 
       coordinates[0].Y -= (coordinates[1].X - coordinates[2].X) * Direction / 2;
 
-      Engine.CreateShape(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateShape(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
   }
 }

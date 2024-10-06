@@ -26,11 +26,11 @@ namespace Canvas.Core.Shapes
       var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
       var coordinates = new DataModel[]
       {
-        Composer.GetItemPosition(Engine, index - 1, (previous ?? current).Value),
-        Composer.GetItemPosition(Engine, index, current.Value)
+        Composer.GetItemPosition(index - 1, (previous ?? current).Value),
+        Composer.GetItemPosition(index, current.Value)
       };
 
-      Engine.CreateLine(coordinates, Component ?? component);
+      Composer.Engine.CreateLine(coordinates, Component ?? component);
     }
   }
 }

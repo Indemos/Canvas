@@ -28,7 +28,7 @@ namespace Canvas.Core.Composers
       {
         if (i >= minIndex && i <= maxIndex)
         {
-          var position = GetItemPosition(View.Engine, i, 0).X;
+          var position = GetItemPosition(i, 0).X;
 
           items.Add(new MarkerModel
           {
@@ -64,7 +64,7 @@ namespace Canvas.Core.Composers
       {
         if (i >= minValue && i <= maxValue)
         {
-          var position = GetItemPosition(View.Engine, 0, i).Y;
+          var position = GetItemPosition(0, i).Y;
 
           items.Add(new MarkerModel
           {
@@ -87,22 +87,19 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Value scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public override IList<double> ZoomValue(IEngine engine, int delta) => Domain.ValueDomain;
+    public override IList<double> ZoomValue(int delta) => Domain.ValueDomain;
 
     /// <summary>
     /// Index scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public override IList<int> ZoomIndex(IEngine engine, int delta) => Domain.IndexDomain;
+    public override IList<int> ZoomIndex(int delta) => Domain.IndexDomain;
 
     /// <summary>
     /// Index scale
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="delta"></param>
-    public override IList<int> PanIndex(IEngine engine, int delta) => Domain.IndexDomain;
+    public override IList<int> PanIndex(int delta) => Domain.IndexDomain;
   }
 }

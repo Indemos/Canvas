@@ -1,7 +1,6 @@
 using Canvas.Core;
 using Canvas.Core.Composers;
 using Canvas.Core.Models;
-using Canvas.Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using ScriptContainer;
@@ -52,7 +51,7 @@ namespace Canvas.Views.Web.Views
         }
       };
 
-      ViewService?.OnMouseMove(message);
+      Composer?.OnMouseMove(message);
       OnMouseMove(message);
     }
 
@@ -63,7 +62,7 @@ namespace Canvas.Views.Web.Views
     protected override void OnMouseLeaveAction(MouseEventArgs e)
     {
       Cursor = null;
-      ViewService?.OnMouseLeave(default);
+      Composer?.OnMouseLeave(default);
       OnMouseLeave(default);
     }
 
@@ -74,7 +73,9 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     protected PositionModel? GetDelta(MouseEventArgs e)
     {
-      if (Engine?.Instance is null)
+      var engine = Composer?.Engine?.Instance;
+
+      if (engine is null)
       {
         return null;
       }
@@ -85,7 +86,7 @@ namespace Canvas.Views.Web.Views
         Y = e.OffsetY
       };
 
-      var values = Composer.GetItemValue(Engine, coordinates);
+      var values = Composer.GetItemValue(coordinates);
       var item = Composer.Items.ElementAtOrDefault((int)Math.Round(values.X));
 
       Series = null;
@@ -94,8 +95,8 @@ namespace Canvas.Views.Web.Views
       {
         var view = new DataModel
         {
-          X = Engine.X,
-          Y = Engine.Y
+          X = engine.X,
+          Y = engine.Y
         };
 
         item.Composer = Composer;
@@ -119,7 +120,6 @@ namespace Canvas.Views.Web.Views
     {
       Dispose();
 
-      ViewService = new EventService { View = this };
       ScriptService = await new ScriptService(RuntimeService).CreateModule();
       ScriptService.Actions["OnChange"] = o => Setup();
 
@@ -127,13 +127,12 @@ namespace Canvas.Views.Web.Views
 
       Task Setup() => Schedule(async () =>
       {
-        Engine?.Dispose();
-
         var engine = new T();
         var bounds = await GetBounds();
 
-        Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
+        Composer?.Engine?.Dispose();
         Composer = action();
+        Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
 
         await Update(Composer.Domain);
       });

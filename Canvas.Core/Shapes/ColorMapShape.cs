@@ -57,13 +57,13 @@ namespace Canvas.Core.Shapes
 
       for (var i = 0; i < dimension; i++)
       {
-        var open = Composer.GetItemPosition(Engine, index, i);
-        var close = Composer.GetItemPosition(Engine, index + 1, i + step);
+        var open = Composer.GetItemPosition(index, i);
+        var close = Composer.GetItemPosition(index + 1, i + step);
         var points = new DataModel[] { open, close };
 
         previous = Points.ElementAtOrDefault(i) ?? previous;
 
-        Engine.CreateBox(points, previous.Value);
+        Composer.Engine.CreateBox(points, previous.Value);
       }
     }
   }
