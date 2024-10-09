@@ -13,7 +13,7 @@ namespace Canvas.Core.Composers
     /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public override void Render(DomainModel domain)
+    public override void Render(DimensionModel domain)
     {
       Engine.Clear();
 

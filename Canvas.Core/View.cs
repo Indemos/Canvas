@@ -42,7 +42,7 @@ namespace Canvas.Core
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    Task Update(DomainModel message);
+    Task Update(DimensionModel? domain = null, string source = null);
 
     /// <summary>
     /// Create

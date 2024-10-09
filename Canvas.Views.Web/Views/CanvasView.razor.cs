@@ -134,7 +134,7 @@ namespace Canvas.Views.Web.Views
         Composer = action();
         Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
 
-        await Update(Composer.Domain);
+        await Update();
       });
 
       return this;

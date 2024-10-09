@@ -1,4 +1,3 @@
-using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -10,15 +9,15 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Max number of points on Y axis
     /// </summary>
-    public int Dimension { get; set; }
+    public int Range { get; set; }
 
     /// <summary>
     /// Enumerate indices
     /// </summary>
     protected override IList<MarkerModel> GetIndices()
     {
-      var minIndex = Domain.MinIndex;
-      var maxIndex = Domain.MaxIndex;
+      var minIndex = Dimension.MinIndex;
+      var maxIndex = Dimension.MaxIndex;
       var range = 0.0 + maxIndex - minIndex;
       var count = Math.Min(IndexCount, range);
       var step = Math.Round(range / count, MidpointRounding.ToEven);
@@ -53,8 +52,8 @@ namespace Canvas.Core.Composers
     /// </summary>
     protected override IList<MarkerModel> GetValues()
     {
-      var minValue = Domain.MinValue;
-      var maxValue = Domain.MaxValue;
+      var minValue = Dimension.MinValue;
+      var maxValue = Dimension.MaxValue;
       var range = 0.0 + maxValue - minValue;
       var count = Math.Min(ValueCount, range);
       var step = Math.Round(range / count, MidpointRounding.ToEven);
@@ -88,18 +87,18 @@ namespace Canvas.Core.Composers
     /// Value scale
     /// </summary>
     /// <param name="delta"></param>
-    public override IList<double> ZoomValue(int delta) => Domain.ValueDomain;
+    public override IList<double> ZoomValue(int delta) => Dimension.ValueDomain;
 
     /// <summary>
     /// Index scale
     /// </summary>
     /// <param name="delta"></param>
-    public override IList<int> ZoomIndex(int delta) => Domain.IndexDomain;
+    public override IList<int> ZoomIndex(int delta) => Dimension.IndexDomain;
 
     /// <summary>
     /// Index scale
     /// </summary>
     /// <param name="delta"></param>
-    public override IList<int> PanIndex(int delta) => Domain.IndexDomain;
+    public override IList<int> PanIndex(int delta) => Dimension.IndexDomain;
   }
 }

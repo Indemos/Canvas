@@ -50,8 +50,8 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var dimension = (Composer as MapComposer).Dimension;
-      var range = Composer.Domain.MaxValue - Composer.Domain.MinValue;
+      var dimension = (Composer as MapComposer).Range;
+      var range = Composer.Dimension.MaxValue - Composer.Dimension.MinValue;
       var previous = Points.FirstOrDefault();
       var step = range / dimension;
 

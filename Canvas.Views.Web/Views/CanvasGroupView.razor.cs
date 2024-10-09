@@ -53,12 +53,12 @@ namespace Canvas.Views.Web.Views
           return composer;
         });
 
-        composer.OnRender += (domain, source) => Views.ForEach(o =>
+        composer.OnAction += domain => Views.Values.ForEach(async o =>
         {
-          if (source is not null && Equals(composer.Name, o.Value.Composer.Name) is false)
+          if (Equals(composer.Name, o?.Composer?.Name) is false)
           {
-            domain.ValueDomain = o.Value.Composer.Domain.ValueDomain;
-            o.Value.Composer.Update(domain);
+            domain.ValueDomain = o.Composer.Dimension.ValueDomain;
+            await o.Update(domain);
           }
         });
       }
@@ -71,19 +71,19 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Update
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="dimension"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual Task Update(DomainModel message, IList<IShape> items = null)
+    public virtual Task Update(DimensionModel? dimension, IList<IShape> items = null)
     {
-      var processes = Views.Select(o =>
+      var processes = Views.Values.Select(o =>
       {
         if (items is not null)
         {
-          o.Value.Composer.Items = items;
+          o.Composer.Items = items;
         }
 
-        return o.Value.Composer.Update(message);
+        return o.Update(dimension);
       });
 
       return Task.WhenAll(processes);

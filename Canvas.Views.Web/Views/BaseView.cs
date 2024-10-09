@@ -43,9 +43,10 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Update
     /// </summary>
-    /// <param name="message"></param>
+    /// <param name="domain"></param>
+    /// <param name="source"></param>
     /// <returns></returns>
-    public virtual async Task Update(DomainModel message)
+    public virtual async Task Update(DimensionModel? domain = null, string source = null)
     {
       await Schedule(() =>
       {
@@ -54,9 +55,14 @@ namespace Canvas.Views.Web.Views
           return;
         }
 
-        Composer.Engine.Clear();
-        Composer.Render(Composer.Domain);
+        Composer.SetDimensions(domain ?? Composer.Dimension);
+        Composer.Render(domain ?? Composer.Dimension);
         Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
+
+        if (source is not null)
+        {
+          Composer.OnAction(domain ?? Composer.Dimension);
+        }
       });
 
       await InvokeAsync(StateHasChanged);

@@ -48,7 +48,7 @@
       var composer = new MapComposer
       {
         Name = "Correlation",
-        Dimension = points.Max(shape => (shape as ColorMapShape).Points.Count),
+        Range = points.Max(shape => (shape as ColorMapShape).Points.Count),
         Items = points,
         View = View,
         IndexCount = labels.Length,
@@ -57,8 +57,8 @@
         ShowValue = i => labels.ElementAtOrDefault((int)i)
       };
 
-      await composer.Create<CanvasEngine>();
-      await composer.Update();
+      await View.Create<CanvasEngine>(() => composer);
+      await View.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

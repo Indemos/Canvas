@@ -32,8 +32,8 @@
         View = View
       };
 
-      await composer.Create<CanvasEngine>();
-      await composer.Update();
+      await View.Create<CanvasEngine>(() => composer);
+      await View.Update();
     }
 
     await base.OnAfterRenderAsync(setup);

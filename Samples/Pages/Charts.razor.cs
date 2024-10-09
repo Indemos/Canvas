@@ -19,7 +19,7 @@ namespace Canvas.Client.Pages
     protected DateTime Time { get; set; } = DateTime.Now;
     protected DateTime TimeGroup { get; set; } = DateTime.Now;
     protected List<IShape> Points { get; set; } = new();
-    protected Dictionary<long, int> Indices { get; set; } = new();
+    protected Dictionary<long, int> Indices { get; set; } = [];
 
     protected override async Task OnAfterRenderAsync(bool setup)
     {
@@ -118,7 +118,7 @@ namespace Canvas.Client.Pages
       }
       .Update(group.Groups["Assets"].Groups["Prices"]);
 
-      var domain = new DomainModel { IndexDomain = new int[] { Points.Count - 100, Points.Count } };
+      var domain = new DimensionModel { IndexDomain = [Points.Count - 100, Points.Count] };
 
       View.Update(domain, Points);
     }
