@@ -48,7 +48,7 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual async Task Update(DimensionModel? domain = null, string source = null)
     {
-      await Schedule(() =>
+      await Schedule(async () =>
       {
         if (Composer?.Engine?.Instance is null)
         {
@@ -63,9 +63,9 @@ namespace Canvas.Views.Web.Views
         {
           Composer.OnAction(domain ?? Composer.Dimension);
         }
-      });
 
-      await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
+      });
     }
 
     /// <summary>
@@ -188,6 +188,6 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    protected virtual Task Schedule(Action action) => (ScheduleService ??= new ScheduleService()).Send(action).Task;
+    protected virtual Task Schedule(Action action) => ScheduleService.Send(action).Task;
   }
 }

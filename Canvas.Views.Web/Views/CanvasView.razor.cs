@@ -1,6 +1,7 @@
 using Canvas.Core;
 using Canvas.Core.Composers;
 using Canvas.Core.Models;
+using Distribution.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using ScriptContainer;
@@ -120,19 +121,24 @@ namespace Canvas.Views.Web.Views
     {
       Dispose();
 
+      ScheduleService = new ScheduleService();
       ScriptService = await new ScriptService(RuntimeService).CreateModule();
       ScriptService.Actions["OnChange"] = o => Setup();
 
       await ScriptService.SubscribeToSize(ChartContainer, "OnChange");
 
+      var engine = new T();
+      var bounds = await GetBounds();
+
+      Composer = action();
+      Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
+
       Task Setup() => Schedule(async () =>
       {
-        var engine = new T();
         var bounds = await GetBounds();
 
-        Composer?.Engine?.Dispose();
         Composer = action();
-        Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
+        Composer?.Engine?.Update(bounds.Data.X, bounds.Data.Y);
 
         await Update();
       });

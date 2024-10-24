@@ -20,14 +20,9 @@ namespace Canvas.Core.Engines
     protected SKPath _curve = null;
 
     /// <summary>
-    /// Bitmap
-    /// </summary>
-    public virtual SKBitmap Map { get; protected set; }
-
-    /// <summary>
     /// Canvas
     /// </summary>
-    public virtual SKCanvas Canvas { get; protected set; }
+    public virtual SKSurface Image { get; protected set; }
 
     /// <summary>
     /// Instance
@@ -37,7 +32,7 @@ namespace Canvas.Core.Engines
     {
       get
       {
-        if (Map is null || Canvas is null)
+        if (Image is null)
         {
           return null;
         }
@@ -126,10 +121,42 @@ namespace Canvas.Core.Engines
       X = Math.Round(Math.Max(index, 5), MidpointRounding.ToZero);
       Y = Math.Round(Math.Max(value, 5), MidpointRounding.ToZero);
 
-      Map = new SKBitmap((int)X - 1, (int)Y - 1);
-      Canvas = new SKCanvas(Map);
+      Image = SKSurface.Create(new SKImageInfo((int)X, (int)Y, SKColorType.Rgba8888, SKAlphaType.Premul));
 
       return this;
+    }
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public override IEngine Update(double index, double value)
+    {
+      var x = Math.Round(Math.Max(index, 5), MidpointRounding.ToZero);
+      var y = Math.Round(Math.Max(value, 5), MidpointRounding.ToZero);
+
+      Image.Canvas.Scale((float)(X / x), (float)(Y / y));
+
+      X = x;
+      Y = y;
+
+      return this;
+    }
+
+    /// <summary>
+    /// Encode as image
+    /// </summary>
+    /// <param name="imageType"></param>
+    /// <param name="quality"></param>
+    /// <returns></returns>
+    public override byte[] Encode(SKEncodedImageFormat imageType, int quality)
+    {
+      using (var image = Image.Snapshot().Encode(imageType, quality))
+      {
+        return image is null ? [] : image.ToArray();
+      }
     }
 
     /// <summary>
@@ -148,7 +175,7 @@ namespace Canvas.Core.Engines
         case CompositionEnum.Dashes: _penLine.PathEffect = _dashLine; break;
       }
 
-      Canvas.DrawLine(
+      Image.Canvas.DrawLine(
         (float)coordinates[0].X,
         (float)coordinates[0].Y,
         (float)coordinates[1].X,
@@ -165,7 +192,7 @@ namespace Canvas.Core.Engines
     {
       _penCircle.Color = shape.Color;
 
-      Canvas.DrawCircle(
+      Image.Canvas.DrawCircle(
         (float)coordinate.X,
         (float)coordinate.Y,
         (float)shape.Size,
@@ -181,7 +208,7 @@ namespace Canvas.Core.Engines
     {
       _penBox.Color = shape.Color;
 
-      Canvas.DrawRect(
+      Image.Canvas.DrawRect(
         (float)coordinates[0].X,
         (float)coordinates[0].Y,
         (float)(coordinates[1].X - coordinates[0].X),
@@ -208,7 +235,7 @@ namespace Canvas.Core.Engines
         _curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
       }
 
-      Canvas.DrawPath(_curve, _penShape);
+      Image.Canvas.DrawPath(_curve, _penShape);
     }
 
     /// <summary>
@@ -231,7 +258,7 @@ namespace Canvas.Core.Engines
 
       var space = (_penCaption.FontSpacing - _penCaption.TextSize) / 2;
 
-      Canvas.DrawText(
+      Image.Canvas.DrawText(
         content,
         (float)coordinate.X,
         (float)(coordinate.Y - space),
@@ -262,7 +289,7 @@ namespace Canvas.Core.Engines
       _penCaptionShape.Color = shape.Color;
       _penCaptionShape.TextSize = (float)shape.Size;
 
-      Canvas.DrawTextOnPath(content, _curve, 0, _penCaptionShape.TextSize / 2, _penCaptionShape);
+      Image.Canvas.DrawTextOnPath(content, _curve, 0, _penCaptionShape.TextSize / 2, _penCaptionShape);
     }
 
     /// <summary>
@@ -288,21 +315,7 @@ namespace Canvas.Core.Engines
     /// </summary>
     public override void Clear()
     {
-      Canvas.Clear(SKColors.Transparent);
-    }
-
-    /// <summary>
-    /// Encode as image
-    /// </summary>
-    /// <param name="imageType"></param>
-    /// <param name="quality"></param>
-    /// <returns></returns>
-    public override byte[] Encode(SKEncodedImageFormat imageType, int quality)
-    {
-      using (var image = Map.Encode(imageType, quality))
-      {
-        return image is null ? [] : image.ToArray();
-      }
+      Image.Canvas.Clear(SKColors.Transparent);
     }
 
     /// <summary>
@@ -310,8 +323,7 @@ namespace Canvas.Core.Engines
     /// </summary>
     public override void Dispose()
     {
-      Map?.Dispose();
-      Canvas?.Dispose();
+      Image?.Dispose();
 
       _dotLine?.Dispose();
       _dashLine?.Dispose();
@@ -322,8 +334,7 @@ namespace Canvas.Core.Engines
       _penCaption?.Dispose();
       _penCaptionShape?.Dispose();
 
-      Map = null;
-      Canvas = null;
+      Image = null;
     }
   }
 }
