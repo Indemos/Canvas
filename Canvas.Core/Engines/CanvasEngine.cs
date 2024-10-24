@@ -121,7 +121,7 @@ namespace Canvas.Core.Engines
       X = Math.Round(Math.Max(index, 5), MidpointRounding.ToZero);
       Y = Math.Round(Math.Max(value, 5), MidpointRounding.ToZero);
 
-      Image = SKSurface.Create(new SKImageInfo((int)X, (int)Y, SKColorType.Rgba8888, SKAlphaType.Premul));
+      Image = SKSurface.Create(new SKImageInfo((int)X, (int)Y));
 
       return this;
     }
