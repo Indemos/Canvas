@@ -188,6 +188,6 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    protected virtual Task Schedule(Action action) => ScheduleService.Send(action).Task;
+    protected virtual Task Schedule(Action action) => ScheduleService is null ? Task.CompletedTask : ScheduleService.Send(action).Task;
   }
 }
