@@ -6,7 +6,6 @@ namespace Canvas.Client.Themes
   {
     public DashboardTheme()
     {
-      Palette = new PaletteLight();
       LayoutProperties = new LayoutProperties()
       {
         DefaultBorderRadius = "6px",
