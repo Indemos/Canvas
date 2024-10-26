@@ -1,7 +1,7 @@
 using Canvas.Core.Composers;
-using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -130,7 +130,7 @@ namespace Canvas.Core.Shapes
     /// </summary>
     public Shape()
     {
-      Groups = new Dictionary<string, IShape>();
+      Groups = new ConcurrentDictionary<string, IShape>();
     }
 
     /// <summary>
@@ -256,12 +256,5 @@ namespace Canvas.Core.Shapes
 
       return clone;
     }
-
-    /// <summary>
-    /// Grouping implementation
-    /// </summary>
-    /// <param name="shape"></param>
-    /// <returns></returns>
-    public virtual IShape Update(IShape shape) => this;
   }
 }

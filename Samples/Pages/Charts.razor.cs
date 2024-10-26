@@ -18,7 +18,7 @@ namespace Canvas.Client.Pages
     protected Random Generator { get; set; } = new();
     protected DateTime Time { get; set; } = DateTime.Now;
     protected DateTime TimeGroup { get; set; } = DateTime.Now;
-    protected List<IShape> Points { get; set; } = new();
+    protected List<IShape> Points { get; set; } = [];
     protected Dictionary<long, int> Indices { get; set; } = [];
 
     protected override async Task OnAfterRenderAsync(bool setup)
@@ -27,8 +27,8 @@ namespace Canvas.Client.Pages
       {
         View.Item = GetShape();
 
-        var interval = new Timer(TimeSpan.FromMicroseconds(1));
         var views = await View.CreateViews<CanvasEngine>();
+        var interval = new Timer(TimeSpan.FromMicroseconds(1));
 
         views.ForEach(o => o.ShowIndex = v => GetDateByIndex(o.Items, (int)v));
 
@@ -52,25 +52,8 @@ namespace Canvas.Client.Pages
 
     protected IShape GetShape()
     {
-      static IShape GetGroup() => new Shape() { Groups = new Dictionary<string, IShape>() };
-
-      var group = GetGroup();
-
-      group.Groups["Assets"] = GetGroup();
-      group.Groups["Assets"].Groups["Prices"] = new CandleShape();
-      group.Groups["Assets"].Groups["Arrows"] = new ArrowShape();
-
-      group.Groups["Indicators"] = GetGroup();
-      group.Groups["Indicators"].Groups["Bars"] = new BarShape();
-
-      group.Groups["Lines"] = GetGroup();
-      group.Groups["Lines"].Groups["X"] = new LineShape();
-      group.Groups["Lines"].Groups["Y"] = new LineShape();
-
-      group.Groups["Performance"] = GetGroup();
-      group.Groups["Performance"].Groups["Balance"] = new AreaShape();
-
-      return group;
+      var areas = new string[] { "Assets", "Indicators", "Lines", "Performance" };
+      return new Shape { Groups = areas.ToDictionary(o => o, o => new Shape() as IShape) };
     }
 
     protected string GetDateByIndex(IList<IShape> items, int index)
@@ -104,19 +87,24 @@ namespace Canvas.Client.Pages
       {
         Indices[TimeGroup.Ticks] = Points.Count;
         Points.Add(group);
+
+        group.Groups["Lines"].Groups["X"] = new LineShape();
+        group.Groups["Lines"].Groups["Y"] = new LineShape();
+        group.Groups["Indicators"].Groups["Bars"] = new BarShape();
+        group.Groups["Assets"].Groups["Arrows"] = new ArrowShape();
+        group.Groups["Assets"].Groups["Prices"] = new CandleShape();
+        group.Groups["Performance"].Groups["Balance"] = new AreaShape { Component = new ComponentModel { Color = SKColors.DeepSkyBlue } };
+        group.Groups["Performance"].Groups["Drawdown"] = new AreaShape { Component = new ComponentModel { Color = SKColors.OrangeRed } };
       }
 
       group.Groups["Lines"].Groups["X"].Y = point + max;
       group.Groups["Lines"].Groups["Y"].Y = point - min;
-      group.Groups["Indicators"].Groups["Bars"] = new BarShape { Y = point, Component = new ComponentModel { Color = barColor } };
-      group.Groups["Performance"].Groups["Balance"] = new AreaShape { Y = point, Component = new ComponentModel { Color = SKColors.DeepSkyBlue } };
+      group.Groups["Indicators"].Groups["Bars"].Y = point;
+      group.Groups["Performance"].Groups["Balance"].Y = point;
+      group.Groups["Performance"].Groups["Drawdown"].Y = -(point - min);
       group.Groups["Assets"].Groups["Arrows"] = new ArrowShape { Y = point, Direction = direction };
-      group.Groups["Assets"].Groups["Prices"] = new CandleShape
-      {
-        Y = point,
-        Component = new ComponentModel { Color = biColor }
-      }
-      .Update(group.Groups["Assets"].Groups["Prices"]);
+      group.Groups["Assets"].Groups["Prices"] = CandleShape.Update(group.Groups["Assets"].Groups["Prices"], point);
+      group.Groups["Assets"].Groups["Prices"].Component = new ComponentModel { Color = biColor };
 
       var domain = new DimensionModel { IndexDomain = [Points.Count - 100, Points.Count] };
 

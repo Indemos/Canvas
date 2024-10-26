@@ -114,18 +114,19 @@ namespace Canvas.Core.Shapes
     /// Grouping implementation
     /// </summary>
     /// <param name="previous"></param>
+    /// <param name="update"></param>
     /// <returns></returns>
-    public override IShape Update(IShape previous)
+    public static IShape Update(IShape previous, double? update)
     {
-      var bar = previous as CandleShape;
-      var price = Y ?? C ?? bar.Y ?? bar.C.Value;
+      var item = (previous?.Clone() ?? new CandleShape()) as CandleShape;
+      var price = update ?? item.Y ?? item.C.Value;
 
-      Y = C = price;
-      O = bar.O ?? O ?? price;
-      L = Math.Min(bar.L ?? price, L ?? price);
-      H = Math.Max(bar.H ?? price, H ?? price);
+      item.Y = item.C = price;
+      item.O = item.O ?? price;
+      item.L = Math.Min(item.L ?? price, price);
+      item.H = Math.Max(item.H ?? price, price);
 
-      return this;
+      return item;
     }
   }
 }

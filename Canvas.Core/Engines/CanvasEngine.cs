@@ -127,25 +127,6 @@ namespace Canvas.Core.Engines
     }
 
     /// <summary>
-    /// Update
-    /// </summary>
-    /// <param name="index"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public override IEngine Update(double index, double value)
-    {
-      var x = Math.Round(Math.Max(index, 5), MidpointRounding.ToZero);
-      var y = Math.Round(Math.Max(value, 5), MidpointRounding.ToZero);
-
-      Image.Canvas.Scale((float)(X / x), (float)(Y / y));
-
-      X = x;
-      Y = y;
-
-      return this;
-    }
-
-    /// <summary>
     /// Encode as image
     /// </summary>
     /// <param name="imageType"></param>

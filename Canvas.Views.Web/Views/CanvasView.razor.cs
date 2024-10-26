@@ -127,21 +127,18 @@ namespace Canvas.Views.Web.Views
 
       await ScriptService.SubscribeToSize(ChartContainer, "OnChange");
 
-      var engine = new T();
-      var bounds = await GetBounds();
-
-      Composer = action();
-      Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
-
       Task Setup() => Schedule(async () =>
       {
+        var engine = new T();
         var bounds = await GetBounds();
 
         Composer = action();
-        Composer?.Engine?.Update(bounds.Data.X, bounds.Data.Y);
+        Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
 
         await Update();
       });
+
+      await Setup();
 
       return this;
     }

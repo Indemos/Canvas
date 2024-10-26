@@ -32,14 +32,6 @@ namespace Canvas.Core.Engines
     IEngine Create(double indexSize, double valueSize);
 
     /// <summary>
-    /// Update
-    /// </summary>
-    /// <param name="indexSize"></param>
-    /// <param name="valueSize"></param>
-    /// <returns></returns>
-    IEngine Update(double indexSize, double valueSize);
-
-    /// <summary>
     /// Create circle
     /// </summary>
     /// <param name="coordinate"></param>
@@ -128,14 +120,6 @@ namespace Canvas.Core.Engines
     /// <param name="y"></param>
     /// <returns></returns>
     public abstract IEngine Create(double x, double y);
-
-    /// <summary>
-    /// Update
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    public abstract IEngine Update(double x, double y);
 
     /// <summary>
     /// Create circle
