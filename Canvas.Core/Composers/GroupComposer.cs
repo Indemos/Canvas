@@ -29,7 +29,7 @@ namespace Canvas.Core.Composers
           continue;
         }
 
-        foreach (var series in seriesGroup.Groups)
+        foreach (var series in seriesGroup.Groups.ToList())
         {
           series.Value.Composer = this;
           series.Value.CreateShape(i, series.Key, Items);
@@ -54,7 +54,7 @@ namespace Canvas.Core.Composers
         return (min, max, average);
       }
 
-      foreach (var shape in series.Groups)
+      foreach (var shape in series.Groups.ToList())
       {
         shape.Value.Composer = this;
 

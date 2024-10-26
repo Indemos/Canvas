@@ -130,7 +130,7 @@ namespace Canvas.Core.Shapes
     /// </summary>
     public Shape()
     {
-      Groups = new ConcurrentDictionary<string, IShape>();
+      Groups = new Dictionary<string, IShape>();
     }
 
     /// <summary>
