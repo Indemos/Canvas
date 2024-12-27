@@ -100,13 +100,20 @@ namespace Canvas.Core.Shapes
         Composer.GetItemPosition(index + size, downSide)
       };
 
-      var rangeCoordinates = new DataModel[]
+      var rangeX = new DataModel[]
       {
-        Composer.GetItemPosition(index, L ?? 0),
-        Composer.GetItemPosition(index, H ?? 0),
+        Composer.GetItemPosition(index - size, close),
+        Composer.GetItemPosition(index + size, close)
       };
 
-      Composer.Engine.CreateLine(rangeCoordinates, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      var rangeY = new DataModel[]
+      {
+        Composer.GetItemPosition(index, L ?? 0),
+        Composer.GetItemPosition(index, H ?? 0)
+      };
+
+      Composer.Engine.CreateLine(rangeX, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateLine(rangeY, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
       Composer.Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
 

@@ -53,14 +53,14 @@ namespace Canvas.Views.Web.Views
           return composer;
         });
 
-        composer.OnAction += domain => Views.Values.ForEach(async o =>
+        composer.OnAction += async domain => await Task.WhenAll(Views.Values.Select(async o =>
         {
           if (Equals(composer.Name, o?.Composer?.Name) is false)
           {
             domain.ValueDomain = o.Composer.Dimension.ValueDomain;
             await o.Update(domain);
           }
-        });
+        }));
       }
 
       await Task.WhenAll(sources.Select(o => o.Task));

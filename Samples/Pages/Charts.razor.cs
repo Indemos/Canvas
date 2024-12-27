@@ -91,8 +91,8 @@ namespace Canvas.Client.Pages
         group.Groups["Lines"].Groups["X"] = new LineShape();
         group.Groups["Lines"].Groups["Y"] = new LineShape();
         group.Groups["Indicators"].Groups["Bars"] = new BarShape();
-        group.Groups["Assets"].Groups["Arrows"] = new ArrowShape();
         group.Groups["Assets"].Groups["Prices"] = new CandleShape();
+        group.Groups["Assets"].Groups["Arrows"] = new ArrowShape();
         group.Groups["Performance"].Groups["Balance"] = new AreaShape { Component = new ComponentModel { Color = SKColors.DeepSkyBlue } };
         group.Groups["Performance"].Groups["Drawdown"] = new AreaShape { Component = new ComponentModel { Color = SKColors.OrangeRed } };
       }
@@ -102,9 +102,9 @@ namespace Canvas.Client.Pages
       group.Groups["Indicators"].Groups["Bars"].Y = point;
       group.Groups["Performance"].Groups["Balance"].Y = point;
       group.Groups["Performance"].Groups["Drawdown"].Y = -(point - min);
-      group.Groups["Assets"].Groups["Arrows"] = new ArrowShape { Y = point, Direction = direction };
       group.Groups["Assets"].Groups["Prices"] = CandleShape.Update(group.Groups["Assets"].Groups["Prices"], point);
       group.Groups["Assets"].Groups["Prices"].Component = new ComponentModel { Color = biColor };
+      group.Groups["Assets"].Groups["Arrows"] = new ArrowShape { Y = point, Direction = direction };
 
       var domain = new DimensionModel { IndexDomain = [Points.Count - 100, Points.Count] };
 
