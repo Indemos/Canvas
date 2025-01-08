@@ -56,8 +56,7 @@
       var composer = new Composer
         {
           Name = "Demo",
-          Items = points,
-          View = View
+          Items = points
         };
 
       await View.Create<CanvasEngine>(() => composer);

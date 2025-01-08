@@ -5,7 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.0.0</Version>
+    <Version>5.5.0</Version>
     <Description>Internal package used in Canvas.Views.Web</Description>
     <Authors>artemiusgreat</Authors>
     <Copyright>indemos.com</Copyright>

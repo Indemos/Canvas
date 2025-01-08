@@ -10,15 +10,13 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Update items
     /// </summary>
-    /// <param name="engine"></param>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public override void Render(DimensionModel domain)
+    public override ScopeModel Render(DimensionModel domain)
     {
       Engine.Clear();
 
-      View.Values = GetValues();
-      View.Indices = GetIndices();
+      SetDimensions(domain);
 
       for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
@@ -29,12 +27,18 @@ namespace Canvas.Core.Composers
           continue;
         }
 
-        foreach (var series in seriesGroup.Groups.ToList())
+        foreach (var series in seriesGroup.Groups)
         {
           series.Value.Composer = this;
           series.Value.CreateShape(i, series.Key, Items);
         }
       }
+
+      return new ScopeModel
+      {
+        Values = GetValues(),
+        Indices = GetIndices()
+      };
     }
 
     /// <summary>
@@ -54,7 +58,7 @@ namespace Canvas.Core.Composers
         return (min, max, average);
       }
 
-      foreach (var shape in series.Groups.ToList())
+      foreach (var shape in series.Groups)
       {
         shape.Value.Composer = this;
 

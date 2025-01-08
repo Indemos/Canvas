@@ -25,18 +25,6 @@ namespace Canvas.Core
     IComposer Composer { get; }
 
     /// <summary>
-    /// Mouse move event
-    /// </summary>
-    /// <param name="e"></param>
-    Action<ViewModel> OnMouseMove { get; set; }
-
-    /// <summary>
-    /// Mouse leave event
-    /// </summary>
-    /// <param name="e"></param>
-    Action<ViewModel> OnMouseLeave { get; set; }
-
-    /// <summary>
     /// Update
     /// </summary>
     /// <param name="message"></param>

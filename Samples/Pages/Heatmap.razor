@@ -50,9 +50,8 @@
         Name = "Correlation",
         Range = points.Max(shape => (shape as ColorMapShape).Points.Count),
         Items = points,
-        View = View,
-        IndexCount = labels.Length,
-        ValueCount = 5,
+        Indices = labels.Length,
+        Values = 5,
         ShowIndex = i => labels.ElementAtOrDefault((int)i),
         ShowValue = i => labels.ElementAtOrDefault((int)i)
       };

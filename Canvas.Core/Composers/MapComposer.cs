@@ -19,7 +19,7 @@ namespace Canvas.Core.Composers
       var minIndex = Dimension.MinIndex;
       var maxIndex = Dimension.MaxIndex;
       var range = 0.0 + maxIndex - minIndex;
-      var count = Math.Min(IndexCount, range);
+      var count = Math.Min(Indices, range);
       var step = Math.Round(range / count, MidpointRounding.ToEven);
       var items = new List<MarkerModel>();
 
@@ -55,7 +55,7 @@ namespace Canvas.Core.Composers
       var minValue = Dimension.MinValue;
       var maxValue = Dimension.MaxValue;
       var range = 0.0 + maxValue - minValue;
-      var count = Math.Min(ValueCount, range);
+      var count = Math.Min(Values, range);
       var step = Math.Round(range / count, MidpointRounding.ToEven);
       var items = new List<MarkerModel>();
 

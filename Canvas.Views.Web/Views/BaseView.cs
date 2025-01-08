@@ -35,12 +35,6 @@ namespace Canvas.Views.Web.Views
     public virtual IList<MarkerModel> Indices { get; set; } = [];
 
     /// <summary>
-    /// Events
-    /// </summary>
-    public virtual Action<ViewModel> OnMouseMove { get; set; } = o => { };
-    public virtual Action<ViewModel> OnMouseLeave { get; set; } = o => { };
-
-    /// <summary>
     /// Update
     /// </summary>
     /// <param name="domain"></param>
@@ -55,8 +49,11 @@ namespace Canvas.Views.Web.Views
           return;
         }
 
-        Composer.SetDimensions(domain ?? Composer.Dimension);
-        Composer.Render(domain ?? Composer.Dimension);
+        var scope = Composer.Render(domain ?? Composer.Dimension);
+
+        Values = scope.Values;
+        Indices = scope.Indices;
+
         Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
         if (source is not null)
@@ -87,9 +84,7 @@ namespace Canvas.Views.Web.Views
       Values?.Clear();
       Indices?.Clear();
 
-      OnMouseMove = o => { };
-      OnMouseLeave = o => { };
-
+      Composer?.Dispose();
       ScriptService?.Dispose();
       ScheduleService?.Dispose();
 
@@ -119,21 +114,28 @@ namespace Canvas.Views.Web.Views
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnWheelAction(WheelEventArgs e) => Composer?.OnWheel(new ViewModel
+    protected virtual async void OnWheelAction(WheelEventArgs e)
     {
-      IsShape = e.ShiftKey,
-      Data = new DataModel
+      var message = new ViewModel
       {
-        X = e.DeltaX,
-        Y = e.DeltaY
-      }
-    });
+        IsShape = e.ShiftKey,
+        Data = new DataModel
+        {
+          X = e.DeltaX,
+          Y = e.DeltaY
+        }
+      };
+
+      var domain = Composer?.OnWheel(message);
+
+      await Update(domain, Composer?.Name);
+    }
 
     /// <summary>
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseMoveAction(MouseEventArgs e)
+    protected virtual async void OnMouseMoveAction(MouseEventArgs e)
     {
       var message = new ViewModel
       {
@@ -145,18 +147,9 @@ namespace Canvas.Views.Web.Views
         }
       };
 
-      Composer?.OnMouseMove(message);
-      OnMouseMove(message);
-    }
+      var domain = Composer?.OnMouseMove(message);
 
-    /// <summary>
-    /// Mouse leave event
-    /// </summary>
-    /// <param name="e"></param>
-    protected virtual void OnMouseLeaveAction(MouseEventArgs e)
-    {
-      Composer?.OnMouseLeave(default);
-      OnMouseLeave(default);
+      await Update(domain, Composer?.Name);
     }
 
     /// <summary>
@@ -164,24 +157,36 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="e"></param>
     /// <param name="orientation"></param>
-    protected virtual void OnScaleAction(MouseEventArgs e, int orientation = 0) => Composer?.OnScale(new ViewModel
+    protected virtual async void OnScaleAction(MouseEventArgs e, int orientation = 0)
     {
-      IsMove = e.Buttons == 1,
-      Data = new DataModel
+      var message = new ViewModel
       {
-        X = e.OffsetX,
-        Y = e.OffsetY
-      }
-    }, orientation);
+        IsMove = e.Buttons == 1,
+        Data = new DataModel
+        {
+          X = e.OffsetX,
+          Y = e.OffsetY
+        }
+      };
+
+      var domain = Composer?.OnScale(message, orientation);
+
+      await Update(domain, Composer?.Name);
+    }
 
     /// <summary>
     /// Double clck event in the view area
     /// </summary>
     /// <param name="e"></param>
-    protected virtual void OnMouseDownAction(MouseEventArgs e) => Composer?.OnMouseDown(new ViewModel
+    protected virtual async Task OnMouseDownAction(MouseEventArgs e)
     {
-      IsControl = e.CtrlKey
-    });
+      if (e.CtrlKey)
+      {
+        var domain = Composer.Dimension;
+        domain.ValueDomain = null;
+        await Update(domain);
+      }
+    }
 
     /// <summary>
     /// Dedicated process

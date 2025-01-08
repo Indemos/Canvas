@@ -53,18 +53,15 @@ namespace Canvas.Views.Web.Views
       };
 
       Composer?.OnMouseMove(message);
-      OnMouseMove(message);
     }
 
     /// <summary>
     /// Mouse leave event
     /// </summary>
     /// <param name="e"></param>
-    protected override void OnMouseLeaveAction(MouseEventArgs e)
+    protected virtual void OnMouseLeaveAction(MouseEventArgs e)
     {
       Cursor = null;
-      Composer?.OnMouseLeave(default);
-      OnMouseLeave(default);
     }
 
     /// <summary>

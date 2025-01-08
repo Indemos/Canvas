@@ -40,8 +40,7 @@ namespace Canvas.Views.Web.Views
         var source = new TaskCompletionSource();
         var composer = group.Composer = new GroupComposer
         {
-          Name = view.Key,
-          View = view.Value
+          Name = view.Key
         };
 
         sources.Add(source);

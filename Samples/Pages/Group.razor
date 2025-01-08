@@ -43,11 +43,10 @@
 
       var composer = new GroupComposer
       {
-        IndexCount = 5,
-        ValueCount = 3,
+        Indices = 5,
+        Values = 3,
         Name = "Indicators",
-        Items = points,
-        View = View
+        Items = points
       };
 
       await View.Create<CanvasEngine>(() => composer);
