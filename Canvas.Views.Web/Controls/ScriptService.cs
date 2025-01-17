@@ -113,7 +113,7 @@ namespace Canvas.Controls
       await DisposeAsync();
 
       _serviceInstance = DotNetObjectReference.Create(this);
-      _scriptModule = await _runtime.InvokeAsync<IJSObjectReference>("import", "./_content/Canvas.Controls/ScriptControl.razor.js");
+      _scriptModule = await _runtime.InvokeAsync<IJSObjectReference>("import", "./_content/Canvas.Views.Web/Controls/ScriptControl.razor.js");
       _scriptInstance = await _scriptModule.InvokeAsync<IJSObjectReference>("getScriptModule", _serviceInstance, options ?? new Dictionary<string, dynamic>());
 
       return this;
