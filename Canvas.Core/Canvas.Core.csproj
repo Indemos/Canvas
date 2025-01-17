@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.5.0</Version>
+    <Version>5.6.0</Version>
     <Description>Internal package used in Canvas.Views.Web</Description>
     <Authors>artemiusgreat</Authors>
     <Copyright>indemos.com</Copyright>
