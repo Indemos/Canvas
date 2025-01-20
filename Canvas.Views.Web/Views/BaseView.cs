@@ -40,13 +40,13 @@ namespace Canvas.Views.Web.Views
     /// <param name="domain"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public virtual async Task Update(DimensionModel? domain = null, string source = null)
+    public virtual Task Update(DimensionModel? domain = null, string source = null)
     {
-      await Schedule(async () =>
+      return Schedule(() =>
       {
         if (Composer?.Engine?.Instance is null)
         {
-          return;
+          return Task.CompletedTask;
         }
 
         var scope = Composer.Render(domain ?? Composer.Dimension);
@@ -61,7 +61,7 @@ namespace Canvas.Views.Web.Views
           Composer.OnAction(domain ?? Composer.Dimension);
         }
 
-        await InvokeAsync(StateHasChanged);
+        return InvokeAsync(StateHasChanged);
       });
     }
 
@@ -193,6 +193,6 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="action"></param>
     /// <returns></returns>
-    protected virtual Task Schedule(Action action) => ScheduleService is null ? Task.CompletedTask : ScheduleService.Send(action).Task;
+    protected virtual Task Schedule(Func<Task> action) => ScheduleService?.Send(action)?.Task ?? Task.CompletedTask;
   }
 }

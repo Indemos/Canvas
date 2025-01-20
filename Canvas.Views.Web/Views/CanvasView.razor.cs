@@ -120,11 +120,11 @@ namespace Canvas.Views.Web.Views
 
       ScheduleService = new ScheduleService();
       ScriptService = await new ScriptService(RuntimeService).CreateModule();
-      ScriptService.Actions["OnChange"] = o => Setup();
+      ScriptService.Actions["OnChange"] = async o => await Setup();
 
       await ScriptService.SubscribeToSize(ChartContainer, "OnChange");
 
-      Task Setup() => Schedule(async () =>
+      async Task Setup() 
       {
         var engine = new T();
         var bounds = await GetBounds();
@@ -133,7 +133,7 @@ namespace Canvas.Views.Web.Views
         Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
 
         await Update();
-      });
+      };
 
       await Setup();
 
