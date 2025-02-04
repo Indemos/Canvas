@@ -5,7 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.6.3</Version>
+    <Version>5.6.5</Version>
     <Description>Internal package used in Canvas.Views.Web</Description>
     <Authors>artemiusgreat</Authors>
     <Copyright>indemos.com</Copyright>
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Distribution" Version="2.2.2" />
-    <PackageReference Include="SkiaSharp" Version="3.118.0-preview.2.3" />
+    <PackageReference Include="SkiaSharp" Version="3.116.1" />
     <PackageReference Include="System.Interactive" Version="6.0.1" />
   </ItemGroup>
 

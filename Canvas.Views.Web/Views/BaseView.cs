@@ -42,27 +42,36 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual Task Update(DimensionModel? domain = null, string source = null)
     {
-      return Schedule(() =>
+      try
       {
-        if (Composer?.Engine?.Instance is null)
+        return Schedule(() =>
         {
-          return Task.CompletedTask;
-        }
+          if (Composer?.Engine?.Instance is null)
+          {
+            return Task.CompletedTask;
+          }
 
-        var scope = Composer.Render(domain ?? Composer.Dimension);
+          var scope = Composer.Render(domain ?? Composer.Dimension);
 
-        Values = scope.Values;
-        Indices = scope.Indices;
+          Values = scope.Values;
+          Indices = scope.Indices;
 
-        Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
+          Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
-        if (source is not null)
-        {
-          Composer.OnAction(domain ?? Composer.Dimension);
-        }
+          if (source is not null)
+          {
+            Composer.OnAction(domain ?? Composer.Dimension);
+          }
 
-        return InvokeAsync(StateHasChanged);
-      });
+          return InvokeAsync(StateHasChanged);
+        });
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+
+      return Task.CompletedTask;
     }
 
     /// <summary>

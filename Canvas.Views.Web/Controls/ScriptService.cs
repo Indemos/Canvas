@@ -48,9 +48,16 @@ namespace Canvas.Controls
     /// <returns></returns>
     public async Task<ScriptMessage?> GetDocBounds()
     {
-      if (_scriptInstance is not null)
+      try
       {
-        return await _scriptInstance.InvokeAsync<ScriptMessage>("getDocBounds");
+        if (_scriptInstance is not null)
+        {
+          return await _scriptInstance.InvokeAsync<ScriptMessage>("getDocBounds");
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
       }
 
       return null;
@@ -63,9 +70,16 @@ namespace Canvas.Controls
     /// <returns></returns>
     public async Task<ScriptMessage?> GetElementBounds(ElementReference element)
     {
-      if (_scriptInstance is not null)
+      try
       {
-        return await _scriptInstance.InvokeAsync<ScriptMessage>("getElementBounds", element);
+        if (_scriptInstance is not null)
+        {
+          return await _scriptInstance.InvokeAsync<ScriptMessage>("getElementBounds", element);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
       }
 
       return null;
@@ -80,9 +94,16 @@ namespace Canvas.Controls
     /// <returns></returns>
     public async Task<string> Subscribe(ElementReference element, string eventName, string actionName)
     {
-      if (_scriptInstance is not null)
+      try
       {
-        return await _scriptInstance.InvokeAsync<string>("subscribe", element, eventName, actionName);
+        if (_scriptInstance is not null)
+        {
+          return await _scriptInstance.InvokeAsync<string>("subscribe", element, eventName, actionName);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
       }
 
       return null;
@@ -96,9 +117,16 @@ namespace Canvas.Controls
     /// <returns></returns>
     public async Task<string> SubscribeToSize(ElementReference element, string actionName)
     {
-      if (_scriptInstance is not null)
+      try
       {
-        return await _scriptInstance.InvokeAsync<string>("subscribeToSize", element, actionName);
+        if (_scriptInstance is not null)
+        {
+          return await _scriptInstance.InvokeAsync<string>("subscribeToSize", element, actionName);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
       }
 
       return null;
@@ -110,11 +138,18 @@ namespace Canvas.Controls
     /// <returns></returns>
     public async Task<ScriptService> CreateModule(IDictionary<string, dynamic> options = null)
     {
-      await DisposeAsync();
+      try
+      {
+        await DisposeAsync();
 
-      _serviceInstance = DotNetObjectReference.Create(this);
-      _scriptModule = await _runtime.InvokeAsync<IJSObjectReference>("import", "./_content/Canvas.Views.Web/Controls/ScriptControl.razor.js");
-      _scriptInstance = await _scriptModule.InvokeAsync<IJSObjectReference>("getScriptModule", _serviceInstance, options ?? new Dictionary<string, dynamic>());
+        _serviceInstance = DotNetObjectReference.Create(this);
+        _scriptModule = await _runtime.InvokeAsync<IJSObjectReference>("import", "./_content/Canvas.Views.Web/Controls/ScriptControl.razor.js");
+        _scriptInstance = await _scriptModule.InvokeAsync<IJSObjectReference>("getScriptModule", _serviceInstance, options ?? new Dictionary<string, dynamic>());
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
+      }
 
       return this;
     }
@@ -128,9 +163,16 @@ namespace Canvas.Controls
     [JSInvokable]
     public void OnChange(dynamic message, string actionName)
     {
-      if (Actions.TryGetValue(actionName, out var action))
+      try
       {
-        action(message);
+        if (Actions.TryGetValue(actionName, out var action))
+        {
+          action(message);
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
       }
     }
 
@@ -146,20 +188,29 @@ namespace Canvas.Controls
     /// <returns></returns>
     public virtual Task DisposeAsync()
     {
-      Actions?.Clear();
+      try
+      {
+        Actions?.Clear();
 
-      _serviceInstance?.Dispose();
+        _serviceInstance?.Dispose();
 
-      var response = Task.WhenAll([
-        _scriptModule is null ? Task.CompletedTask : _scriptModule.DisposeAsync().AsTask(),
+        var response = Task.WhenAll([
+          _scriptModule is null ? Task.CompletedTask : _scriptModule.DisposeAsync().AsTask(),
         _scriptInstance is null ? Task.CompletedTask : _scriptInstance.DisposeAsync().AsTask()
-      ]);
+        ]);
 
-      _scriptModule = null;
-      _scriptInstance = null;
-      _serviceInstance = null;
+        _scriptModule = null;
+        _scriptInstance = null;
+        _serviceInstance = null;
 
-      return response;
+        return response;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
+      }
+
+      return Task.CompletedTask;
     }
   }
 }
