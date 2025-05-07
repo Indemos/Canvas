@@ -34,7 +34,7 @@ namespace Canvas.Views.Web.Views
 
       await InvokeAsync(StateHasChanged);
 
-      foreach (var view in Views)
+      foreach (var view in Views.Where(o => o.Value is not null))
       {
         var group = Item.Groups[view.Key];
         var source = new TaskCompletionSource();
