@@ -10,7 +10,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.6.6</Version>
+    <Version>5.6.7</Version>
     <PackageTags>finance chart opengl canvas trading gdi stock direct2d</PackageTags>
     <Authors>artemiusgreat</Authors>
     <Copyright>indemos.com</Copyright>
