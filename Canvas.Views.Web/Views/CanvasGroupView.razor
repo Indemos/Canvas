@@ -6,7 +6,7 @@
   {
     @foreach (var group in Item.Groups)
     {
-      <CanvasView @ref="@Views[group.Key]"></CanvasView>
+      <CanvasView @ref="@Views[group.Key]" Name="@group.Key" OnReady="OnCanvasRender"></CanvasView>
     }
   }
 

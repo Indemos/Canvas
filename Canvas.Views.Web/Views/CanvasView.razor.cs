@@ -9,15 +9,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace Canvas.Views.Web.Views
 {
   public partial class CanvasView : IDisposable
   {
-    protected virtual string Name { get; set; } = $"{Guid.NewGuid():N}";
+    [Parameter] public string Name { get; set; } = $"{Guid.NewGuid():N}";
+    [Parameter] public EventCallback<string> OnReady { get; set; }
+
     protected virtual PositionModel? Cursor { get; set; }
     protected virtual ElementReference ChartContainer { get; set; }
     protected virtual IDictionary<string, IList<double>> Series { get; set; }
+
+    /// <summary>
+    /// Renderer
+    /// </summary>
+    /// <param name="setup"></param>
+    /// <returns></returns>
+    protected override async Task OnAfterRenderAsync(bool setup)
+    {
+      await base.OnAfterRenderAsync(setup);
+
+      if (setup)
+      {
+        await OnReady.InvokeAsync(Name);
+      }
+    }
 
     /// <summary>
     /// Board values

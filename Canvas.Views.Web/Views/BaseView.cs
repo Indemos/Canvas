@@ -113,8 +113,8 @@ namespace Canvas.Views.Web.Views
       {
         Data = new DataModel
         {
-          X = bounds.Value.X,
-          Y = bounds.Value.Y
+          X = bounds?.X ?? 0,
+          Y = bounds?.Y ?? 0
         }
       };
     }

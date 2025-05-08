@@ -3,6 +3,7 @@ using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,7 +20,24 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Views
     /// </summary>
-    public IDictionary<string, CanvasView> Views { get; set; } = new Dictionary<string, CanvasView>();
+    public ConcurrentDictionary<string, CanvasView> Views { get; set; } = new ConcurrentDictionary<string, CanvasView>();
+
+    /// <summary>
+    /// Completion sources
+    /// </summary>
+    public ConcurrentDictionary<string, TaskCompletionSource> Sources { get; set; } = new ConcurrentDictionary<string, TaskCompletionSource>();
+
+    /// <summary>
+    /// Renderer
+    /// </summary>
+    /// <param name="name"></param>
+    public void OnCanvasRender(string name)
+    {
+      if (Sources.TryGetValue(name, out var source))
+      {
+        source.TrySetResult();
+      }
+    }
 
     /// <summary>
     /// Create
@@ -28,30 +46,27 @@ namespace Canvas.Views.Web.Views
     public async Task<IList<IComposer>> CreateViews<EngineType>() where EngineType : IEngine, new()
     {
       var composers = new List<IComposer>();
-      var sources = new List<TaskCompletionSource>();
 
-      Item.Groups.ForEach(view => Views[view.Key] = null);
+      foreach (var group in Item.Groups)
+      {
+        Views[group.Key] = null;
+        Sources[group.Key] = new TaskCompletionSource();
+      }
 
       await InvokeAsync(StateHasChanged);
+      await Task.WhenAll(Sources.Values.Select(o => o.Task));
 
-      foreach (var view in Views.Where(o => o.Value is not null))
+      foreach (var view in Views)
       {
         var group = Item.Groups[view.Key];
-        var source = new TaskCompletionSource();
         var composer = group.Composer = new GroupComposer
         {
           Name = view.Key
         };
 
-        sources.Add(source);
+        await view.Value.Create<EngineType>(() => composer);
+
         composers.Add(composer);
-
-        await view.Value.Create<EngineType>(() =>
-        {
-          source.TrySetResult();
-          return composer;
-        });
-
         composer.OnAction += domain => Views.Values.ForEach(async o =>
         {
           if (o?.Composer?.Name is not null && Equals(composer.Name, o.Composer.Name) is false)
@@ -61,8 +76,6 @@ namespace Canvas.Views.Web.Views
           }
         });
       }
-
-      await Task.WhenAll(sources.Select(o => o.Task));
 
       return composers;
     }
