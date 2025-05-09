@@ -2,7 +2,7 @@
 
 <PageTitle>Blazor</PageTitle>
 
-<MudThemeProvider Theme="_theme" />
+<MudThemeProvider Theme="theme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -12,12 +12,12 @@
 
 @code {
 
-  public bool _drawerOpen = true;
-  public DashboardTheme _theme = new();
+  public bool drawerOpen = true;
+  public DashboardTheme theme = new();
 
   void DrawerToggle()
   {
-    _drawerOpen = !_drawerOpen;
+    drawerOpen = !drawerOpen;
   }
 
   protected override void OnInitialized()
