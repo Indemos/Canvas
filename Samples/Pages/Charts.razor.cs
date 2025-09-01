@@ -35,15 +35,12 @@ namespace Canvas.Client.Pages
         interval.Enabled = true;
         interval.Elapsed += (o, e) =>
         {
-          lock (this)
+          if (Points.Count >= 100)
           {
-            if (Points.Count >= 100)
-            {
-              interval.Stop();
-            }
-
-            OnData();
+            interval.Stop();
           }
+
+          OnData();
         };
       }
 
@@ -67,7 +64,7 @@ namespace Canvas.Client.Pages
     /// <summary>
     /// On timer event
     /// </summary>
-    protected void OnData()
+    protected Task OnData()
     {
       var min = Generator.Next(1000, 2000);
       var max = Generator.Next(3000, 5000);
@@ -108,7 +105,7 @@ namespace Canvas.Client.Pages
 
       var domain = new DimensionModel { IndexDomain = [Points.Count - 100, Points.Count] };
 
-      View.Update(domain, Points);
+      return View.Update(domain, Points);
     }
   }
 }

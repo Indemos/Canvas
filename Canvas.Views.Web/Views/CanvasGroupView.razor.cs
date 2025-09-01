@@ -2,6 +2,7 @@ using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
+using Distribution.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace Canvas.Views.Web.Views
 {
   public partial class CanvasGroupView : IDisposable
   {
+    protected virtual ScheduleService GroupService { get; set; }
+
     /// <summary>
     /// Item
     /// </summary>
@@ -45,6 +48,10 @@ namespace Canvas.Views.Web.Views
     /// <param name="item"></param>
     public async Task<IList<IComposer>> CreateViews<EngineType>() where EngineType : IEngine, new()
     {
+      Dispose();
+
+      GroupService = new ScheduleService();
+
       var composers = new List<IComposer>();
 
       foreach (var group in Item.Groups)
@@ -88,17 +95,30 @@ namespace Canvas.Views.Web.Views
     /// <returns></returns>
     public virtual Task Update(DimensionModel? dimension, IList<IShape> items = null)
     {
-      var processes = Views.Values.Select(o =>
+      try
       {
-        if (items is not null)
+        return GroupService?.Send(() =>
         {
-          o.Composer.Items = items;
-        }
+          var processes = Views.Values.Select(o =>
+          {
+            if (items is not null)
+            {
+              o.Composer.Items = items;
+            }
 
-        return o.Update(dimension);
-      });
+            return o.Update(dimension);
+          });
 
-      return Task.WhenAll(processes);
+          return Task.WhenAll(processes);
+
+        })?.Task ?? Task.CompletedTask;
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+      }
+
+      return Task.CompletedTask;
     }
 
     /// <summary>
@@ -107,6 +127,7 @@ namespace Canvas.Views.Web.Views
     public override void Dispose()
     {
       base.Dispose();
+      GroupService?.Dispose();
       Views?.ForEach(o => o.Value?.Dispose());
     }
   }

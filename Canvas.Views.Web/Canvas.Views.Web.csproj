@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -10,7 +10,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>5.6.9</Version>
+    <Version>5.7.5</Version>
     <PackageTags>finance chart opengl canvas trading gdi stock direct2d</PackageTags>
     <Authors>artemiusgreat</Authors>
     <Copyright>indemos.com</Copyright>
