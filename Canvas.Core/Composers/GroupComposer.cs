@@ -1,3 +1,4 @@
+using Canvas.Core.Extensions;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
 using System;
@@ -21,13 +22,14 @@ namespace Canvas.Core.Composers
       for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
       {
         var group = Items.ElementAtOrDefault(i);
+        var grouSeries = group?.Groups?.Get(Name);
 
-        if (group?.Groups is null || group.Groups.TryGetValue(Name, out IShape seriesGroup) is false)
+        if (grouSeries is null)
         {
           continue;
         }
 
-        foreach (var series in seriesGroup.Groups)
+        foreach (var series in grouSeries.Groups.ToArray())
         {
           series.Value.Composer = this;
           series.Value.CreateShape(i, series.Key, Items);
@@ -52,13 +54,14 @@ namespace Canvas.Core.Composers
     protected override (double, double, double) GetExtremes(int i, double min, double max, double average)
     {
       var group = Items.ElementAtOrDefault(i);
+      var series = group?.Groups?.Get(Name);
 
-      if (group?.Groups is null || group.Groups.TryGetValue(Name, out IShape series) is false)
+      if (series is null)
       {
         return (min, max, average);
       }
 
-      foreach (var shape in series.Groups)
+      foreach (var shape in series.Groups.ToArray())
       {
         shape.Value.Composer = this;
 

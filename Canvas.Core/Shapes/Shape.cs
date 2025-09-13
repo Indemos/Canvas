@@ -1,7 +1,7 @@
 using Canvas.Core.Composers;
+using Canvas.Core.Extensions;
 using Canvas.Core.Models;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -184,7 +184,7 @@ namespace Canvas.Core.Shapes
         };
       }
 
-      group.Groups.TryGetValue(Composer?.Name ?? string.Empty, out IShape series);
+      var series = group.Groups.Get(Composer?.Name ?? string.Empty);
 
       if (series?.Groups is null)
       {
@@ -228,16 +228,14 @@ namespace Canvas.Core.Shapes
         return null;
       }
 
-      group.Groups.TryGetValue(Composer.Name, out IShape series);
+      var series = group.Groups.Get(Composer.Name);
 
       if (series?.Groups is null)
       {
         return null;
       }
 
-      series.Groups.TryGetValue(name, out IShape shape);
-
-      return shape;
+      return series.Groups.Get(name);
     }
 
     /// <summary>
