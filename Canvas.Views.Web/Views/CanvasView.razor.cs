@@ -2,7 +2,6 @@ using Canvas.Controls;
 using Canvas.Core;
 using Canvas.Core.Composers;
 using Canvas.Core.Models;
-using Distribution.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
@@ -135,7 +134,7 @@ namespace Canvas.Views.Web.Views
     {
       Dispose();
 
-      ScheduleService = new ScheduleService();
+      SchedulerService = new();
       ScriptService = await new ScriptService(RuntimeService).CreateModule();
       ScriptService.Actions["OnChange"] = async o => await Setup();
 

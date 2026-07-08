@@ -196,7 +196,7 @@ namespace Canvas.Controls
 
         var response = Task.WhenAll([
           scriptModule is null ? Task.CompletedTask : scriptModule.DisposeAsync().AsTask(),
-        scriptInstance is null ? Task.CompletedTask : scriptInstance.DisposeAsync().AsTask()
+          scriptInstance is null ? Task.CompletedTask : scriptInstance.DisposeAsync().AsTask()
         ]);
 
         scriptModule = null;

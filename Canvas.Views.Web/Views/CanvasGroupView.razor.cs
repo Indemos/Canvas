@@ -2,7 +2,6 @@ using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
 using Canvas.Core.Shapes;
-using Distribution.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,8 +12,6 @@ namespace Canvas.Views.Web.Views
 {
   public partial class CanvasGroupView : IDisposable
   {
-    protected virtual ScheduleService GroupService { get; set; }
-
     /// <summary>
     /// Item
     /// </summary>
@@ -23,12 +20,12 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Views
     /// </summary>
-    public ConcurrentDictionary<string, CanvasView> Views { get; set; } = new ConcurrentDictionary<string, CanvasView>();
+    public ConcurrentDictionary<string, CanvasView> Views { get; set; } = new();
 
     /// <summary>
     /// Completion sources
     /// </summary>
-    public ConcurrentDictionary<string, TaskCompletionSource> Sources { get; set; } = new ConcurrentDictionary<string, TaskCompletionSource>();
+    public ConcurrentDictionary<string, TaskCompletionSource> Sources { get; set; } = new();
 
     /// <summary>
     /// Renderer
@@ -49,8 +46,6 @@ namespace Canvas.Views.Web.Views
     public async Task<IList<IComposer>> CreateViews<EngineType>() where EngineType : IEngine, new()
     {
       Dispose();
-
-      GroupService = new ScheduleService();
 
       var composers = new List<IComposer>();
 
@@ -97,21 +92,17 @@ namespace Canvas.Views.Web.Views
     {
       try
       {
-        return GroupService?.Send(() =>
+        var processes = Views.Values.Select(o =>
         {
-          var processes = Views.Values.Select(o =>
+          if (items is not null)
           {
-            if (items is not null)
-            {
-              o.Composer.Items = items;
-            }
+            o.Composer.Items = items;
+          }
 
-            return o.Update(dimension);
-          });
+          return o.Update(dimension);
+        });
 
-          return Task.WhenAll(processes);
-
-        })?.Task ?? Task.CompletedTask;
+        return Task.WhenAll(processes);
       }
       catch (Exception e)
       {
@@ -127,7 +118,6 @@ namespace Canvas.Views.Web.Views
     public override void Dispose()
     {
       base.Dispose();
-      GroupService?.Dispose();
       Views?.ForEach(o => o.Value?.Dispose());
     }
   }

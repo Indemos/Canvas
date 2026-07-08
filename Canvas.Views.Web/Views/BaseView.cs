@@ -1,12 +1,12 @@
+using Canvas.Controls;
 using Canvas.Core;
 using Canvas.Core.Composers;
 using Canvas.Core.Engines;
 using Canvas.Core.Models;
-using Distribution.Services;
+using Canvas.Core.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Canvas.Controls;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace Canvas.Views.Web.Views
 
     protected virtual string Route { get; set; }
     protected virtual ScriptService ScriptService { get; set; }
-    protected virtual ScheduleService ScheduleService { get; set; }
+    protected virtual SchedulerService SchedulerService { get; set; }
     protected virtual ElementReference Container { get; set; }
 
     /// <summary>
@@ -39,39 +39,30 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="domain"></param>
     /// <param name="source"></param>
-    /// <returns></returns>
     public virtual Task Update(DimensionModel? domain = null, string source = null)
     {
-      try
+      return SchedulerService?.Send(() =>
       {
-        return Schedule(() =>
+        if (Composer?.Engine?.Instance is null)
         {
-          if (Composer?.Engine?.Instance is null)
-          {
-            return Task.CompletedTask;
-          }
+          return Task.CompletedTask;
+        }
 
-          var scope = Composer.Render(domain ?? Composer.Dimension);
+        var scope = Composer.Render(domain ?? Composer.Dimension);
 
-          Values = scope.Values;
-          Indices = scope.Indices;
+        Values = scope.Values;
+        Indices = scope.Indices;
 
-          Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
-          if (source is not null)
-          {
-            Composer.OnAction(domain ?? Composer.Dimension);
-          }
+        if (source is not null)
+        {
+          Composer.OnAction(domain ?? Composer.Dimension);
+        }
 
-          return InvokeAsync(StateHasChanged);
-        });
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e);
-      }
+        return InvokeAsync(StateHasChanged);
 
-      return Task.CompletedTask;
+      }) ?? Task.CompletedTask;
     }
 
     /// <summary>
@@ -79,7 +70,6 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="action"></param>
-    /// <returns></returns>
     public virtual Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
     {
       return Task.FromResult<IView>(default);
@@ -95,16 +85,15 @@ namespace Canvas.Views.Web.Views
 
       Composer?.Dispose();
       ScriptService?.Dispose();
-      ScheduleService?.Dispose();
+      SchedulerService?.Dispose();
 
       ScriptService = null;
-      ScheduleService = null;
+      SchedulerService = null;
     }
 
     /// <summary>
     /// Get information about event
     /// </summary>
-    /// <returns></returns>
     protected virtual async Task<ViewModel> GetBounds()
     {
       var bounds = await ScriptService.GetElementBounds(Container);
@@ -196,12 +185,5 @@ namespace Canvas.Views.Web.Views
         await Update(domain);
       }
     }
-
-    /// <summary>
-    /// Dedicated process
-    /// </summary>
-    /// <param name="action"></param>
-    /// <returns></returns>
-    protected virtual Task Schedule(Func<Task> action) => ScheduleService?.Send(action)?.Task ?? Task.CompletedTask;
   }
 }
