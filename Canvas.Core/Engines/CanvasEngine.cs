@@ -9,7 +9,7 @@ namespace Canvas.Core.Engines
 {
   public class CanvasEngine : Engine, IEngine
   {
-    protected SKPath curve;
+    protected SKPathBuilder curve;
     protected SKPaint penBox;
     protected SKPaint penLine;
     protected SKPaint penShape;
@@ -42,7 +42,7 @@ namespace Canvas.Core.Engines
     {
       Dispose();
 
-      curve = new SKPath();
+      curve = new SKPathBuilder();
       dotLine = SKPathEffect.CreateDash([1, 3], 0);
       dashLine = SKPathEffect.CreateDash([3, 3], 0);
 
@@ -199,7 +199,7 @@ namespace Canvas.Core.Engines
         curve.LineTo((float)coordinates[i].X, (float)coordinates[i].Y);
       }
 
-      Image.Canvas.DrawPath(curve, penShape);
+      Image.Canvas.DrawPath(curve.Detach(), penShape);
     }
 
     /// <summary>
@@ -256,7 +256,7 @@ namespace Canvas.Core.Engines
       penCaptionShape.Color = shape.Color;
       captionShape.Size = (float)shape.Size;
 
-      Image.Canvas.DrawTextOnPath(content, curve, 0, captionShape.Size / 2, captionShape, penCaptionShape);
+      Image.Canvas.DrawTextOnPath(content, curve.Detach(), 0, captionShape.Size / 2, SKTextAlign.Center, captionShape, penCaptionShape);
     }
 
     /// <summary>
