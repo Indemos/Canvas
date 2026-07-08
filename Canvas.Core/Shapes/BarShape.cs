@@ -23,7 +23,7 @@ namespace Canvas.Core.Shapes
       }
 
       var size = Composer.Size / 2.0;
-      var coordinates = new DataModel[]
+      var coordinates = new Unit[]
       {
         Composer.GetItemPosition(index - size, 0.0),
         Composer.GetItemPosition(index + size, current.Value)

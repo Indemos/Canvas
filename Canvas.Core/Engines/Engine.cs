@@ -35,28 +35,28 @@ namespace Canvas.Core.Engines
     /// Create circle
     /// </summary>
     /// <param name="coordinate"></param>
-    void CreateCircle(DataModel coordinate, ComponentModel shape);
+    void CreateCircle(Unit coordinate, Section shape);
 
     /// <summary>
     /// Create box
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateBox(IList<DataModel> coordinates, ComponentModel shape);
+    void CreateBox(IList<Unit> coordinates, Section shape);
 
     /// <summary>
     /// Create line
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateLine(IList<DataModel> coordinates, ComponentModel shape);
+    void CreateLine(IList<Unit> coordinates, Section shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    void CreateShape(IList<DataModel> coordinates, ComponentModel shape);
+    void CreateShape(IList<Unit> coordinates, Section shape);
 
     /// <summary>
     /// Create label
@@ -64,7 +64,7 @@ namespace Canvas.Core.Engines
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateCaption(DataModel coordinate, ComponentModel shape, string content);
+    void CreateCaption(Unit coordinate, Section shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -72,14 +72,14 @@ namespace Canvas.Core.Engines
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    void CreateCaptionShape(IList<DataModel> coordinates, ComponentModel shape, string content);
+    void CreateCaptionShape(IList<Unit> coordinates, Section shape, string content);
 
     /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    DataModel GetContentMeasure(string content, double size);
+    Unit GetContentMeasure(string content, double size);
 
     /// <summary>
     /// Encode as image
@@ -125,28 +125,28 @@ namespace Canvas.Core.Engines
     /// Create circle
     /// </summary>
     /// <param name="coordinate"></param>
-    public abstract void CreateCircle(DataModel coordinate, ComponentModel shape);
+    public abstract void CreateCircle(Unit coordinate, Section shape);
 
     /// <summary>
     /// Create box
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public abstract void CreateBox(IList<DataModel> coordinates, ComponentModel shape);
+    public abstract void CreateBox(IList<Unit> coordinates, Section shape);
 
     /// <summary>
     /// Create line
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public abstract void CreateLine(IList<DataModel> coordinates, ComponentModel shape);
+    public abstract void CreateLine(IList<Unit> coordinates, Section shape);
 
     /// <summary>
     /// Create shape
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public abstract void CreateShape(IList<DataModel> coordinates, ComponentModel shape);
+    public abstract void CreateShape(IList<Unit> coordinates, Section shape);
 
     /// <summary>
     /// Create label
@@ -154,7 +154,7 @@ namespace Canvas.Core.Engines
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public abstract void CreateCaption(DataModel coordinate, ComponentModel shape, string content);
+    public abstract void CreateCaption(Unit coordinate, Section shape, string content);
 
     /// <summary>
     /// Draw label along the path
@@ -162,14 +162,14 @@ namespace Canvas.Core.Engines
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public abstract void CreateCaptionShape(IList<DataModel> coordinates, ComponentModel shape, string content);
+    public abstract void CreateCaptionShape(IList<Unit> coordinates, Section shape, string content);
 
     /// <summary>
     /// Measure content
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    public abstract DataModel GetContentMeasure(string content, double size);
+    public abstract Unit GetContentMeasure(string content, double size);
 
     /// <summary>
     /// Encode as image

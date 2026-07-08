@@ -37,7 +37,7 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Options
     /// </summary>
-    ComponentModel? Component { get; set; }
+    Section? Component { get; set; }
 
     /// <summary>
     /// Shape groups
@@ -68,7 +68,7 @@ namespace Canvas.Core.Shapes
     /// <param name="view"></param>
     /// <param name="coordinates"></param>
     /// <returns></returns>
-    IDictionary<string, IList<double>> GetSeries(DataModel view, DataModel coordinates);
+    IDictionary<string, IList<double>> GetSeries(Unit view, Unit coordinates);
 
     /// <summary>
     /// Get series values
@@ -76,7 +76,7 @@ namespace Canvas.Core.Shapes
     /// <param name="view"></param>
     /// <param name="coordinates"></param>
     /// <returns></returns>
-    IList<double> GetSeriesValues(DataModel view, DataModel coordinates);
+    IList<double> GetSeriesValues(Unit view, Unit coordinates);
 
     /// <summary>
     /// Get specific group by position and name
@@ -118,7 +118,7 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Options
     /// </summary>
-    public virtual ComponentModel? Component { get; set; }
+    public virtual Section? Component { get; set; }
 
     /// <summary>
     /// Shape groups
@@ -171,7 +171,7 @@ namespace Canvas.Core.Shapes
     /// <param name="view"></param>
     /// <param name="coordinates"></param>
     /// <returns></returns>
-    public virtual IDictionary<string, IList<double>> GetSeries(DataModel view, DataModel coordinates)
+    public virtual IDictionary<string, IList<double>> GetSeries(Unit view, Unit coordinates)
     {
       var group = this;
       var groups = new Dictionary<string, IList<double>>();
@@ -202,7 +202,7 @@ namespace Canvas.Core.Shapes
     /// <param name="view"></param>
     /// <param name="coordinates"></param>
     /// <returns></returns>
-    public virtual IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
+    public virtual IList<double> GetSeriesValues(Unit view, Unit coordinates)
     {
       return [Y ?? 0.0];
     }

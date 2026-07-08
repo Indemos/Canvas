@@ -24,7 +24,7 @@ namespace Canvas.Core.Shapes
       }
 
       var component = Composer.Components[nameof(ComponentEnum.ShapeSection)];
-      var coordinates = new DataModel[]
+      var coordinates = new Unit[]
       {
         Composer.GetItemPosition(index - 1, (previous ?? current).Value),
         Composer.GetItemPosition(index, current.Value)

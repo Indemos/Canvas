@@ -88,7 +88,7 @@ namespace Canvas.Views.Web.Views
     /// <param name="dimension"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    public virtual Task Update(DimensionModel? dimension, IList<IShape> items = null)
+    public virtual Task Update(Dimension? dimension, IList<IShape> items = null)
     {
       try
       {

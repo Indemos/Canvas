@@ -19,9 +19,9 @@
     if (setup)
     {
       var generator = new Random();
-      var comUp = new ComponentModel { Color = SKColors.DeepSkyBlue };
-      var comDown = new ComponentModel { Color = SKColors.OrangeRed };
-      var comAverage = new ComponentModel { Size = 1 };
+      var comUp = new Section { Color = SKColors.DeepSkyBlue };
+      var comDown = new Section { Color = SKColors.OrangeRed };
+      var comAverage = new Section { Size = 1 };
       var points = Enumerable
         .Range(1, 117)
         .Select(i => new Shape

@@ -39,7 +39,7 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain
     /// </summary>
-    DimensionModel Dimension { get; set; }
+    Dimension Dimension { get; set; }
 
     /// <summary>
     /// Engine
@@ -54,7 +54,7 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Options
     /// </summary>
-    IDictionary<string, ComponentModel> Components { get; set; }
+    IDictionary<string, Section> Components { get; set; }
 
     /// <summary>
     /// Format indices
@@ -74,45 +74,45 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain update event
     /// </summary>
-    Action<DimensionModel> OnAction { get; set; }
+    Action<Dimension> OnAction { get; set; }
 
     /// <summary>
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    DimensionModel OnWheel(ViewModel e);
+    Dimension OnWheel(Transition e);
 
     /// <summary>
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    DimensionModel OnMouseMove(ViewModel e);
+    Dimension OnMouseMove(Transition e);
 
     /// <summary>
     /// Resize event
     /// </summary>
     /// <param name="e"></param>
     /// <param name="orientation"></param>
-    DimensionModel OnScale(ViewModel e, int orientation = 0);
+    Dimension OnScale(Transition e, int orientation = 0);
 
     /// <summary>
     /// Update items
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    ScopeModel Render(DimensionModel message);
+    Scope Render(Dimension message);
 
     /// <summary>
     /// Update dimensions
     /// </summary>
     /// <param name="domain"></param>
-    DimensionModel SetDimensions(DimensionModel domain);
+    Dimension SetDimensions(Dimension domain);
 
     /// <summary>
     /// Convert values to canvas coordinates
     /// </summary>
     /// <param name="item"></param>
-    DataModel GetItemPosition(DataModel item);
+    Unit GetItemPosition(Unit item);
 
     /// <summary>
     /// Transform coordinates
@@ -120,13 +120,13 @@ namespace Canvas.Core.Composers
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    DataModel GetItemPosition(double index, double value);
+    Unit GetItemPosition(double index, double value);
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
     /// <param name="item"></param>
-    DataModel GetItemValue(DataModel item);
+    Unit GetItemValue(Unit item);
 
     /// <summary>
     /// Value scale
@@ -149,8 +149,8 @@ namespace Canvas.Core.Composers
 
   public partial class Composer : IComposer
   {
-    protected virtual ViewModel? MoveEvent { get; set; }
-    protected virtual ViewModel? ScaleEvent { get; set; }
+    protected virtual Transition? MoveEvent { get; set; }
+    protected virtual Transition? ScaleEvent { get; set; }
 
     /// <summary>
     /// Name
@@ -180,7 +180,7 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain
     /// </summary>
-    public virtual DimensionModel Dimension { get; set; }
+    public virtual Dimension Dimension { get; set; }
 
     /// <summary>
     /// Engine
@@ -195,7 +195,7 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Options
     /// </summary>
-    public virtual IDictionary<string, ComponentModel> Components { get; set; }
+    public virtual IDictionary<string, Section> Components { get; set; }
 
     /// <summary>
     /// Format indices
@@ -215,7 +215,7 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Domain update event
     /// </summary>
-    public virtual Action<DimensionModel> OnAction { get; set; }
+    public virtual Action<Dimension> OnAction { get; set; }
 
     /// <summary>
     /// Constructor
@@ -227,8 +227,8 @@ namespace Canvas.Core.Composers
       Values = 3;
       Indices = 9;
 
-      Dimension = new DimensionModel();
-      Components = new Dictionary<string, ComponentModel>();
+      Dimension = new Dimension();
+      Components = new Dictionary<string, Section>();
       Items = [];
 
       ShowBoard = o => $"{o:0.00}";
@@ -237,27 +237,27 @@ namespace Canvas.Core.Composers
 
       OnAction = o => { };
 
-      Components[nameof(ComponentEnum.Shape)] = new ComponentModel
+      Components[nameof(ComponentEnum.Shape)] = new Section
       {
         Size = 1,
         Color = new SKColor(50, 50, 50)
       };
 
-      Components[nameof(ComponentEnum.ShapeSection)] = new ComponentModel
+      Components[nameof(ComponentEnum.ShapeSection)] = new Section
       {
         Size = 1,
         Color = new SKColor(50, 50, 50)
       };
 
       Components[nameof(ComponentEnum.Grid)] =
-      Components[nameof(ComponentEnum.BoardLine)] = new ComponentModel
+      Components[nameof(ComponentEnum.BoardLine)] = new Section
       {
         Size = 1,
         Color = new SKColor(50, 50, 50),
         Composition = CompositionEnum.Dashes
       };
 
-      Components[nameof(ComponentEnum.Board)] = new ComponentModel
+      Components[nameof(ComponentEnum.Board)] = new Section
       {
         Size = 10,
         Position = PositionEnum.L,
@@ -267,7 +267,7 @@ namespace Canvas.Core.Composers
 
       Components[nameof(ComponentEnum.Caption)] =
       Components[nameof(ComponentEnum.BoardMarker)] =
-      Components[nameof(ComponentEnum.BoardCaption)] = new ComponentModel
+      Components[nameof(ComponentEnum.BoardCaption)] = new Section
       {
         Size = 10,
         Position = PositionEnum.Center,
@@ -281,7 +281,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public virtual ScopeModel Render(DimensionModel domain)
+    public virtual Scope Render(Dimension domain)
     {
       Engine.Clear();
 
@@ -300,7 +300,7 @@ namespace Canvas.Core.Composers
         item.CreateShape(i, null, Items);
       }
 
-      return new ScopeModel
+      return new Scope
       {
         Values = GetValues(),
         Indices = GetIndices()
@@ -311,7 +311,7 @@ namespace Canvas.Core.Composers
     /// Convert values to canvas coordinates
     /// </summary>
     /// <param name="item"></param>
-    public virtual DataModel GetItemPosition(DataModel item)
+    public virtual Unit GetItemPosition(Unit item)
     {
       var valueRange = Dimension.MaxValue - Dimension.MinValue;
       var minX = Dimension.MinIndex;
@@ -338,16 +338,16 @@ namespace Canvas.Core.Composers
     /// <param name="index"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    public virtual DataModel GetItemPosition(double index, double value)
+    public virtual Unit GetItemPosition(double index, double value)
     {
-      return GetItemPosition(new DataModel { X = index, Y = value });
+      return GetItemPosition(new Unit { X = index, Y = value });
     }
 
     /// <summary>
     /// Convert canvas coordinates to values
     /// </summary>
     /// <param name="item"></param>
-    public virtual DataModel GetItemValue(DataModel item)
+    public virtual Unit GetItemValue(Unit item)
     {
       var valueRange = Dimension.MaxValue - Dimension.MinValue;
       var minX = Dimension.MinIndex;
@@ -466,7 +466,7 @@ namespace Canvas.Core.Composers
     /// Mouse wheel event
     /// </summary>
     /// <param name="e"></param>
-    public virtual DimensionModel OnWheel(ViewModel e)
+    public virtual Dimension OnWheel(Transition e)
     {
       var isZoom = e.IsShape;
       var domain = Dimension;
@@ -484,7 +484,7 @@ namespace Canvas.Core.Composers
     /// Horizontal drag and resize event
     /// </summary>
     /// <param name="e"></param>
-    public virtual DimensionModel OnMouseMove(ViewModel e)
+    public virtual Dimension OnMouseMove(Transition e)
     {
       MoveEvent ??= e;
 
@@ -512,7 +512,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="e"></param>
     /// <param name="orientation"></param>
-    public virtual DimensionModel OnScale(ViewModel e, int orientation = 0)
+    public virtual Dimension OnScale(Transition e, int orientation = 0)
     {
       ScaleEvent ??= e;
 
@@ -544,14 +544,14 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    protected virtual IList<MarkerModel> GetIndices()
+    protected virtual IList<Mark> GetIndices()
     {
       var minIndex = Dimension.MinIndex;
       var maxIndex = Dimension.MaxIndex;
       var range = 0.0 + maxIndex - minIndex;
       var center = Math.Round(minIndex + range / 2.0, MidpointRounding.ToEven);
       var step = Math.Round(range / Indices, MidpointRounding.ToZero);
-      var items = new List<MarkerModel>();
+      var items = new List<Mark>();
 
       void createItem(double i)
       {
@@ -559,7 +559,7 @@ namespace Canvas.Core.Composers
         {
           var position = GetItemPosition(i, 0).X;
 
-          items.Add(new MarkerModel
+          items.Add(new Mark
           {
             Line = position,
             Marker = position,
@@ -580,14 +580,14 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Enumerate values
     /// </summary>
-    protected virtual IList<MarkerModel> GetValues()
+    protected virtual IList<Mark> GetValues()
     {
       var minValue = Dimension.MinValue;
       var maxValue = Dimension.MaxValue;
       var range = maxValue - minValue;
       var center = minValue + range / 2.0;
       var step = range / Values;
-      var items = new List<MarkerModel>();
+      var items = new List<Mark>();
 
       void createItem(double i)
       {
@@ -595,7 +595,7 @@ namespace Canvas.Core.Composers
         {
           var position = GetItemPosition(0, i).Y;
 
-          items.Add(new MarkerModel
+          items.Add(new Mark
           {
             Line = position,
             Marker = position,
@@ -618,7 +618,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public virtual DimensionModel SetDimensions(DimensionModel domain)
+    public virtual Dimension SetDimensions(Dimension domain)
     {
       var autoMin = 0;
       var autoMax = Items.Count;

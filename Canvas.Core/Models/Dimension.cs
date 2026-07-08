@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Canvas.Core.Models
 {
-  public struct DimensionModel
+  public struct Dimension
   {
     /// <summary>
     /// Index axis

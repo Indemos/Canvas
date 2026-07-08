@@ -39,7 +39,7 @@
       var points = Enumerable.Range(0, labels.Length).Select(i => new ColorMapShape
       {
         Points = range
-          .Select(o => new ComponentModel { Size = o, Color = colorService.GetColor(o) } as ComponentModel?)
+          .Select(o => new Section { Size = o, Color = colorService.GetColor(o) } as Section?)
           .OrderBy(o => generator.Next())
           .ToList()
 

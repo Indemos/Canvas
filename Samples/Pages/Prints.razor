@@ -47,7 +47,7 @@
                 C = close,
                 L = Math.Max(0, min - Math.Abs(open)),
                 H = Math.Max(0, max + Math.Abs(open)),
-                Box = new ComponentModel { Color = (close > open ? SKColors.DeepSkyBlue : SKColors.OrangeRed) },
+                Box = new Section { Color = (close > open ? SKColors.DeepSkyBlue : SKColors.OrangeRed) },
                 Ls = longs,
                 Rs = shorts
               } as IShape;

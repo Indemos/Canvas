@@ -42,13 +42,13 @@ namespace Canvas.Core.Shapes
       var size = Composer.Size / 3.0;
       var downSide = Math.Min(open, close);
       var upSide = Math.Max(open, close);
-      var coordinates = new DataModel[]
+      var coordinates = new Unit[]
       {
         Composer.GetItemPosition(index - size, upSide),
         Composer.GetItemPosition(index + size, downSide)
       };
 
-      var rangeCoordinates = new DataModel[]
+      var rangeCoordinates = new Unit[]
       {
         Composer.GetItemPosition(index, L ?? 0),
         Composer.GetItemPosition(index, H ?? 0),
@@ -61,14 +61,14 @@ namespace Canvas.Core.Shapes
       var lastR = double.MaxValue;
       var textSize = 10;
 
-      var comLs = new ComponentModel
+      var comLs = new Section
       {
         Size = textSize,
         Position = PositionEnum.R,
         Color = Composer.Components[nameof(ComponentEnum.Caption)].Color
       };
 
-      var comRs = new ComponentModel
+      var comRs = new Section
       {
         Size = textSize,
         Position = PositionEnum.L,

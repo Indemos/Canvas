@@ -31,15 +31,15 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Labels
     /// </summary>
-    public virtual IList<MarkerModel> Values { get; set; } = [];
-    public virtual IList<MarkerModel> Indices { get; set; } = [];
+    public virtual IList<Mark> Values { get; set; } = [];
+    public virtual IList<Mark> Indices { get; set; } = [];
 
     /// <summary>
     /// Update
     /// </summary>
     /// <param name="domain"></param>
     /// <param name="source"></param>
-    public virtual Task Update(DimensionModel? domain = null, string source = null)
+    public virtual Task Update(Dimension? domain = null, string source = null)
     {
       return SchedulerService?.Send(() =>
       {
@@ -94,13 +94,13 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Get information about event
     /// </summary>
-    protected virtual async Task<ViewModel> GetBounds()
+    protected virtual async Task<Transition> GetBounds()
     {
       var bounds = await ScriptService.GetElementBounds(Container);
 
-      return new ViewModel
+      return new Transition
       {
-        Data = new DataModel
+        Data = new Unit
         {
           X = bounds?.X ?? 0,
           Y = bounds?.Y ?? 0
@@ -114,10 +114,10 @@ namespace Canvas.Views.Web.Views
     /// <param name="e"></param>
     protected virtual async void OnWheelAction(WheelEventArgs e)
     {
-      var message = new ViewModel
+      var message = new Transition
       {
         IsShape = e.ShiftKey,
-        Data = new DataModel
+        Data = new Unit
         {
           X = e.DeltaX,
           Y = e.DeltaY
@@ -135,10 +135,10 @@ namespace Canvas.Views.Web.Views
     /// <param name="e"></param>
     protected virtual async void OnMouseMoveAction(MouseEventArgs e)
     {
-      var message = new ViewModel
+      var message = new Transition
       {
         IsMove = e.Buttons == 1,
-        Data = new DataModel
+        Data = new Unit
         {
           X = e.OffsetX,
           Y = e.OffsetY
@@ -157,10 +157,10 @@ namespace Canvas.Views.Web.Views
     /// <param name="orientation"></param>
     protected virtual async void OnScaleAction(MouseEventArgs e, int orientation = 0)
     {
-      var message = new ViewModel
+      var message = new Transition
       {
         IsMove = e.Buttons == 1,
-        Data = new DataModel
+        Data = new Unit
         {
           X = e.OffsetX,
           Y = e.OffsetY

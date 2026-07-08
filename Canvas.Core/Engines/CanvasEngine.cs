@@ -128,7 +128,7 @@ namespace Canvas.Core.Engines
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public override void CreateLine(IList<DataModel> coordinates, ComponentModel shape)
+    public override void CreateLine(IList<Unit> coordinates, Section shape)
     {
       penLine.Color = shape.Color;
       penLine.StrokeWidth = (float)shape.Size;
@@ -152,7 +152,7 @@ namespace Canvas.Core.Engines
     /// </summary>
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
-    public override void CreateCircle(DataModel coordinate, ComponentModel shape)
+    public override void CreateCircle(Unit coordinate, Section shape)
     {
       penCircle.Color = shape.Color;
 
@@ -168,7 +168,7 @@ namespace Canvas.Core.Engines
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public override void CreateBox(IList<DataModel> coordinates, ComponentModel shape)
+    public override void CreateBox(IList<Unit> coordinates, Section shape)
     {
       penBox.Color = shape.Color;
 
@@ -185,7 +185,7 @@ namespace Canvas.Core.Engines
     /// </summary>
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
-    public override void CreateShape(IList<DataModel> coordinates, ComponentModel shape)
+    public override void CreateShape(IList<Unit> coordinates, Section shape)
     {
       var origin = coordinates.ElementAtOrDefault(0);
 
@@ -208,7 +208,7 @@ namespace Canvas.Core.Engines
     /// <param name="coordinate"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateCaption(DataModel coordinate, ComponentModel shape, string content)
+    public override void CreateCaption(Unit coordinate, Section shape, string content)
     {
       penCaption.Color = shape.Color;
       caption.Size = (float)shape.Size;
@@ -238,7 +238,7 @@ namespace Canvas.Core.Engines
     /// <param name="coordinates"></param>
     /// <param name="shape"></param>
     /// <param name="content"></param>
-    public override void CreateCaptionShape(IList<DataModel> coordinates, ComponentModel shape, string content)
+    public override void CreateCaptionShape(IList<Unit> coordinates, Section shape, string content)
     {
       var origin = coordinates.ElementAtOrDefault(0);
 
@@ -264,11 +264,11 @@ namespace Canvas.Core.Engines
     /// </summary>
     /// <param name="content"></param>
     /// <param name="size"></param>
-    public override DataModel GetContentMeasure(string content, double size)
+    public override Unit GetContentMeasure(string content, double size)
     {
       caption.Size = (float)size;
 
-      var item = new DataModel
+      var item = new Unit
       {
         X = content.Length * Math.Min(caption.Metrics.MaxCharacterWidth, size),
         Y = caption.Spacing

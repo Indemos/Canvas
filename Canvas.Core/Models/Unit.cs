@@ -1,6 +1,6 @@
 namespace Canvas.Core.Models
 {
-  public struct DataModel
+  public struct Unit
   {
     public double X { get; set; }
     public double Y { get; set; }

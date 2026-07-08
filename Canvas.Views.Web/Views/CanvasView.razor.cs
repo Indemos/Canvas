@@ -16,7 +16,7 @@ namespace Canvas.Views.Web.Views
     [Parameter] public string Name { get; set; } = $"{Guid.NewGuid():N}";
     [Parameter] public EventCallback<string> OnReady { get; set; }
 
-    protected virtual PositionModel? Cursor { get; set; }
+    protected virtual Position? Cursor { get; set; }
     protected virtual ElementReference ChartContainer { get; set; }
     protected virtual IDictionary<string, IList<double>> Series { get; set; }
 
@@ -58,10 +58,10 @@ namespace Canvas.Views.Web.Views
     {
       Cursor = GetDelta(e);
 
-      var message = new ViewModel
+      var message = new Transition
       {
         IsMove = e.Buttons == 1,
-        Data = new DataModel
+        Data = new Unit
         {
           X = e.OffsetX,
           Y = e.OffsetY
@@ -85,7 +85,7 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="e"></param>
     /// <returns></returns>
-    protected PositionModel? GetDelta(MouseEventArgs e)
+    protected Position? GetDelta(MouseEventArgs e)
     {
       var engine = Composer?.Engine?.Instance;
 
@@ -94,7 +94,7 @@ namespace Canvas.Views.Web.Views
         return null;
       }
 
-      var coordinates = new DataModel
+      var coordinates = new Unit
       {
         X = e.OffsetX,
         Y = e.OffsetY
@@ -107,7 +107,7 @@ namespace Canvas.Views.Web.Views
 
       if (item is not null)
       {
-        var view = new DataModel
+        var view = new Unit
         {
           X = engine.X,
           Y = engine.Y
@@ -117,7 +117,7 @@ namespace Canvas.Views.Web.Views
         Series = item.GetSeries(view, coordinates);
       }
 
-      return new PositionModel
+      return new Position
       {
         Data = coordinates,
         X = Composer.ShowIndex(values.X),

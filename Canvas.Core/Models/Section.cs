@@ -3,7 +3,7 @@ using SkiaSharp;
 
 namespace Canvas.Core.Models
 {
-  public struct ComponentModel
+  public struct Section
   {
     /// <summary>
     /// Index

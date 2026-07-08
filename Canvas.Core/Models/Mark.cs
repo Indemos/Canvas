@@ -1,6 +1,6 @@
 namespace Canvas.Core.Models
 {
-  public struct MarkerModel
+  public struct Mark
   {
     public double Line { get; set; }
     public double Marker { get; set; }

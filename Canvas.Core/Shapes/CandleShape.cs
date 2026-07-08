@@ -30,12 +30,12 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Options
     /// </summary>
-    public virtual ComponentModel? Box { get; set; }
+    public virtual Section? Box { get; set; }
 
     /// <summary>
     /// Options
     /// </summary>
-    public virtual ComponentModel? Line { get; set; }
+    public virtual Section? Line { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -64,7 +64,7 @@ namespace Canvas.Core.Shapes
     /// <param name="view"></param>
     /// <param name="coordinates"></param>
     /// <returns></returns>
-    public override IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
+    public override IList<double> GetSeriesValues(Unit view, Unit coordinates)
     {
       return
       [
@@ -94,19 +94,19 @@ namespace Canvas.Core.Shapes
       var size = Composer.Size / 2.0;
       var downSide = Math.Min(open, close);
       var upSide = Math.Max(open, close);
-      var coordinates = new DataModel[]
+      var coordinates = new Unit[]
       {
         Composer.GetItemPosition(index - size, upSide),
         Composer.GetItemPosition(index + size, downSide)
       };
 
-      var rangeX = new DataModel[]
+      var rangeX = new Unit[]
       {
         Composer.GetItemPosition(index - size, close),
         Composer.GetItemPosition(index + size, close)
       };
 
-      var rangeY = new DataModel[]
+      var rangeY = new Unit[]
       {
         Composer.GetItemPosition(index, L ?? 0),
         Composer.GetItemPosition(index, H ?? 0)

@@ -12,12 +12,12 @@ namespace Canvas.Core
     /// <summary>
     /// Indices
     /// </summary>
-    IList<MarkerModel> Indices { get; set; }
+    IList<Mark> Indices { get; set; }
 
     /// <summary>
     /// Values
     /// </summary>
-    IList<MarkerModel> Values { get; set; }
+    IList<Mark> Values { get; set; }
 
     /// <summary>
     /// Composer
@@ -30,7 +30,7 @@ namespace Canvas.Core
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    Task Update(DimensionModel? domain = null, string source = null);
+    Task Update(Dimension? domain = null, string source = null);
 
     /// <summary>
     /// Create

@@ -11,7 +11,7 @@ namespace Canvas.Core.Shapes
     /// <summary>
     /// Points
     /// </summary>
-    public virtual IList<ComponentModel?> Points { get; set; }
+    public virtual IList<Section?> Points { get; set; }
 
     /// <summary>
     /// Get Min and Max for the current point
@@ -28,7 +28,7 @@ namespace Canvas.Core.Shapes
     /// <param name="view"></param>
     /// <param name="coordinates"></param>
     /// <returns></returns>
-    public override IList<double> GetSeriesValues(DataModel view, DataModel coordinates)
+    public override IList<double> GetSeriesValues(Unit view, Unit coordinates)
     {
       var indexRatio = Math.Max(coordinates.X / view.X, 0.0);
       var indexPosition = (int)Math.Round(Composer.Items.Count * indexRatio, MidpointRounding.ToZero);
@@ -59,7 +59,7 @@ namespace Canvas.Core.Shapes
       {
         var open = Composer.GetItemPosition(index, i);
         var close = Composer.GetItemPosition(index + 1, i + step);
-        var points = new DataModel[] { open, close };
+        var points = new Unit[] { open, close };
 
         previous = Points.ElementAtOrDefault(i) ?? previous;
 

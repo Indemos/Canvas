@@ -14,14 +14,14 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Enumerate indices
     /// </summary>
-    protected override IList<MarkerModel> GetIndices()
+    protected override IList<Mark> GetIndices()
     {
       var minIndex = Dimension.MinIndex;
       var maxIndex = Dimension.MaxIndex;
       var range = 0.0 + maxIndex - minIndex;
       var count = Math.Min(Indices, range);
       var step = Math.Round(range / count, MidpointRounding.ToEven);
-      var items = new List<MarkerModel>();
+      var items = new List<Mark>();
 
       void createItem(double i)
       {
@@ -29,7 +29,7 @@ namespace Canvas.Core.Composers
         {
           var position = GetItemPosition(i, 0).X;
 
-          items.Add(new MarkerModel
+          items.Add(new Mark
           {
             Line = 0,
             Marker = position,
@@ -50,14 +50,14 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Enumerate values
     /// </summary>
-    protected override IList<MarkerModel> GetValues()
+    protected override IList<Mark> GetValues()
     {
       var minValue = Dimension.MinValue;
       var maxValue = Dimension.MaxValue;
       var range = 0.0 + maxValue - minValue;
       var count = Math.Min(Values, range);
       var step = Math.Round(range / count, MidpointRounding.ToEven);
-      var items = new List<MarkerModel>();
+      var items = new List<Mark>();
 
       void createItem(double i)
       {
@@ -65,7 +65,7 @@ namespace Canvas.Core.Composers
         {
           var position = GetItemPosition(0, i).Y;
 
-          items.Add(new MarkerModel
+          items.Add(new Mark
           {
             Line = 0,
             Marker = position,

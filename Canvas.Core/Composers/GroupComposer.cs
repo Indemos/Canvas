@@ -13,7 +13,7 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="domain"></param>
     /// <returns></returns>
-    public override ScopeModel Render(DimensionModel domain)
+    public override Scope Render(Dimension domain)
     {
       Engine.Clear();
 
@@ -36,7 +36,7 @@ namespace Canvas.Core.Composers
         }
       }
 
-      return new ScopeModel
+      return new Scope
       {
         Values = GetValues(),
         Indices = GetIndices()
