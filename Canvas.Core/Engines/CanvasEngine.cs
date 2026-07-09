@@ -50,7 +50,7 @@ namespace Canvas.Core.Engines
       {
         Color = SKColors.Black,
         Style = SKPaintStyle.Stroke,
-        IsAntialias = false,
+        IsAntialias = true,
         IsStroke = false,
         IsDither = false
       };

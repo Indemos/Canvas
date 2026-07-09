@@ -1,5 +1,7 @@
+using Canvas.Core.Composers;
 using Canvas.Core.Enums;
 using Canvas.Core.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Canvas.Core.Shapes
@@ -15,18 +17,19 @@ namespace Canvas.Core.Shapes
     /// <returns></returns>
     public override void CreateShape(int index, string name, IList<IShape> items)
     {
-      var current = Y;
-
-      if (current is null)
+      if (Y is null)
       {
         return;
       }
 
-      var size = Composer.Size / 2.0;
+      var x = Composer.GetShapePixels(index, Composer.Size);
+      var y0 = Composer.GetItemPosition(index, 0.0).Y;
+      var y1 = Composer.GetItemPosition(index, Y.Value).Y;
+
       var coordinates = new Unit[]
       {
-        Composer.GetItemPosition(index - size, 0.0),
-        Composer.GetItemPosition(index + size, current.Value)
+        new() { X = x.L, Y = Math.Min(y0, y1) },
+        new() { X = x.R, Y = Math.Max(y0, y1) }
       };
 
       Composer.Engine.CreateBox(coordinates, Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);

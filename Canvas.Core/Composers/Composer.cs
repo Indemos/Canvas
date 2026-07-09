@@ -145,6 +145,13 @@ namespace Canvas.Core.Composers
     /// </summary>
     /// <param name="delta"></param>
     IList<int> PanIndex(int delta);
+
+    /// <summary>
+    /// Get evenly distributed shape size in pixels
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="logicalWidth"></param>
+    (double L, double R, double Center) GetShapePixels(double index, double logicalWidth);
   }
 
   public partial class Composer : IComposer
@@ -313,22 +320,22 @@ namespace Canvas.Core.Composers
     /// <param name="item"></param>
     public virtual Unit GetItemPosition(Unit item)
     {
+      const double eps = 1e-12;
+
       var valueRange = Dimension.MaxValue - Dimension.MinValue;
       var minX = Dimension.MinIndex;
       var maxX = Dimension.MaxIndex;
       var minY = Dimension.MinValue - valueRange * Space;
       var maxY = Dimension.MaxValue + valueRange * Space;
 
-      // Convert to device pixels
+      var dx = Math.Max(eps, maxX - minX);
+      var dy = Math.Max(eps, maxY - minY);
 
-      var index = Equals(minX, maxX) ? 1.0 : (item.X - minX) / (maxX - minX);
-      var value = Equals(minY, maxY) ? 1.0 : (item.Y - minY) / (maxY - minY);
+      var nx = Math.Clamp((item.X - minX) / dx, 0.0, 1.0);
+      var ny = Math.Clamp((item.Y - minY) / dy, 0.0, 1.0);
 
-      // Percentage to pixels, Y is inverted
-
-      item.X = Engine.X * index;
-      item.Y = Engine.Y - Engine.Y * value;
-
+      item.X = Engine.X * nx;
+      item.Y = Engine.Y - Engine.Y * ny;
       return item;
     }
 
@@ -663,6 +670,33 @@ namespace Canvas.Core.Composers
       response.AutoValueDomain[1] = max;
 
       return Dimension = response;
+    }
+
+    /// <summary>
+    /// Stable shape rendering
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public virtual (double L, double R, double Center) GetShapePixels(double index, double range)
+    {
+      var pxPerIndex = Engine.X / Math.Max(1, Dimension.MaxIndex - Dimension.MinIndex);
+      var pxWidth = Math.Max(1.0, Math.Round(range * pxPerIndex, MidpointRounding.AwayFromZero));
+
+      if (pxWidth % 2 is 0)
+      {
+        pxWidth += 1;
+      }
+
+      // X does not depend on Y, use any stable Y from domain.
+      var centerRaw = GetItemPosition(index, Dimension.MinValue).X;
+
+      // Snap center to pixel grid for stable visual width across resize.
+      var center = Math.Round(centerRaw, MidpointRounding.AwayFromZero) + 0.5;
+      var L = Math.Floor(center - pxWidth / 2.0);
+      var R = L + pxWidth;
+
+      return (L, R, center);
     }
 
     /// <summary>

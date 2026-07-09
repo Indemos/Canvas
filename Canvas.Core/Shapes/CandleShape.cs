@@ -89,32 +89,26 @@ namespace Canvas.Core.Shapes
         return;
       }
 
-      var open = O ?? 0;
-      var close = C ?? 0;
-      var size = Composer.Size / 2.0;
-      var downSide = Math.Min(open, close);
-      var upSide = Math.Max(open, close);
-      var coordinates = new Unit[]
+      var x = Composer.GetShapePixels(index, Composer.Size);
+      var pxO = Composer.GetItemPosition(index, O.Value).Y;
+      var pxC = Composer.GetItemPosition(index, C.Value).Y;
+      var pxH = Composer.GetItemPosition(index, H.Value).Y;
+      var pxL = Composer.GetItemPosition(index, L.Value).Y;
+
+      var box = new Unit[]
       {
-        Composer.GetItemPosition(index - size, upSide),
-        Composer.GetItemPosition(index + size, downSide)
+        new() { X = x.L, Y = Math.Min(pxO, pxC) },
+        new() { X = x.R, Y = Math.Max(pxO, pxC) }
       };
 
-      var rangeX = new Unit[]
+      var line = new Unit[]
       {
-        Composer.GetItemPosition(index - size, close),
-        Composer.GetItemPosition(index + size, close)
+        new() { X = x.Center, Y = pxH },
+        new() { X = x.Center, Y = pxL }
       };
 
-      var rangeY = new Unit[]
-      {
-        Composer.GetItemPosition(index, L ?? 0),
-        Composer.GetItemPosition(index, H ?? 0)
-      };
-
-      Composer.Engine.CreateLine(rangeX, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
-      Composer.Engine.CreateLine(rangeY, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
-      Composer.Engine.CreateBox(coordinates, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateLine(line, Line ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
+      Composer.Engine.CreateBox(box, Box ?? Component ?? Composer.Components[nameof(ComponentEnum.Shape)]);
     }
 
     /// <summary>
