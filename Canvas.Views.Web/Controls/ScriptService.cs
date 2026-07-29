@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace Canvas.Controls
     /// <summary>
     /// On size event
     /// </summary>
-    public Dictionary<string, Action<dynamic>> Actions { get; set; } = new();
+    public ConcurrentDictionary<string, Action<dynamic>> Actions { get; set; } = new();
 
     /// <summary>
     /// Constructor

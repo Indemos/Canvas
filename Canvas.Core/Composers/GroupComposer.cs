@@ -1,6 +1,5 @@
 using Canvas.Core.Extensions;
 using Canvas.Core.Models;
-using Canvas.Core.Shapes;
 using System;
 using System.Linq;
 
@@ -29,10 +28,10 @@ namespace Canvas.Core.Composers
           continue;
         }
 
-        foreach (var series in grouSeries.Groups.ToArray())
+        foreach (var name in grouSeries.Groups.Keys)
         {
-          series.Value.Composer = this;
-          series.Value.CreateShape(i, series.Key, Items);
+          grouSeries.Groups[name].Composer = this;
+          grouSeries.Groups[name].CreateShape(i, name, Items);
         }
       }
 
