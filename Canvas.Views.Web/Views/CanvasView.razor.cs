@@ -150,7 +150,7 @@ namespace Canvas.Views.Web.Views
         Composer = action();
         Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
 
-        Update();
+        await Update();
       };
 
       return this;

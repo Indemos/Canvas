@@ -23,6 +23,8 @@ namespace Canvas.Views.Web.Views
     protected virtual SchedulerService SchedulerService { get; set; }
     protected virtual ElementReference Container { get; set; }
 
+    protected object sync = new();
+
     /// <summary>
     /// Composer
     /// </summary>
@@ -61,26 +63,29 @@ namespace Canvas.Views.Web.Views
     /// </summary>
     /// <param name="domain"></param>
     /// <param name="propagation"></param>
-    public virtual void Update(Dimension? domain = null, string propagation = null)
+    public virtual Task Update(Dimension? domain = null, string propagation = null)
     {
-      if (Composer?.Engine?.Instance is null)
+      lock (sync)
       {
-        return;
+        if (Composer?.Engine?.Instance is null)
+        {
+          return Task.CompletedTask;
+        }
+
+        var scope = Composer.Render(domain ?? Composer.Dimension);
+
+        Values = scope.Values;
+        Indices = scope.Indices;
+
+        Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
+
+        if (propagation is not null)
+        {
+          Composer.OnAction(domain ?? Composer.Dimension);
+        }
       }
 
-      var scope = Composer.Render(domain ?? Composer.Dimension);
-
-      Values = scope.Values;
-      Indices = scope.Indices;
-
-      Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
-
-      if (propagation is not null)
-      {
-        Composer.OnAction(domain ?? Composer.Dimension);
-      }
-
-      InvokeAsync(StateHasChanged);
+      return InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
