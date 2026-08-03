@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
@@ -138,9 +139,10 @@ namespace Canvas.Views.Web.Views
       ScriptService = await new ScriptService(RuntimeService).CreateModule();
       ScriptService.Actions["OnChange"] = async o => await Setup();
 
+      await SchedulerService.Send(Setup);
       await ScriptService.SubscribeToSize(ChartContainer, "OnChange");
 
-      async Task Setup() 
+      async Task Setup()
       {
         var engine = new T();
         var bounds = await GetBounds();
@@ -148,10 +150,8 @@ namespace Canvas.Views.Web.Views
         Composer = action();
         Composer.Engine = engine.Create(bounds.Data.X, bounds.Data.Y);
 
-        await Update();
+        Update();
       };
-
-      await Setup();
 
       return this;
     }

@@ -10,15 +10,17 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Update items
     /// </summary>
-    /// <param name="domain"></param>
+    /// <param name="dimension"></param>
     /// <returns></returns>
     public override Scope Render(Dimension domain)
     {
       Engine.Clear();
 
-      SetDimensions(domain);
+      var dimension = SetDimensions(domain);
+      var minIndex = dimension.MinIndex;
+      var maxIndex = dimension.MaxIndex;
 
-      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      for (var i = minIndex; i < maxIndex; i++)
       {
         var group = Items.ElementAtOrDefault(i);
         var grouSeries = group?.Groups?.Get(Name);
@@ -28,10 +30,10 @@ namespace Canvas.Core.Composers
           continue;
         }
 
-        foreach (var name in grouSeries.Groups.Keys)
+        foreach (var (name, shape) in grouSeries.Groups)
         {
-          grouSeries.Groups[name].Composer = this;
-          grouSeries.Groups[name].CreateShape(i, name, Items);
+          shape.Composer = this;
+          shape.CreateShape(i, name, Items);
         }
       }
 
@@ -60,11 +62,11 @@ namespace Canvas.Core.Composers
         return (min, max, average);
       }
 
-      foreach (var shape in series.Groups.ToArray())
+      foreach (var (name, shape) in series.Groups)
       {
-        shape.Value.Composer = this;
+        shape.Composer = this;
 
-        var domain = shape.Value.GetDomain(i, shape.Key, Items);
+        var domain = shape.GetDomain(i, name, Items);
 
         if (domain is not null)
         {

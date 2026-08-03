@@ -30,7 +30,7 @@ namespace Canvas.Core
     /// <param name="message"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    Task Update(Dimension? domain = null, string source = null);
+    Task Render(Dimension? domain = null, string source = null);
 
     /// <summary>
     /// Create

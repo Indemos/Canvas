@@ -29,7 +29,6 @@ namespace Canvas.Core.Engines
     /// <summary>
     /// Instance
     /// </summary>
-    /// <returns></returns>
     public override IEngine Instance => Image is null ? null : this;
 
     /// <summary>
@@ -291,6 +290,7 @@ namespace Canvas.Core.Engines
     public override void Dispose()
     {
       Image?.Dispose();
+      Image = null;
 
       dotLine?.Dispose();
       dashLine?.Dispose();
@@ -300,8 +300,6 @@ namespace Canvas.Core.Engines
       penShape?.Dispose();
       penCaption?.Dispose();
       penCaptionShape?.Dispose();
-
-      Image = null;
     }
   }
 }

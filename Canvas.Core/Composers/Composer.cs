@@ -294,7 +294,10 @@ namespace Canvas.Core.Composers
 
       SetDimensions(domain);
 
-      for (var i = domain.MinIndex; i < domain.MaxIndex; i++)
+      var minIndex = domain.MinIndex;
+      var maxIndex = domain.MaxIndex;
+
+      for (var i = minIndex; i < maxIndex; i++)
       {
         var item = Items.ElementAtOrDefault(i);
 
@@ -638,7 +641,10 @@ namespace Canvas.Core.Composers
       var min = double.MaxValue;
       var max = double.MinValue;
 
-      for (var i = response.MinIndex; i < response.MaxIndex; i++)
+      var minIndex = response.MinIndex;
+      var maxIndex = response.MaxIndex;
+
+      for (var i = minIndex; i < maxIndex; i++)
       {
         (min, max, average) = GetExtremes(i, min, max, average);
       }
@@ -728,6 +734,10 @@ namespace Canvas.Core.Composers
     /// <summary>
     /// Dispose
     /// </summary>
-    public void Dispose() => Engine?.Dispose();
+    public void Dispose()
+    {
+      Engine?.Dispose();
+      Engine = null;
+    }
   }
 }

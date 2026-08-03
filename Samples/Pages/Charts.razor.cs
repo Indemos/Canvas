@@ -21,6 +21,8 @@ namespace Canvas.Client.Pages
     protected List<IShape> Points { get; set; } = [];
     protected Dictionary<long, int> Indices { get; set; } = [];
 
+    protected object sync = new();
+
     protected override async Task OnAfterRenderAsync(bool setup)
     {
       if (setup)
@@ -40,7 +42,10 @@ namespace Canvas.Client.Pages
             interval.Stop();
           }
 
-          OnData();
+          lock (sync)
+          {
+            OnData();
+          }
         };
       }
 

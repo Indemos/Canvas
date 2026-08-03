@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Canvas.Views.Web.Views
 {
-  public class BaseView : ComponentBase, IView
+  public abstract class BaseView : ComponentBase, IView
   {
     [Inject] protected virtual IJSRuntime RuntimeService { get; set; }
 
@@ -35,17 +35,41 @@ namespace Canvas.Views.Web.Views
     public virtual IList<Mark> Indices { get; set; } = [];
 
     /// <summary>
+    /// Create
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="action"></param>
+    public abstract Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new();
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="domain"></param>
-    /// <param name="source"></param>
-    public virtual Task Update(Dimension? domain = null, string source = null)
+    /// <param name="propagation"></param>
+    public virtual async Task Render(Dimension? domain = null, string propagation = null)
     {
-      return SchedulerService?.Send(() =>
+      if (SchedulerService is null)
+      {
+        return;
+      }
+
+      await SchedulerService?.Send(() => Update(domain, propagation));
+    }
+
+    object sync = new();
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="domain"></param>
+    /// <param name="propagation"></param>
+    public virtual void Update(Dimension? domain = null, string propagation = null)
+    {
+      lock (sync)
       {
         if (Composer?.Engine?.Instance is null)
         {
-          return Task.CompletedTask;
+          return;
         }
 
         var scope = Composer.Render(domain ?? Composer.Dimension);
@@ -55,24 +79,13 @@ namespace Canvas.Views.Web.Views
 
         Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
 
-        if (source is not null)
+        if (propagation is not null)
         {
           Composer.OnAction(domain ?? Composer.Dimension);
         }
 
-        return InvokeAsync(StateHasChanged);
-
-      }) ?? Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Create
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="action"></param>
-    public virtual Task<IView> Create<T>(Func<IComposer> action) where T : IEngine, new()
-    {
-      return Task.FromResult<IView>(default);
+        InvokeAsync(StateHasChanged);
+      }
     }
 
     /// <summary>
@@ -83,9 +96,9 @@ namespace Canvas.Views.Web.Views
       Values?.Clear();
       Indices?.Clear();
 
-      Composer?.Dispose();
       ScriptService?.Dispose();
       SchedulerService?.Dispose();
+      Composer?.Dispose();
 
       ScriptService = null;
       SchedulerService = null;
@@ -126,7 +139,7 @@ namespace Canvas.Views.Web.Views
 
       var domain = Composer?.OnWheel(message);
 
-      await Update(domain, Composer?.Name);
+      await Render(domain, Composer?.Name);
     }
 
     /// <summary>
@@ -147,7 +160,7 @@ namespace Canvas.Views.Web.Views
 
       var domain = Composer?.OnMouseMove(message);
 
-      await Update(domain, Composer?.Name);
+      await Render(domain, Composer?.Name);
     }
 
     /// <summary>
@@ -169,7 +182,7 @@ namespace Canvas.Views.Web.Views
 
       var domain = Composer?.OnScale(message, orientation);
 
-      await Update(domain, Composer?.Name);
+      await Render(domain, Composer?.Name);
     }
 
     /// <summary>
@@ -182,7 +195,7 @@ namespace Canvas.Views.Web.Views
       {
         var domain = Composer.Dimension;
         domain.ValueDomain = null;
-        await Update(domain);
+        await Render(domain);
       }
     }
   }

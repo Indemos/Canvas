@@ -54,23 +54,4 @@
 
     await base.OnAfterRenderAsync(setup);
   }
-
-  protected IShape S(double X, double Y, double Z)
-  {
-    return new Shape
-    {
-      Groups = new Dictionary<string, IShape>
-      {
-        ["Indicators"] = new Shape
-        {
-          Groups = new Dictionary<string, IShape>
-          {
-            ["Ups"] = new BarShape { Y = X },
-            ["Downs"] = new BarShape { Y = Y },
-            ["Averages"] = new LineShape { Y = Z }
-          }
-        }
-      }
-    };
-  }
 }

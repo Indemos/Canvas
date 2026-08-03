@@ -7,7 +7,7 @@ namespace Canvas.Core.Services
 {
   public class SchedulerService : IDisposable
   {
-    protected Thread processor;
+    protected Task processor;
     protected Channel<Action> queue;
     protected CancellationTokenSource cleaner;
 
@@ -19,27 +19,26 @@ namespace Canvas.Core.Services
     /// <summary>
     /// Constructor
     /// </summary>
-    public SchedulerService() : this(1, new CancellationTokenSource())
-    {
-    }
+    public SchedulerService() : this(1, new CancellationTokenSource()) { }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="count"></param>
     /// <param name="cleaner"></param>
-    public SchedulerService(int count, CancellationTokenSource cleaner)
+    /// <param name="mode"></param>
+    public SchedulerService(int count, CancellationTokenSource cleaner, BoundedChannelFullMode mode = BoundedChannelFullMode.DropOldest)
     {
       this.cleaner = cleaner;
 
       queue = Channel.CreateBounded<Action>(new BoundedChannelOptions(count)
       {
+        FullMode = mode,
         SingleReader = true,
-        SingleWriter = false,
-        FullMode = BoundedChannelFullMode.Wait
+        SingleWriter = false
       });
 
-      processor = new Thread(() =>
+      processor = Task.Factory.StartNew(() =>
       {
         try
         {
@@ -50,12 +49,10 @@ namespace Canvas.Core.Services
         }
         catch (OperationCanceledException) { }
         catch (ObjectDisposedException) { }
-      })
-      {
-        IsBackground = true
-      };
-
-      processor.Start();
+      },
+      cleaner.Token,
+      TaskCreationOptions.LongRunning,
+      TaskScheduler.Default);
     }
 
     /// <summary>
@@ -155,7 +152,7 @@ namespace Canvas.Core.Services
         queue?.Writer?.TryComplete();
         cleaner?.Cancel();
         cleaner?.Dispose();
-        processor?.Join();
+        processor?.Wait();
       }
       catch { }
     }

@@ -74,7 +74,7 @@ namespace Canvas.Views.Web.Views
           if (o?.Composer?.Name is not null && Equals(composer.Name, o.Composer.Name) is false)
           {
             domain.ValueDomain = o.Composer.Dimension.ValueDomain;
-            await o.Update(domain);
+            await o.Render(domain);
           }
         });
       }
@@ -99,7 +99,7 @@ namespace Canvas.Views.Web.Views
             o.Composer.Items = items;
           }
 
-          return o.Update(dimension);
+          return o.Render(dimension);
         });
 
         return Task.WhenAll(processes);
@@ -115,10 +115,6 @@ namespace Canvas.Views.Web.Views
     /// <summary>
     /// Dispose
     /// </summary>
-    public override void Dispose()
-    {
-      base.Dispose();
-      Views?.ForEach(o => o.Value?.Dispose());
-    }
+    public virtual void Dispose() => Views?.ForEach(o => o.Value?.Dispose());
   }
 }
