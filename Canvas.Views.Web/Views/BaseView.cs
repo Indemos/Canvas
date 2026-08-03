@@ -56,8 +56,6 @@ namespace Canvas.Views.Web.Views
       await SchedulerService?.Send(() => Update(domain, propagation));
     }
 
-    object sync = new();
-
     /// <summary>
     /// Update
     /// </summary>
@@ -65,27 +63,24 @@ namespace Canvas.Views.Web.Views
     /// <param name="propagation"></param>
     public virtual void Update(Dimension? domain = null, string propagation = null)
     {
-      lock (sync)
+      if (Composer?.Engine?.Instance is null)
       {
-        if (Composer?.Engine?.Instance is null)
-        {
-          return;
-        }
-
-        var scope = Composer.Render(domain ?? Composer.Dimension);
-
-        Values = scope.Values;
-        Indices = scope.Indices;
-
-        Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
-
-        if (propagation is not null)
-        {
-          Composer.OnAction(domain ?? Composer.Dimension);
-        }
-
-        InvokeAsync(StateHasChanged);
+        return;
       }
+
+      var scope = Composer.Render(domain ?? Composer.Dimension);
+
+      Values = scope.Values;
+      Indices = scope.Indices;
+
+      Route = "data:image/webp;base64," + Convert.ToBase64String(Composer.Engine.Encode(SKEncodedImageFormat.Webp, 100));
+
+      if (propagation is not null)
+      {
+        Composer.OnAction(domain ?? Composer.Dimension);
+      }
+
+      InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
